@@ -9,6 +9,10 @@ class Users {
         return users;
     }
 
+    static async delete({ username }, { mongoDbConfig }) {
+        await mongoDbConfig.collections.USERS.deleteOne({ username });
+    }
+
     static async register({ category, firstName, lastName, password, username }, { mongoDbConfig }) {
         const hashedPassword = await bcrypt.hash(password, 10);
 
