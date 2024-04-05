@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-export const GET = async () => {
+import { apiHandler } from "@/middlewares/route-handler"
 
-    return NextResponse.json([ { firstName: "Rafael", lastName: "Tivane" } ]);
+export const GET = async () => {
+    return await apiHandler(async ({ mongoDbConfig, user }) => {
+        const users = await mongoDbConfig.collections.USERS.find({}).toArray();
+        return NextResponse.json(users);
+    });
 };
