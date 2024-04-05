@@ -4,6 +4,11 @@ import { getId } from "@/helpers/id"
 
 class Users {
 
+    static async get({ username }, { mongoDbConfig }) {
+        const user = await mongoDbConfig.collections.USERS.findOne({ username });
+        return user;
+    }
+
     static async getAll({}, { mongoDbConfig }) {
         const users = await mongoDbConfig.collections.USERS.find({}).toArray();
         return users;
