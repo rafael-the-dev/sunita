@@ -1,7 +1,14 @@
-//import { Inter } from "next/font/google";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
+import { ThemeProvider } from '@mui/material/styles';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 import "@/styles/globals.css";
 
-//const inter = Inter({ subsets: ["latin"] });
+import { theme } from "./mui/theme"
 
 export const metadata = {
     title: "Create Next App",
@@ -11,8 +18,14 @@ export const metadata = {
 const RootLayout = ({ children }) => {
     return (
         <html lang="en">
+            <head>
+            </head>
             <body>
-                { children }
+                <AppRouterCacheProvider options={{ key: 'css' }}>
+                    <ThemeProvider theme={theme}>
+                        { children }
+                    </ThemeProvider>
+                </AppRouterCacheProvider>
             </body>
         </html>
     );
