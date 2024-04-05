@@ -1,4 +1,6 @@
-//const DefaultError = require("src/models/server/errors/DefaultError");
+import { NextResponse } from "next/server";
+
+import DefaultError from "@/errors/server/DefaultError";
 
 //const Access = require("src/models/server/Acess");
 
@@ -15,7 +17,6 @@ const apiHandler = async (handler) => {
         await createMongoDBConnection();
         mongoDbConfig = mongoDBConfig
     }
-    
     //const { authorization } = req.headers;
     
     //const { token } = cookie.parse(req.headers.cookie ?? "");
@@ -36,22 +37,17 @@ const apiHandler = async (handler) => {
         
         /*if(!hasFreeAccess(req)) {
             user = Access.getUser(authorization ?? token);
-        } */
+        } */ 
 
         return handler({ user, mongoDbConfig });
     } catch(err) {
         console.error("handler error", err);
 
-        /*if(err instanceof DefaultError) {
-            res.status(err.status).json(err.getResponse());
-            return;
+        if(err instanceof DefaultError) {
+            return NextResponse.json(err.getResponse(), { status: err.status });
         }
         
-        res.status(500).json({ message: "Internal server error", err });*/
-    }
-    finally {
-        //mongoDBConfig.isConnected = false;
-        //await mongoDBConnection.closeDbConnections();
+        return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }
 };
 
