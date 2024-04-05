@@ -11,3 +11,10 @@ export const DELETE = async (req, { params: { username } }) => {
         return NextResponse.json({});
     });
 };
+
+export const GET = async (req, { params: { username } }) => {
+    return await apiHandler(async ({ mongoDbConfig, user }) => {
+        const requestedUser = await Users.get({ username }, { mongoDbConfig, user });
+        return NextResponse.json(requestedUser);
+    });
+};
