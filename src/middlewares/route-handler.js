@@ -12,7 +12,7 @@ let mongoDbConfig = {
 };
 
 
-const apiHandler = async (handler) => {
+export const apiHandler = async (handler) => {
     if(!mongoDbConfig.isConnected) {
         await createMongoDBConnection();
         mongoDbConfig = mongoDBConfig
@@ -50,5 +50,3 @@ const apiHandler = async (handler) => {
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }
 };
-
-module.exports = { apiHandler };
