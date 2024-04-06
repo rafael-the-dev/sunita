@@ -50,7 +50,7 @@ const Login = () => {
         <main className="bg-primary-50 flex items-center justify-center min-h-screen">
             <Paper 
                 component="form"
-                className={classNames(styles.form, `mx-auto px-4 py-8 rounded-lg`)}
+                className={classNames(styles.form, `mx-auto px-4 py-8 rounded-xl sm:px-6`)}
                 elevation={1}
                 onSubmit={submitHandler}>
                 <div className={classNames(`border border-solid border-blue-700 flex items-center px-3 rounded-lg dark:bg-stone-400`)}>
