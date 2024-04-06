@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import { verifyToken } from "@/helpers/auth";
+import { decode, verifyToken } from "@/helpers/auth";
 
 import AuthError from "@/errors/server/AuthenticationError";
 import Users  from "./Users";
@@ -13,10 +13,9 @@ class Auth {
         const match = await bcrypt.compare(password, user.password);
 
         if(match) {
-            const privateKey = "53a0d1a4174d2e1b8de701437fe06c08891035ed4fd945aef843a75bed2ade0657b3c4ff7ecd8474cb5180b2666c0688bbe640c9eb3d39bb9f2b724a10f343c6";
-            const token = jwt.sign(user, privateKey, { expiresIn: 30 });
+            const token = decode(user);
 
-            const { _id, exp, iat, password, ...userDetails } =verifyToken(token);
+            const { _id, exp, iat, password, ...userDetails } = verifyToken(token);
 
             return { 
                 access: {
@@ -28,6 +27,26 @@ class Auth {
         }
 
         throw new AuthError("Username or password invalid.");
+    }
+
+    static async refreshToken({ token }) {
+        try {
+            const { _id, exp, iat, password, ...userDetails } = verifyToken(token);
+
+            const newToken = decode(userDetails);
+    
+            const decodedToken = verifyToken(newToken);
+    
+            return { 
+                access: {
+                    expiresIn: decodedToken.exp,
+                    token: newToken
+                }
+            };
+        } catch(err) {
+            if(err instanceof jwt.TokenExpiredError) throw new AuthError("Expired token");
+            throw err;
+        }
     }
 }
 

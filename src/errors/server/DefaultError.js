@@ -8,9 +8,7 @@ class DefaultError extends Error {
     get status() { return this._status; }
 
     getResponse() {
-        return {
-            message: this.message
-        }
+        return this.message;
     }
 }
 

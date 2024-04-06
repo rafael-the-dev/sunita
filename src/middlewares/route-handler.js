@@ -39,14 +39,14 @@ export const apiHandler = async (handler) => {
             user = Access.getUser(authorization ?? token);
         } */ 
 
-        return handler({ user, mongoDbConfig });
+        return await handler({ user, mongoDbConfig });
     } catch(err) {
-        console.error("handler error", err);
+        console.error(err);
 
         if(err instanceof DefaultError) {
             return NextResponse.json(err.getResponse(), { status: err.status });
         }
         
-        return NextResponse.json({ message: "Internal server error" }, { status: 500 });
+        return NextResponse.json(err.message, { status: 500 });
     }
 };
