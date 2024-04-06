@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import Paper from '@mui/material/Paper';
+import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css";
 
@@ -53,19 +54,27 @@ const Login = () => {
                 className={classNames(styles.form, `mx-auto px-4 py-8 rounded-xl sm:px-6`)}
                 elevation={1}
                 onSubmit={submitHandler}>
-                <div className={classNames(`border border-solid border-primary-800 flex items-center px-3 rounded-lg`)}>
-                    <AccountCircleIcon className="text-slate-700" />
-                    <Input 
-                        className="bg-primary-800 border-0 grow"
-                        placeholder='Username'
-                        ref={usernameRef}
-                        required
+                <fieldset>
+                    <Typography 
+                        component="legend"
+                        className='font-bold text-center text-2xl sm:text-3xl'
+                        variant='h2'>
+                        Login
+                    </Typography>
+                    <div className={classNames(`border border-solid border-primary-800 flex items-center mt-4 px-3 rounded-lg sm:mt-8`)}>
+                        <AccountCircleIcon className="text-slate-700" />
+                        <Input 
+                            className="bg-primary-800 border-0 grow"
+                            placeholder='Username'
+                            ref={usernameRef}
+                            required
+                        />
+                    </div>
+                    <PasswordInput 
+                        placeholder="Password"
+                        ref={passwordRef}
                     />
-                </div>
-                <PasswordInput 
-                    placeholder="Password"
-                    ref={passwordRef}
-                />
+                </fieldset>
                 <div className='flex flex-col items-center mt-4'>
                     <Button
                         className="py-3 rounded-lg w-full"
