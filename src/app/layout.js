@@ -6,6 +6,8 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
+import "@/styles/reset.css";
+import "@/styles/tailwind.css";
 import "@/styles/globals.css";
 
 import { theme } from "./mui/theme"
@@ -16,7 +18,7 @@ const RootLayout = ({ children }) => {
             <head>
             </head>
             <body>
-                <AppRouterCacheProvider options={{ key: 'css' }}>
+                <AppRouterCacheProvider options={{  enableCssLayer: true  }}>
                     <ThemeProvider theme={theme}>
                         { children }
                     </ThemeProvider>
