@@ -26,7 +26,7 @@ const PasswordInput = React.forwardRef(({ iconPosition, label, ...rest}, ref) =>
     const handleMouseDownPassword = React.useCallback(event => event.preventDefault(), []);
 
     return  (
-        <div className={classNames(`border border-solid border-blue-700 flex items-center mt-4 px-3 rounded-lg dark:bg-stone-400`)}>
+        <div className={classNames(`border border-solid border-primary-800 flex items-center mt-4 px-3 rounded-lg`)}>
             <IconButton
                 aria-label="toggle password visibility"
                 onClick={togglePasswordVisibility}

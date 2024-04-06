@@ -53,7 +53,7 @@ const Login = () => {
                 className={classNames(styles.form, `mx-auto px-4 py-8 rounded-xl sm:px-6`)}
                 elevation={1}
                 onSubmit={submitHandler}>
-                <div className={classNames(`border border-solid border-blue-700 flex items-center px-3 rounded-lg dark:bg-stone-400`)}>
+                <div className={classNames(`border border-solid border-primary-800 flex items-center px-3 rounded-lg`)}>
                     <AccountCircleIcon className="text-slate-700" />
                     <Input 
                         className="bg-primary-800 border-0 grow"

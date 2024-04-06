@@ -9,8 +9,8 @@ const Container = ({ children, color, className, variant, ...rest }) => {
     
     const getClasses = () => {
         switch(variant) {
-            case "contained": return `bg-${color}-800 text-white`;
-            case "outlined": return ``
+            case "contained": return `bg-${color}-800 text-white hover:opacity-80`;
+            case "outlined": return `border-${color}-800 text-${color} hover:bg-${color}-800 hover:text-white`
         }
     };
 
