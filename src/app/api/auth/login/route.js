@@ -4,7 +4,6 @@ import { apiHandler } from "@/middlewares/route-handler";
 
 import Auth from "@/models/server/db/Auth";
 
-
 export const POST = async (req) => {
     return apiHandler(async ({ mongoDbConfig, user }) => {
         const { password, username } = await req.json();
