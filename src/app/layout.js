@@ -1,11 +1,17 @@
+import { useContext  } from "react";
+
+import { LoginContextProvider } from "@/context/LoginContext"
 
 import LayoutContainer from "@/components/shared/layout";
 
 const RootLayout = ({ children }) => {
     return (
         <LayoutContainer>
-            { children }
+            <LoginContextProvider>
+                { children }
+            </LoginContextProvider>
         </LayoutContainer>
+
     );
 };
 

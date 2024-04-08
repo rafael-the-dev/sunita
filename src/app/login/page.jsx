@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import classNames from 'classnames';
+import { useRouter } from "next/navigation"
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -10,11 +11,16 @@ import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css";
 
+import { LoginContext } from "@/context/LoginContext";
+
 import Button from "@/components/shared/button";
 import Input from "@/components/Input";
 import PasswordInput from '@/components/shared/password';
 
 const Login = () => {
+    const router = useRouter();
+
+    const { setCredentials } = React.useContext(LoginContext);
     const [ loading, setLoading ] = React.useState(false);
 
     const passwordRef = React.useRef(null);
@@ -37,15 +43,18 @@ const Login = () => {
 
         try {
             const res = await fetch('/api/auth/login', options);
-            const result = await res.json();
-            console.log(result);
+            const { access, data } = await res.json();
+            setCredentials({
+                ...access,
+                user: data
+            });
+            router.push(`/users/${data.username }`);
         } catch(e) {
-            console.error(e)
-        } finally {
-            setLoading(false)
+            console.error(e);
+            setLoading(false);
         }
 
-    }, []);
+    }, [ router, setCredentials ]);
 
     return (
         <main className="bg-primary-50 flex items-center justify-center min-h-screen">
