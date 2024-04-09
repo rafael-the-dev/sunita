@@ -14,6 +14,7 @@ import styles from "./styles.module.css";
 
 import { LoginContext } from "@/context/LoginContext";
 
+import Alert from "@/components/alert";
 import Button from "./components/SubmitButton";
 import Input from "@/components/Input";
 import PasswordInput from '@/components/shared/password';
@@ -23,7 +24,11 @@ const Login = () => {
 
     const { setCredentials } = React.useContext(LoginContext);
 
+    const onCloseHandlerRef = React.useRef(null);
+    const onOpenHandlerRef = React.useRef(null);
+
     const submitHandler = React.useCallback(async (prevState, formData) => {
+        onCloseHandlerRef.current?.();
 
         const body = JSON.stringify({ 
             password: formData.get("password-input"), 
@@ -37,20 +42,36 @@ const Login = () => {
 
         try {
             const res = await fetch('/api/auth/login', options);
-            const { access, data } = await res.json();
+            const result = await res.json();
+
+            if(res.status !== 200) throw new Error(result);
+
+            const { access, data } = result;
+
             setCredentials({
                 ...access,
                 user: data
             });
-            router.push(`/users/${data.username }`);
+
+            router.push(`/users/${data.username}`);
         } catch(e) {
             console.error(e);
+
+            return {
+                ...prevState,
+                error: e.message
+            };
         }
 
     }, [ router, setCredentials ]);
 
-    const [ state, formAction ] = useFormState(submitHandler, null);
+    const [ state, formAction ] = useFormState(submitHandler, { error: null });
 
+    React.useEffect(() => {
+        console.log(state.error)
+        if(state.error) onOpenHandlerRef.current?.(); 
+    }, [ state ]);
+    
     return (
         <main className="bg-primary-50 flex items-center justify-center min-h-screen">
             <Paper
@@ -65,6 +86,14 @@ const Login = () => {
                         variant='h2'>
                         Login
                     </Typography>
+                        <Alert 
+                            className="mt-3"
+                            description={state.error}
+                            onClose={onCloseHandlerRef}
+                            onOpen={onOpenHandlerRef}
+                            severity="error"
+                            title="Error"
+                        />
                     <div className={classNames(`border border-solid border-primary-800 flex items-center mt-4 px-3 rounded-lg sm:mt-8`)}>
                         <AccountCircleIcon className="text-slate-700" />
                         <Input 
