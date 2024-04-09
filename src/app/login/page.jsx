@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import classNames from 'classnames';
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
+import { useFormState } from "react-dom";
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -13,7 +14,7 @@ import styles from "./styles.module.css";
 
 import { LoginContext } from "@/context/LoginContext";
 
-import Button from "@/components/shared/button";
+import Button from "./components/SubmitButton";
 import Input from "@/components/Input";
 import PasswordInput from '@/components/shared/password';
 
@@ -21,19 +22,12 @@ const Login = () => {
     const router = useRouter();
 
     const { setCredentials } = React.useContext(LoginContext);
-    const [ loading, setLoading ] = React.useState(false);
 
-    const passwordRef = React.useRef(null);
-    const usernameRef = React.useRef(null);
-
-    const submitHandler = React.useCallback(async (e) => {
-        e.preventDefault();
-
-        setLoading(true)
+    const submitHandler = React.useCallback(async (prevState, formData) => {
 
         const body = JSON.stringify({ 
-            password: passwordRef.current.value, 
-            username: usernameRef.current.value 
+            password: formData.get("password-input"), 
+            username: formData.get("username-input")
         });
 
         const options = {
@@ -51,18 +45,19 @@ const Login = () => {
             router.push(`/users/${data.username }`);
         } catch(e) {
             console.error(e);
-            setLoading(false);
         }
 
     }, [ router, setCredentials ]);
 
+    const [ state, formAction ] = useFormState(submitHandler, null);
+
     return (
         <main className="bg-primary-50 flex items-center justify-center min-h-screen">
-            <Paper 
+            <Paper
+                action={formAction}
                 component="form"
                 className={classNames(styles.form, `mx-auto px-4 py-8 rounded-xl sm:px-6`)}
-                elevation={1}
-                onSubmit={submitHandler}>
+                elevation={1}>
                 <fieldset>
                     <Typography 
                         component="legend"
@@ -74,21 +69,19 @@ const Login = () => {
                         <AccountCircleIcon className="text-slate-700" />
                         <Input 
                             className="bg-primary-800 border-0 grow"
+                            name="username-input"
                             placeholder='Username'
-                            ref={usernameRef}
                             required
                         />
                     </div>
                     <PasswordInput 
+                        name="password-input"
                         placeholder="Password"
-                        ref={passwordRef}
                     />
                 </fieldset>
                 <div className='flex flex-col items-center mt-4'>
-                    <Button
-                        className="py-3 rounded-lg w-full"
-                        type={ loading ? "button" : "submit" }>
-                        { loading ? "Loading..." : "Submit" }
+                    <Button>
+                        Submit
                     </Button>
                 </div>
             </Paper>
