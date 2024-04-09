@@ -1,11 +1,16 @@
 import bcrypt from "bcrypt";
 
-import { getId } from "@/helpers/id"
+import { getId } from "@/helpers/id";
+
+import Error404 from "@/errors/server/404Error";
 
 class Users {
 
     static async get({ username }, { mongoDbConfig }) {
         const user = await mongoDbConfig.collections.USERS.findOne({ username });
+
+        if(!user) throw new Error404("User not found");
+        
         return user;
     }
 
