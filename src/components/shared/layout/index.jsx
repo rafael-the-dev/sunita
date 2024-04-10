@@ -10,7 +10,8 @@ import "@/styles/reset.css";
 import "@/styles/tailwind.css";
 import "@/styles/globals.css";
 
-import { theme } from "./mui/theme"
+import { theme } from "./mui/theme";
+
 
 const RootLayout = ({ children }) => {
     return (

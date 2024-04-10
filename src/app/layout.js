@@ -1,7 +1,8 @@
 import { useContext  } from "react";
 
-import { LoginContextProvider } from "@/context/LoginContext"
+import { LoginContextProvider } from "@/context/LoginContext";
 
+import ExpiredTokenDialog from '@/components/shared/layout/components/ExpiredTokenDialog';
 import LayoutContainer from "@/components/shared/layout";
 
 const RootLayout = ({ children }) => {
@@ -9,7 +10,8 @@ const RootLayout = ({ children }) => {
         <LayoutContainer>
             <LoginContextProvider>
                 { children }
-            </LoginContextProvider>
+                <ExpiredTokenDialog />
+           </LoginContextProvider>
         </LayoutContainer>
 
     );
