@@ -2,11 +2,8 @@ import classNames from "classnames";
 
 import Button from "@mui/material/Button";
 
-const Container = ({ children, color, className, variant, ...rest }) => {
+const Container = ({ children, color = "primary", className, variant = "contained", ...rest }) => {
 
-    color = color ?? "primary";
-    variant = variant ?? "contained";
-    
     const getClasses = () => {
         switch(variant) {
             case "contained": return `bg-${color}-800 text-white hover:opacity-80`;
