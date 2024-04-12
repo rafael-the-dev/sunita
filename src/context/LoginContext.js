@@ -5,7 +5,7 @@ import * as React from "react";
 export const LoginContext = React.createContext();
 LoginContext.displayName = "LoginContext";
 
-import { getItem, setItem } from "@/helpers/local-storage";
+import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
 
 export const LoginContextProvider = ({ children }) => {
     const [ credentials, setCredentials ] = React.useState(null);
@@ -32,11 +32,18 @@ export const LoginContextProvider = ({ children }) => {
 
     React.useEffect(() => {
         try {
-            getItem("user")
+            getItem("credentials")
         } catch(e) {
-            setItem({ key: "credentials", value: JSON.stringify({ user: {} }) });
+            configLocalStorage();
         }
     }, []);
+
+    React.useEffect(() => {
+        try {
+            if(credentials) setItem({ key: "credentials", value: credentials });
+        } catch(e) {
+        }
+    }, [ credentials ]);
 
     return (
         <LoginContext.Provider
