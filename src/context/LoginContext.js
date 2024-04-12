@@ -5,7 +5,7 @@ import * as React from "react";
 export const LoginContext = React.createContext();
 LoginContext.displayName = "LoginContext";
 
-import {bb } from "@/src/helpers/local-storage.js"
+import { getItem, setItem } from "@/helpers/local-storage";
 
 export const LoginContextProvider = ({ children }) => {
     const [ credentials, setCredentials ] = React.useState(true);
@@ -16,7 +16,11 @@ export const LoginContextProvider = ({ children }) => {
     }, [ credentials ]);
 
     React.useEffect(() => {
-        localStorage.getItem("")
+        try {
+            console.log(getItem("user"))
+        } catch(e) {
+            setItem({ key: "credentials", value: JSON.stringify({ user: {} }) });
+        }
     }, []);
 
     return (
