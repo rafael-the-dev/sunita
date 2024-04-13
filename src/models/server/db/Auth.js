@@ -50,7 +50,8 @@ class Auth {
                 access: {
                     expiresIn: decodedToken.exp,
                     token: newToken
-                }
+                },
+                data: userDetails
             };
         } catch(err) {
             if(err instanceof jwt.TokenExpiredError) throw new AuthError("Expired token");

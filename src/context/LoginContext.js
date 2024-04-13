@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 
 export const LoginContext = React.createContext();
 LoginContext.displayName = "LoginContext";
@@ -8,6 +9,8 @@ LoginContext.displayName = "LoginContext";
 import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
 
 export const LoginContextProvider = ({ children }) => {
+    const router = useRouter();
+
     const [ credentials, setCredentials ] = React.useState(null);
 
     const user = React.useMemo(() => {
@@ -44,6 +47,32 @@ export const LoginContextProvider = ({ children }) => {
         } catch(e) {
         }
     }, [ credentials ]);
+
+    const validateSavedToken = React.useCallback(async ({ signal }) => {
+        try {
+            const { token } = getItem("credentials");
+
+            if(!token) throw new Error("Undefined local storage");
+
+            const res = await fetch(`/api/auth/refresh?token=${token}`, { signal });
+            const result = await res.json();
+
+            if(res.status !== 200) throw new Error("Refresh token error");
+            
+            setCredentials(result);
+            router.push(`/users/${result.data.username}`);
+        } catch(e) {
+            console.error(e);
+        }
+    }, [ router ]);
+
+    React.useEffect(() => {
+        const controller = new AbortController();
+
+        validateSavedToken({ signal: controller.signal });
+
+        return () => controller.abort();
+    }, [ validateSavedToken ])
 
     return (
         <LoginContext.Provider

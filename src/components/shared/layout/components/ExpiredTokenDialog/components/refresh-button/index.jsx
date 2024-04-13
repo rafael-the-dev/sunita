@@ -20,8 +20,7 @@ const RefreshButton = ({ closeHandler, clearTokenTimeout, setTokenTimeout }) => 
     const refreshTokenHandler = React.useCallback(async () => {
         try {
             setLoading(true);
-
-            const res = await fetch(`/api/auth/refresh?token=${credentials.token}`);
+            const res = await fetch(`/api/auth/refresh?token=${credentials.access.token}`);
             const data = await res.json();
 
             if(res.status !== 200) throw new Error("Refresh token error");

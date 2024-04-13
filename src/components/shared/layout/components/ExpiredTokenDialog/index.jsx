@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from "react";
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import classNames from "classnames";
 
 import styles from "./styles.module.css";
@@ -13,11 +13,14 @@ import { LoginContext } from "@/context/LoginContext";
 
 import Button from "@/components/shared/button";
 import Dialog from "@/components/dialog";
-import RefreshTokenButton from "./components/refresh-button"
+import RefreshTokenButton from "./components/refresh-button";
+
+const ignorablePaths = [ "/login" ]
 
 const ExpiredTokenDialog = () => {
     const { credentials, setCredentials } = React.useContext(LoginContext);
 
+    const pathname = usePathname();
     const router = useRouter();
 
     const dialogTimeoutRef = React.useRef(null);
@@ -66,11 +69,11 @@ const ExpiredTokenDialog = () => {
 
     //check token expiration time every credentials state is updated
     React.useEffect(() => {
-        if(credentials && isFirstCredentialsTest.current) {
+        if(credentials && isFirstCredentialsTest.current && !ignorablePaths.includes(pathname)) {
             checkTokenExpirationTime(credentials.expiresIn);
             isFirstCredentialsTest.current = false;
         }
-    }, [ credentials, checkTokenExpirationTime ]);
+    }, [ credentials, checkTokenExpirationTime, pathname ]);
 
     React.useEffect(() => {
         // clear data when component is unmounted
@@ -79,7 +82,7 @@ const ExpiredTokenDialog = () => {
         }
     }, [ clearTokenTimeout ]);
 
-    if(!credentials) return <></>;
+    if(!credentials || ignorablePaths.includes(pathname)) return <></>;
 
     return (
         <Dialog
