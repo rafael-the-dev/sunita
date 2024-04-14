@@ -10,7 +10,7 @@ const LogoutButton = () => {
     return (
         <Button 
             color="secondary"
-            className="w-full">
+            className=" text-red-800 w-full">
             <Icon className="flex">
                 <LogoutIcon />
             </Icon>

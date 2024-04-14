@@ -2,6 +2,7 @@
 
 import { useContext } from "react";
 import { useParams } from "next/navigation";
+import Hidden from "@mui/material/Hidden";
 
 import Menu from "./components/menu";
 
@@ -11,7 +12,9 @@ const Container = () => {
     return (
         <main>
             <div>
-                <Menu />
+                <Hidden mdUp>
+                    <Menu />
+                </Hidden>
             </div>
         </main>
     );

@@ -23,16 +23,16 @@ const SideBar = ({ closeHandler }) => {
                         onClick={closeHandler}>
                         <CloseIcon />
                     </IconButton>
-                    <Typography
-                        className="mt-4 mb-6"
-                        component="h2">
-                        <Link 
-                            className="text-white no-underline px-2"
-                            href="/">
-                            Luis Langa
-                        </Link>
-                    </Typography>
                 </Hidden>
+                <Typography
+                    className="mt-4 mb-6"
+                    component="h2">
+                    <Link 
+                        className="text-white no-underline px-2"
+                        href="/">
+                        Luis Langa
+                    </Link>
+                </Typography>
                 <Menu />
             </div>
             <div className={classNames(styles.footer)}>
