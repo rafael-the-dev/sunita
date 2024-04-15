@@ -7,6 +7,7 @@ import Hidden from "@mui/material/Hidden";
 import { LoginContextProvider } from "@/context/LoginContext";
 
 import ExpiredTokenDialog from '@/components/shared/layout/components/ExpiredTokenDialog';
+import Header from "@/components/shared/header";
 import LayoutContainer from "@/components/shared/layout";
 import Sidebar from "@/components/shared/side-bar";
 
@@ -26,7 +27,10 @@ const RootLayout = ({ children }) => {
                             </Hidden>
                         )
                     }
-                    { children }
+                    <div className="grow">
+                        <Header />
+                        { children }
+                    </div>
                 </div>
                 <ExpiredTokenDialog />
            </LoginContextProvider>
