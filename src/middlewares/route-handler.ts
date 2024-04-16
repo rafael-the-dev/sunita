@@ -5,15 +5,19 @@ import DefaultError from "@/errors/server/DefaultError";
 //const Access = require("src/models/server/Acess");
 
 import { closeDbConnections, createMongoDBConnection, mongoDBConfig } from "@/connections/mongo_db";
+import { MongoDbConfigType } from "@/types/mongoDb";
+import { UserType } from "@/types/user";
 //const RtComercial = require("src/connections/import-data");
+
+export type APIHandlerType = ({ user, mongoDbConfig }: { mongoDbConfig: MongoDbConfigType, user: UserType | null }) => Promise<any>;
 
 let mongoDbConfig = {
     isConnected: false 
 };
 
 
-export const apiHandler = async (handler) => {
-    if(!mongoDbConfig.isConnected) {
+export const apiHandler = async (handler: APIHandlerType) => {
+    if(!mongoDBConfig.isConnected) {
         await createMongoDBConnection();
         mongoDbConfig = mongoDBConfig
     }
@@ -39,7 +43,7 @@ export const apiHandler = async (handler) => {
             user = Access.getUser(authorization ?? token);
         } */ 
 
-        return await handler({ user, mongoDbConfig });
+        return await handler({ user, mongoDbConfig: mongoDBConfig });
     } catch(err) {
         console.error(err);
 

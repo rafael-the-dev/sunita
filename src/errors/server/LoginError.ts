@@ -1,4 +1,4 @@
-const DefaultError = require("./DefaultError");
+import DefaultError from "./DefaultError";
 
 class LoginError extends DefaultError {
     constructor() {
@@ -6,4 +6,4 @@ class LoginError extends DefaultError {
     }
 }
 
-module.exports = LoginError;
+export default LoginError;

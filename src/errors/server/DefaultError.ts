@@ -1,6 +1,8 @@
 
 class DefaultError extends Error {
-    constructor(status, message) {
+    _status: number;
+
+    constructor(status: number, message: string) {
         super(message);
         this._status = status;
     }
@@ -12,4 +14,4 @@ class DefaultError extends Error {
     }
 }
 
-module.exports = DefaultError;
+export default DefaultError;

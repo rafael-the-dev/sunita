@@ -1,14 +1,11 @@
-const { MongoClient } = require("mongodb");
+import { MongoClient, Collection, Db } from "mongodb";
 
-var mongoDBConfig = { 
+import { MongoDbConfigType } from "@/types/mongoDb";
+import { UserType } from "@/types/user";
+
+let mongoDBConfig: MongoDbConfigType = { 
     collections: {
-        PRODUCTS: null,
-        PAYMENTS_METHOD: null,
-        SALES: null,
-        SUPPLIERS: null,
-        SUPPLIERS_INVOICES: null,
-        TABLES: null,
-        USERS: null,
+        USERS: null
     },
     connection: null,
     isConnected: false ,
@@ -21,13 +18,6 @@ const closeConfig = () => {
     mongoDBConfig.isConnected = false;
 
     mongoDBConfig.collections = {
-        BARMEN: null,
-        DEBTS: null,
-        EXPENSES: null,
-        PRODUCTS: null,
-        PAYMENT_METHOD: null,
-        SALES: null,
-        TABLES: null,
         USERS: null
     };
 };
@@ -36,7 +26,7 @@ const closeDbConnections = async () =>  await mongoDBConnection.close();
 
 const createMongoDBConnection = async () => {
     //const dbCollections = process.env.MONGO_DB.collections;
-    let clusterDB;
+    let clusterDB: Db;
 
     try {
 
@@ -45,7 +35,7 @@ const createMongoDBConnection = async () => {
             clusterDB = mongoDBConnection.db("luis-langa-store");
             
             mongoDBConfig.collections = {
-                USERS: clusterDB.collection("users")
+                USERS: clusterDB.collection<UserType>("users")
             };
 
         });
@@ -67,7 +57,7 @@ const createMongoDBConnection = async () => {
     return clusterDB;
 };
 
-module.exports = { 
+export { 
     closeDbConnections,
     createMongoDBConnection, 
     mongoDBConfig 

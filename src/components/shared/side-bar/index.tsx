@@ -12,7 +12,7 @@ import LogoutButton from "./components/logout-button";
 import Link from "@/components/link";
 import Menu from "./components/menu";
 
-const SideBar = ({ closeHandler }) => {
+const SideBar = ({ closeHandler }: { closeHandler?: () => void }) => {
 
     return (
         <aside className={classNames(styles.container, "bg-primary-800 flex flex-col justify-between relative")}>

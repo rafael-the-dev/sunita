@@ -1,8 +1,8 @@
 import classNames from "classnames";
-
 import Button from "@mui/material/Button";
+import { ButtonProps } from "@mui/material/Button/Button";
 
-const Container = ({ children, color = "primary", className, variant = "contained", ...rest }) => {
+const Container = ({ children, color = "primary", className, variant = "contained", ...rest }: ButtonProps) => {
 
     const getClasses = () => {
         if(color === "primary") {

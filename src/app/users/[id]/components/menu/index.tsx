@@ -10,8 +10,8 @@ import SideBar from "@/components/shared/side-bar";
 
 
 const Menu = () => {
-    const onCloseHandlerRef =useRef(null);
-    const openHandlerRef = useRef(null);
+    const onCloseHandlerRef =useRef<() => void>(null);
+    const openHandlerRef = useRef<() => void>(null);
 
     const closeHandler = useCallback(() => onCloseHandlerRef.current?.(), []);
     const openHandler = useCallback(() => openHandlerRef.current?.(), []);
@@ -27,7 +27,7 @@ const Menu = () => {
             <Drawer
                 anchor="left"
                 classes={{ paper: styles.paper }}
-                onClose={onCloseHandlerRef}
+                onCloseRef={onCloseHandlerRef}
                 onOpen={openHandlerRef}>
                 { sideBarMemo }
             </Drawer>

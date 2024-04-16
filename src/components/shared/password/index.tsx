@@ -17,13 +17,19 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import Input from "@/components/Input";
 
+type Ref = HTMLInputElement;
 
-const PasswordInput = React.forwardRef(({ iconPosition, label, ...rest}, ref) => {
+type PasswordProps = React.InputHTMLAttributes<HTMLInputElement> & {
+    iconPosition?: string,
+    label?: string
+};
+
+const PasswordInput = React.forwardRef<Ref, PasswordProps>(({ iconPosition, label, ...rest}, ref) => {
     const [ showPassword, setShowPassword ] = React.useState(false);
 
     const togglePasswordVisibility = React.useCallback(() => setShowPassword((show) => !show), []);
 
-    const handleMouseDownPassword = React.useCallback(event => event.preventDefault(), []);
+    const handleMouseDownPassword = React.useCallback((event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault(), []);
 
     return  (
         <div className={classNames(`border border-solid border-primary-800 flex items-center mt-4 px-3 rounded-lg`)}>
@@ -33,7 +39,7 @@ const PasswordInput = React.forwardRef(({ iconPosition, label, ...rest}, ref) =>
                 onMouseDown={handleMouseDownPassword}
                 edge="start"
             >
-                {  showPassword ? <VisibilityOff className="text-slate-700" /> : <Visibility className="text-slate-700" />}
+                {  showPassword ? <VisibilityOff className="text-slate-700" /> : <Visibility className="text-slate-700" /> }
             </IconButton>
             <Input 
                 className="border-0 grow"

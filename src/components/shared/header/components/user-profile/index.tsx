@@ -6,10 +6,12 @@ import Button from "@mui/material/Button";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
+import { UserType } from "@/types/user";
 import { LoginContext } from "@/context/LoginContext";
 
 const Container = () => {
-    const { user } = useContext(LoginContext);
+    const result = useContext(LoginContext);
+    const user = (result.user) as  UserType;
 
     return (
         <div className="flex items-center">

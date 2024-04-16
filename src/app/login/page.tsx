@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css";
 
+import { CredentialsType } from '@/types/login';
 import { LoginContext } from "@/context/LoginContext";
 
 import Alert from "@/components/alert";
@@ -46,14 +47,11 @@ const Login = () => {
 
             if(res.status !== 200) throw new Error(result);
 
-            const { access, data } = result;
+            const { access, user } = result as CredentialsType;
 
-            setCredentials({
-                ...access,
-                user: data
-            });
+            setCredentials({ access, user });
 
-            router.push(`/users/${data.username}`);
+            router.push(`/users/${user.username}`);
         } catch(e) {
             console.error(e);
 

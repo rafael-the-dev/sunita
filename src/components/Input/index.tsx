@@ -1,8 +1,12 @@
 import classNames from "classnames";
-import { forwardRef } from 'react'
-import classes from './styles.module.css'
+import * as React from 'react'
+import classes from './styles.module.css';
 
-const Input = forwardRef(({ autoComplete, className, onChange, ...rest }, ref) => {
+type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+
+type Ref = HTMLInputElement;
+
+const Input = React.forwardRef<Ref, InputProps>(({ autoComplete, className, onChange, ...rest }, ref) => {
     return (
         <input 
             { ...rest }
