@@ -11,7 +11,7 @@ import styles from "./styles.module.css";
 const ListItem = ({ icon, label, path }) => {
     const pathname = usePathname();
 
-    console.log(pathname, path)
+    // console.log(pathname, path)
     const isSelected = path === pathname;
 
     return (

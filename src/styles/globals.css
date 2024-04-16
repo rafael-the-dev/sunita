@@ -1,0 +1,13 @@
+
+
+.hover-primary-button:hover {
+    background-color: #FFF;
+    color: #000;
+    opacity: .95;
+}
+
+.hover-secondary-button:hover {
+    background-color: #000;
+    color: #FFF;
+    opacity: .70;
+}
