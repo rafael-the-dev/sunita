@@ -1,22 +1,26 @@
+import { useContext } from "react";
+
+import { LoginContext } from "@/context/LoginContext"
 
 import ListItem from "./components/list-item";
 
-const list = [
-    {
-        label: "Home",
-        path: "/users/rafaeltivane"
-    },
-    {
-        label: "Sales",
-        path: "/sales"
-    },
-    {
-        label: "Products",
-        path: "/products"
-    },
-];
-
 const Menu = () => {
+    const { user } = useContext(LoginContext);
+
+    const list = [
+        {
+            label: "Home",
+            path: `/users/${user.username}`
+        },
+        {
+            label: "Sales",
+            path: "/sales"
+        },
+        {
+            label: "Products",
+            path: `/users/${user.username}/warehouses/${12345}/products`
+        },
+    ];
 
     return (
         <ul>

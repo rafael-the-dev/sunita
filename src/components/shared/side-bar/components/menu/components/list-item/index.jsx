@@ -8,6 +8,8 @@ import Typography from "@mui/material/Typography";
 
 import styles from "./styles.module.css";
 
+import Link from "@/components/link";
+
 const ListItem = ({ icon, label, path }) => {
     const pathname = usePathname();
 
@@ -21,11 +23,13 @@ const ListItem = ({ icon, label, path }) => {
                 isSelected ? "bg-white text-primary-800" :  "text-white",
                 { [styles.listItemSelected]: isSelected }
                 )}>
-            <Typography
-                component="span"
-                className={classNames()}>
-                { label }
-            </Typography>
+            <Link className="text-current no-underline" href={path}>
+                <Typography
+                    component="span"
+                    className={classNames()}>
+                    { label }
+                </Typography>
+            </Link>
         </li>
     );
 };
