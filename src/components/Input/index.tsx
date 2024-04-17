@@ -2,7 +2,7 @@ import classNames from "classnames";
 import * as React from 'react'
 import classes from './styles.module.css';
 
-type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
+import { InputProps } from "./type";
 
 type Ref = HTMLInputElement;
 
