@@ -28,7 +28,7 @@ const RootLayout = ({ children }) => {
                         )
                     }
                     <div className="grow">
-                        <Header />
+                        { !isLoginPage && <Header /> }
                         { children }
                     </div>
                 </div>
