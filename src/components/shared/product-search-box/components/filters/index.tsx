@@ -11,6 +11,7 @@ import styles from "./styles.module.css";
 
 import Categories from "./components/categories";
 import Popover from "@/components/popover";
+import Price from "./components/price";
 
 const FiltersContainer = () => {
 
@@ -29,8 +30,7 @@ const FiltersContainer = () => {
                 onClickRef={onClickHandlerRef}>
                 <div className="py-3 px-2">
                     <Categories />
-                    <Categories />
-                    <Categories />
+                    <Price />
                     <Categories />
                 </div>
             </Popover>

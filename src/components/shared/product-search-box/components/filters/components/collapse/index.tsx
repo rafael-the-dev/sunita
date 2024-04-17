@@ -5,8 +5,8 @@ import Collapse from "@mui/material/Collapse";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-const Container = ({ children, open = false, title }: { children: ReactNode, open: boolean, title: string }) => {
-    const [ state, setState ] = useState(open);
+const Container = ({ children, open, title }: { children: ReactNode, open?: boolean, title: string }) => {
+    const [ state, setState ] = useState(Boolean(open));
 
     const childrenMemo = useMemo(() => children, [ children ])
 
