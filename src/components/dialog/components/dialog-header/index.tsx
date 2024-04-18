@@ -3,8 +3,14 @@ import classNames from "classnames";
 
 import CloseIcon from '@mui/icons-material/Close';
 
-const BootstrapDialogTitle = (props) => {
-    const { children, classes, id, onClose, ...other } = props;
+type DialogHeaderPropsType = {
+    children: React.ReactNode;
+    classes?: { button: string; icon: string; root: string; };
+    id?: string;
+    onClose?: () => void
+};
+
+const BootstrapDialogTitle = ({ children, classes, id, onClose, ...other }: DialogHeaderPropsType) => {
   
     return (
       <DialogTitle 
@@ -30,7 +36,7 @@ const BootstrapDialogTitle = (props) => {
     );
 };
 
-const DialogHeader = ({ classes, children, id, onClose }) => {
+const DialogHeader = ({ classes, children, id, onClose }: DialogHeaderPropsType) => {
     
     return (
         <BootstrapDialogTitle classes={classes} id={id} onClose={onClose}>

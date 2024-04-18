@@ -1,30 +1,41 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState, MutableRefObject } from "react"
 import { usePathname } from "next/navigation"
-import classNames from "classnames"
 import Dialog from "@mui/material/Dialog";
 import DialogAction from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-
 import DialogHeader from "./components/dialog-header";
+import { DialogClasses } from "@mui/material/Dialog/dialogClasses"
 
-const Container = ({ ariaDescribedby, ariaLabelledby, children, classes, customClose, onClose, onOpen }) => {
+type HandlerRef = MutableRefObject<() => void>;
+
+type DialogProspsType = {
+    ariaDescribedby?: string;
+    ariaLabelledby?: string;
+    children: React.ReactNode;
+    classes?: DialogClasses;
+    customClose?: () => void;
+    onCloseRef?: HandlerRef | null
+    onOpenRef: HandlerRef;
+};
+
+const Container = ({ ariaDescribedby, ariaLabelledby, children, classes, customClose, onCloseRef, onOpenRef }: DialogProspsType) => {
     const pathname = usePathname();
 
-    const currentPath = useRef(null);
+    const currentPath = useRef<string | null>(null);
     const [ open, setOpen ] = useState(false);
 
     const childrenMemo = useMemo(() => children, [ children ])
     const handleClose = useCallback(() => setOpen(false), []);
 
     useEffect(() => {
-        onOpen.current = () => setOpen(true);
-    }, [ onOpen ]);
+        onOpenRef.current = () => setOpen(true);
+    }, [ onOpenRef ]);
 
     useEffect(() => {
-        if(onClose) onClose.current = handleClose;
-    }, [ onClose, handleClose ]);
+        if(onCloseRef) onCloseRef.current = handleClose;
+    }, [ onCloseRef, handleClose ]);
 
     useEffect(() => {
         if(pathname !== currentPath.current) {
@@ -38,7 +49,7 @@ const Container = ({ ariaDescribedby, ariaLabelledby, children, classes, customC
         <Dialog
             classes={classes}
             open={open}
-            onClose={customClose ? customClose : handleClose}
+            onClose={customClose ?? handleClose}
             aria-describedby={ariaDescribedby}
             aria-labelledby={ariaLabelledby}
         >
