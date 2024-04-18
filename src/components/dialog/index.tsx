@@ -14,7 +14,7 @@ type DialogProspsType = {
     ariaDescribedby?: string;
     ariaLabelledby?: string;
     children: React.ReactNode;
-    classes?: DialogClasses;
+    classes?: { paper: string };
     customClose?: () => void;
     onCloseRef?: HandlerRef | null
     onOpenRef: HandlerRef;

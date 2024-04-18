@@ -1,12 +1,16 @@
 import * as React from "react";
+import classNames from "classnames";
 
+import styles from "./styles.module.css";
 
+import Main from "@/components/main";
+import RegisterProduct from "./components/register-product";
 import SearchBox from "@/components/shared/product-search-box";
 
 const Container = () => {
 
     return (
-        <main className="flex flex-col items-stretch justify-between py-3 w-full">
+        <Main className="flex flex-col items-stretch justify-between">
             <div className="px-3">
                 <form>
                     <SearchBox className="pr-2 rounded-md">
@@ -17,8 +21,14 @@ const Container = () => {
                         />
                     </SearchBox>
                 </form>
+                <div className={classNames(styles.body, `table-body`)}>
+
+                </div>
             </div>
-        </main>
+            <div className="flex justify-end px-3">
+                <RegisterProduct />
+            </div>
+        </Main>
     );
 };
 

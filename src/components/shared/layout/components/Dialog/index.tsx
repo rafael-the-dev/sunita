@@ -6,15 +6,18 @@ import { AppContext } from "@/context/AppContext";
 import Dialog from "@/components/dialog"
 
 const Container = () => {
-    const { dialog, setDialog } = useContext(AppContext);
+    const { dialog, isLoading, setDialog } = useContext(AppContext);
 
     const onCloseRef = useRef<() => void | null>(null);
     const onOpenRef = useRef<() => void | null>(null);
 
     const closeHandler = useCallback(() => {
+        if(isLoading.current) return;
+
+        dialog?.header?.onClose?.();
         onCloseRef.current?.();
         setDialog(null);
-    }, [ setDialog ]);
+    }, [ dialog, isLoading, setDialog ]);
 
     useEffect(() => {
         if(dialog) onOpenRef.current?.();
@@ -23,14 +26,28 @@ const Container = () => {
 
     return (
         <Dialog
+            classes={{ paper: "m-0 md:max-w-max" }}
             customClose={closeHandler}
             onCloseRef={onCloseRef}
             onOpenRef={onOpenRef}>
+            {
+                dialog?.header && (
+                    <Dialog.Header 
+                        classes={{ root: "bg-primary-800 capitalize pl-3 text-white" }}
+                        onClose={closeHandler}>
+                        { dialog.header.title }
+                    </Dialog.Header>
+                )
+            }
             <Dialog.Body className="p-0">
                 { dialog?.body }
             </Dialog.Body>
-            <Dialog.Footer className="mt-6 pb-0 pr-0">
-            </Dialog.Footer>
+            {
+                dialog?.footer && (
+                    <Dialog.Footer className="mt-6 pb-0 pr-0">
+                    </Dialog.Footer>
+                )
+            }
         </Dialog>
     );
 };

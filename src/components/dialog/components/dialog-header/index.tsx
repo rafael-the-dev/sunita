@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 type DialogHeaderPropsType = {
     children: React.ReactNode;
-    classes?: { button: string; icon: string; root: string; };
+    classes?: { button?: string; icon?: string; root: string; };
     id?: string;
     onClose?: () => void
 };
