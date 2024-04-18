@@ -11,6 +11,9 @@ import "@/styles/tailwind.css";
 import "@/styles/globals.css";
 
 import { theme } from "./mui/theme";
+import { AppContextProvider } from "@/context/AppContext";
+
+import Dialog from "./components/Dialog";
 
 
 const RootLayout = ({ children }) => {
@@ -19,7 +22,10 @@ const RootLayout = ({ children }) => {
             <body>
                 <AppRouterCacheProvider options={{  enableCssLayer: true  }}>
                     <ThemeProvider theme={theme}>
-                        { children }
+                        <AppContextProvider>
+                            { children }
+                            <Dialog />
+                        </AppContextProvider>
                     </ThemeProvider>
                 </AppRouterCacheProvider>
             </body>
