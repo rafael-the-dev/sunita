@@ -13,9 +13,6 @@ import "@/styles/globals.css";
 import { theme } from "./mui/theme";
 import { AppContextProvider } from "@/context/AppContext";
 
-import Dialog from "./components/Dialog";
-
-
 const RootLayout = ({ children }) => {
     return (
         <html lang="en">
@@ -24,7 +21,6 @@ const RootLayout = ({ children }) => {
                     <ThemeProvider theme={theme}>
                         <AppContextProvider>
                             { children }
-                            <Dialog />
                         </AppContextProvider>
                     </ThemeProvider>
                 </AppRouterCacheProvider>

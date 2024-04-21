@@ -8,7 +8,8 @@ type DialogType = {
         title: string;
     };
     body: React.ReactNode;
-    footer?: React.ReactNode
+    footer?: React.ReactNode,
+    payload?: Object
 };
 
 type AppContextType = {
