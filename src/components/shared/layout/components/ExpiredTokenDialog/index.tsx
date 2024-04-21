@@ -25,8 +25,8 @@ const ExpiredTokenDialog = () => {
 
     const dialogTimeoutRef = React.useRef(null);
     const isFirstCredentialsTest = React.useRef(true);
-    const onClose = React.useRef(null);
-    const onOpen = React.useRef(null);
+    const onClose = React.useRef<() => void | null>(null);
+    const onOpen = React.useRef<() => void | null>(null);
     const verificationTimeoutRef = React.useRef(null);
 
     const closeHandler = React.useCallback(() => onClose.current?.(), []);
@@ -38,9 +38,9 @@ const ExpiredTokenDialog = () => {
     }, []);
 
     const verifyExpirationTime = React.useCallback(async () => {
-        const { end } = getEndAndStartTime({ expiresIn: credentials.expiresIn });
+        const { end } = getEndAndStartTime({ expiresIn: credentials.access.expiresIn });
 
-        const isValid = Date.now() >= end;
+        const isValid = new Date(Date.now()) >= end;
 
         if(isValid) {
             try {
@@ -59,7 +59,7 @@ const ExpiredTokenDialog = () => {
         verificationTimeoutRef.current = setTimeout(verifyExpirationTime, endTime - Date.now());
     }, [ openHandler, verifyExpirationTime ]);
 
-    const checkTokenExpirationTime = React.useCallback(expiresIn => {
+    const checkTokenExpirationTime = React.useCallback((expiresIn: number) => {
         clearTokenTimeout();
 
         const { end, start } = getEndAndStartTime({ expiresIn });
@@ -70,7 +70,7 @@ const ExpiredTokenDialog = () => {
     //check token expiration time every credentials state is updated
     React.useEffect(() => {
         if(credentials && isFirstCredentialsTest.current && !ignorablePaths.includes(pathname)) {
-            checkTokenExpirationTime(credentials.expiresIn);
+            checkTokenExpirationTime(credentials.access.expiresIn);
             isFirstCredentialsTest.current = false;
         }
     }, [ credentials, checkTokenExpirationTime, pathname ]);
@@ -87,8 +87,8 @@ const ExpiredTokenDialog = () => {
     return (
         <Dialog
             classes={{ paper: classNames(styles.paper, `m-0`) }}
-            onClose={onClose}
-            onOpen={onOpen}>
+            onCloseRef={onClose}
+            onOpenRef={onOpen}>
             <Dialog.Body className="p-0">
                 Your token will expire in 5 min
             </Dialog.Body>

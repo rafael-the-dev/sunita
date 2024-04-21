@@ -11,7 +11,13 @@ import { LoginContext } from "@/context/LoginContext";
 
 import Button from "@/components/shared/button";
 
-const RefreshButton = ({ closeHandler, clearTokenTimeout, setTokenTimeout }) => {
+type ButtonProps = {
+    closeHandler: () => void;
+    clearTokenTimeout: () => void;
+    setTokenTimeout: ({ endTime, startTime }: { endTime: Date, startTime: Date}) => void
+};
+
+const RefreshButton = ({ closeHandler, clearTokenTimeout, setTokenTimeout }: ButtonProps) => {
     const { credentials, setCredentials } = React.useContext(LoginContext);
     const [ loading, setLoading ] = React.useState(false);
 
