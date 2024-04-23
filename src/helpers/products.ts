@@ -1,10 +1,8 @@
 
-import WarehouseModel from "@/models/server/db/Warehouse";
-
 import { ConfigType } from "@/types/app-config-server";
 import { ProductInfoType } from "@/types/product";
 
-export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfig }) => {
+export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfig }: ConfigType) => {
     const products = await mongoDbConfig.collections.WAREHOUSES.aggregate([
         // Match the store by its ID
         { $unwind: '$products' },
