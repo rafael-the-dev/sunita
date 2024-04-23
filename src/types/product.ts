@@ -38,3 +38,11 @@ export type WarehouseProductType = {
     };
     sellPrice: number;
 };
+
+export type ProductFilterType = {
+    category?: string | string[];
+    price?: {
+        min: number;
+        max: number
+    }
+};
