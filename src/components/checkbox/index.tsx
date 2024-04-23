@@ -1,6 +1,14 @@
+import { ChangeEvent } from "react";
+
 import { Checkbox, FormControlLabel } from "@mui/material";
-import { FormControlLabelProps } from "@mui/material/FormControlLabel/FormControlLabel";
 import { styled } from "@mui/material/styles";
+
+type CheckboxPropsType = {
+    checked?: boolean;
+    label: string;
+    onChange: (e: ChangeEvent<HTMLInputElement>, checked: boolean) => void;
+    value?: string;
+};
 
 const CustomCheckbox = styled(Checkbox)({
     "& .MuiSvgIcon-root": {
@@ -11,9 +19,9 @@ const CustomCheckbox = styled(Checkbox)({
     }
 });
 
-const CheckboxContainer = ({ checked, label, onChange }: FormControlLabelProps) => (
+const CheckboxContainer = ({ checked, label, onChange, value}: CheckboxPropsType) => (
     <FormControlLabel 
-        control={<CustomCheckbox checked={checked} onChange={onChange} />} 
+        control={<CustomCheckbox checked={checked} onChange={onChange} value={value} />} 
         label={label}
     />
 );
