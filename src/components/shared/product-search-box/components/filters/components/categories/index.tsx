@@ -6,7 +6,7 @@ import Collapse from "../collapse";
 import Checkbox from "@/components/checkbox";
 
 const Categories = () => {
-    const { category, isChecked, setSearchParams } = React.useContext(ProductFilterContext);
+    const { category, isChecked, setManySearchParams } = React.useContext(ProductFilterContext);
 
     const list = [
         {
@@ -26,8 +26,8 @@ const Categories = () => {
     ];
 
     const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
-        setSearchParams("category", e.target.value)
-    }, [ setSearchParams ]);
+        setManySearchParams("category", e.target.value)
+    }, [ setManySearchParams ]);
 
     return (
         <Collapse title="Categories">
