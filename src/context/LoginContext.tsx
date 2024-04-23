@@ -60,6 +60,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
             router.push(`/users/${result.user.username}`);
         } catch(e) {
             console.error(e);
+            router.push("/login");
         }
     }, [ router ]);
 
