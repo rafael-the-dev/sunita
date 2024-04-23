@@ -6,15 +6,19 @@ import classNames from "classnames";
 import styles from "./styles.module.css";
 
 import { ProductInfoType } from "@/types/product";
+import { AppContext } from "@/context/AppContext";
+import { ProductFilterContextProvider  } from "@/context/ProductFilterContext";
 
+import DialogBody from "./components/register-product/components/body";
 import Main from "@/components/main";
 import RegisterProduct from "./components/register-product";
 import SearchBox from "@/components/shared/product-search-box";
 import Table from "@/components/shared/table";
 import { TableHeadersType } from "@/components/table/types";
 
-
 const Container = () => {
+    const { setDialog } = React.useContext(AppContext);
+
     const [ productsList, setProductsList ] = React.useState<ProductInfoType[] | null>(null);
 
     const headers = React.useRef<TableHeadersType[]>([
@@ -53,10 +57,24 @@ const Container = () => {
         }
     ]);
 
+    const rowClickHandler = React.useCallback((row: ProductInfoType) => () => {
+        setDialog({
+            header: { title: "Update product" },
+            body: <DialogBody />,
+            payload: row
+        });
+    }, [ setDialog ]);
+
     const fetchData = React.useCallback(async ({ signal }: { signal: AbortSignal }) => {
-        const res = await fetch("http://localhost:3000/api/users/rafaeltivane/warehouses/12345/products", { signal });
-        const data = await res.json() as ProductInfoType[];
-        setProductsList(data);
+        try {
+            const res = await fetch("http://localhost:3000/api/users/rafaeltivane/warehouses/12345/products", { signal });
+            const data = await res.json();
+
+            if(res.status === 200) setProductsList(data as ProductInfoType[]);
+            else throw new Error(data)
+        } catch(err) {
+            console.error(err);
+        }
     }, []);
 
     React.useEffect(() => {
@@ -86,6 +104,7 @@ const Container = () => {
                     { productsList && <Table 
                         data={productsList}
                         headers={headers}
+                        onClickRow={rowClickHandler}
                     /> }
                 </div>
             </div>
@@ -96,4 +115,13 @@ const Container = () => {
     );
 };
 
-export default Container;
+const ProductsPage = () => {
+
+    return (
+        <ProductFilterContextProvider>
+            <Container />
+        </ProductFilterContextProvider>
+    )
+}
+
+export default ProductsPage;
