@@ -6,6 +6,7 @@ import Hidden from "@mui/material/Hidden";
 
 import { LoginContextProvider } from "@/context/LoginContext";
 
+import Dialog from "@/components/shared/layout/components/Dialog";
 import ExpiredTokenDialog from '@/components/shared/layout/components/ExpiredTokenDialog';
 import Header from "@/components/shared/header";
 import LayoutContainer from "@/components/shared/layout";
@@ -32,6 +33,7 @@ const RootLayout = ({ children }) => {
                         { children }
                     </div>
                 </div>
+                <Dialog />
                 <ExpiredTokenDialog />
            </LoginContextProvider>
         </LayoutContainer>
