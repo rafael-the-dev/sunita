@@ -2,10 +2,14 @@ import { MongoClient, Collection, Db } from "mongodb";
 
 import { MongoDbConfigType } from "@/types/mongoDb";
 import { UserType } from "@/types/user";
+import { GblobalProductType } from "@/types/product";
+import { WarehouseType } from "@/types/warehouse";
 
 let mongoDBConfig: MongoDbConfigType = { 
     collections: {
-        USERS: null
+        PRODUCTS: null,
+        USERS: null,
+        WAREHOUSES: null,
     },
     connection: null,
     isConnected: false ,
@@ -18,7 +22,9 @@ const closeConfig = () => {
     mongoDBConfig.isConnected = false;
 
     mongoDBConfig.collections = {
-        USERS: null
+        PRODUCTS: null,
+        USERS: null,
+        WAREHOUSES: null
     };
 };
 
@@ -35,7 +41,9 @@ const createMongoDBConnection = async () => {
             clusterDB = mongoDBConnection.db("luis-langa-store");
             
             mongoDBConfig.collections = {
-                USERS: clusterDB.collection<UserType>("users")
+                PRODUCTS: clusterDB.collection<GblobalProductType>("products"),
+                USERS: clusterDB.collection<UserType>("users"),
+                WAREHOUSES: clusterDB.collection<WarehouseType>("warehouses")
             };
 
         });
