@@ -15,12 +15,15 @@ import RegisterProduct from "./components/register-product";
 import SearchBox from "@/components/shared/product-search-box";
 import Table from "@/components/shared/table";
 import { TableHeadersType } from "@/components/table/types";
+import useFechProducts from "@/hooks/useFetchProducts";
 
 const Container = () => {
     const { setDialog } = React.useContext(AppContext);
     const { category, price, searchKey, setUniqueSearchParams } = React.useContext(ProductFilterContext);
 
-    const [ productsList, setProductsList ] = React.useState<ProductInfoType[] | null>(null);
+    const { data, fetchProducts } = useFechProducts()
+
+    const productsList = React.useMemo(() => data ?? [], [ data ])
 
     const headers = React.useRef<TableHeadersType[]>([
         {
@@ -95,29 +98,6 @@ const Container = () => {
             payload: row
         });
     }, [ setDialog ]);
-
-    const fetchData = React.useCallback(async ({ signal }: { signal: AbortSignal }) => {
-        try {
-            const res = await fetch("http://localhost:3000/api/users/rafaeltivane/warehouses/12345/products", { signal });
-            const data = await res.json();
-
-            if(res.status === 200) setProductsList(data as ProductInfoType[]);
-            else throw new Error(data)
-        } catch(err) {
-            console.error(err);
-        }
-    }, []);
-
-    React.useEffect(() => {
-        const controller = new AbortController();
-
-        fetchData({ signal: controller.signal});
-
-        return () => {
-            controller.abort;
-        }
-        
-    }, [ fetchData ])
 
     return (
         <Main className="flex flex-col items-stretch justify-between">
