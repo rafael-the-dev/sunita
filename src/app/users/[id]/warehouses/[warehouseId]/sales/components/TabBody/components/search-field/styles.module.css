@@ -1,0 +1,11 @@
+.tableContainer {
+    max-height: 340px;
+    transform: translate(0, 100%);
+}
+
+
+@media screen and (min-width: 768px) {
+    .root {
+        width: 350px;
+    }
+}
