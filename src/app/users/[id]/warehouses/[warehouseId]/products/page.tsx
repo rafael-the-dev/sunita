@@ -7,7 +7,7 @@ import styles from "./styles.module.css";
 
 import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
-import { ProductFilterContextProvider  } from "@/context/ProductFilterContext";
+import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
 
 import DialogBody from "./components/register-product/components/body";
 import Main from "@/components/main";
@@ -18,6 +18,7 @@ import { TableHeadersType } from "@/components/table/types";
 
 const Container = () => {
     const { setDialog } = React.useContext(AppContext);
+    const { category, price, searchKey, setUniqueSearchParams } = React.useContext(ProductFilterContext);
 
     const [ productsList, setProductsList ] = React.useState<ProductInfoType[] | null>(null);
 
@@ -43,7 +44,7 @@ const Container = () => {
         {
             label: "Price",
             key: {
-                value: "price"
+                value: "sellPrice"
             }
         },
         {
@@ -56,6 +57,36 @@ const Container = () => {
             }
         }
     ]);
+
+    const productsListFiltered = React.useMemo(() => {
+        if(category.length > 0 || price.min || price.max || searchKey.trim()) {
+            let list = productsList ?? [];
+
+            list = list.filter(product => {
+                let isSelected = false;
+                
+                if(searchKey.trim() && product.name?.toLowerCase()?.includes(searchKey.toLowerCase())) {
+                    isSelected = true;
+                }
+
+                if(category) {
+                    if(Array.isArray(category) && category.length > 0 && category.includes(product?.category?.toUpperCase())) {
+                        isSelected = true;
+                    }
+                }
+                // return product if product's price greater than or equals to price.min and if product is less than or equals to price.max
+                if((product.sellPrice >= price.min) && (product.sellPrice <= price.max)) isSelected = true;
+
+                return isSelected;
+            });
+
+            return list;
+        }
+
+        return productsList;
+    }, [ category, price, productsList, searchKey ])
+
+    const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setUniqueSearchParams("search-key", e.target.value), [ setUniqueSearchParams ]);
 
     const rowClickHandler = React.useCallback((row: ProductInfoType) => () => {
         setDialog({
@@ -96,13 +127,14 @@ const Container = () => {
                         <SearchBox.Filters />
                         <SearchBox.Input 
                             className="grow"
+                            onChange={changeHandler}
                             placeholder="Insert product's name"
                         />
                     </SearchBox>
                 </form>
                 <div className={classNames(styles.body, `mt-6 table-body`)}>
                     { productsList && <Table 
-                        data={productsList}
+                        data={productsListFiltered}
                         headers={headers}
                         onClickRow={rowClickHandler}
                     /> }
