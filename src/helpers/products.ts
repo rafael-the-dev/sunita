@@ -25,7 +25,7 @@ export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfi
                 category: '$productsInfo.category',
                 id: '$productsInfo.id',
                 name: '$productsInfo.name',
-                price: '$products.sellPrice',
+                sellPrice: '$products.sellPrice',
                 stock: '$products.stock'
                 
                 // Include additional fields as needed
