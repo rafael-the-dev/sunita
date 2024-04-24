@@ -9,6 +9,7 @@ import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/car
 
 type SaleContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
+    changeQuantity: (productId: string, quantity: number) => void;
     getCart: () => CartType<ProductInfoType>;
     isEmpty: boolean;
 
@@ -47,6 +48,22 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
         })
     }, [])
 
+    const changeQuantity = React.useCallback((productId: string, quantity: number) => {
+        setCart(cart => {
+            const modifiedCart = structuredClone({ ...cart });
+            
+            const item = modifiedCart.items.find(cartItem => cartItem.product.id === productId);
+
+            if(item) {
+                item.quantity = currency(quantity).value;
+                item.total = calculateProductTotalPrice(item.product.sellPrice, item.quantity);
+            } 
+
+            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
+            return modifiedCart;
+        })
+    }, [])
+
     const isEmpty = React.useMemo(() => getCart().items.length === 0, [ getCart ])
     
     return (
@@ -55,6 +72,7 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
                 isEmpty,
 
                 addItem,
+                changeQuantity,
                 getCart
             }}>
             { children }
