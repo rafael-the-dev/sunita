@@ -44,5 +44,6 @@ export type ProductFilterType = {
     price?: {
         min: number;
         max: number
-    }
+    };
+    searchKey?: string;
 };
