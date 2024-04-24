@@ -4,7 +4,7 @@ import * as React from "react";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { ProductFilterType  } from "@/types/product"; 
-import { Arapey } from "next/font/google";
+import currency from "currency.js";
 
 type FiltersType = ProductFilterType & {
     isChecked: (origin: string | string[], value: string) => boolean;
@@ -86,10 +86,13 @@ export const ProductFilterContextProvider = ({ children }: { children: React.Rea
             value={{
                 category: params.getAll("category"),
                 price: {
-                    min: get("min-price", 0),
-                    max: get("max-price", 0)
+                    min: currency(get("min-price", 0)).value,
+                    max: currency(get("max-price", 0)).value
                 },
                 isChecked,
+                searchKey: get("search-key", ""),
+
+                // METHODS
                 setManySearchParams,
                 setUniqueSearchParams
             }}>
