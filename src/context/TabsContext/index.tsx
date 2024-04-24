@@ -5,16 +5,23 @@ import { v4 as uuidV4 } from "uuid"
 
 import { TabType, TabsPropsType } from "./types"
 
+type TabsContextPropsType = { 
+    children: React.ReactNode;
+    defaultComponent: React.ReactNode;
+}
+
 export const TabsContext = React.createContext<TabsPropsType | null>(null)
 TabsContext.displayName = "TabsContext"
 
-export const TabsContextProvider = ({ children }) => {
-    const getNewTab = React.useCallback((index: number): TabType => ({
+export const TabsContextProvider = ({ children,  defaultComponent }: TabsContextPropsType) => {
+
+    const getNewTab = React.useCallback((index: number, component: React.ReactNode): TabType => ({
+        component,
         id: uuidV4(),
         name: `Tab ${index}`
     }), [])
 
-    const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => [ getNewTab(1) ])
+    const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => [ getNewTab(1, defaultComponent ) ])
     const [ activeTab, setActiveTab ] = React.useState<TabType>(() => tabsList[0])
 
     const addTab = React.useCallback(() => {
@@ -23,10 +30,10 @@ export const TabsContextProvider = ({ children }) => {
 
             return [
                 ...tabs,
-                getNewTab(tabs.length + 1)
+                getNewTab(tabs.length + 1, defaultComponent)
             ]
         })
-    }, [ getNewTab ])
+    }, [ defaultComponent, getNewTab ])
 
     const activateTab = React.useCallback((id: string) => {
         const tab = tabsList.find((tab) => tab.id ===id)

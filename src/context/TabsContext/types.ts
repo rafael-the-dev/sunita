@@ -1,6 +1,7 @@
-
+import { ReactNode } from "react"
 
 export type TabType = {
+    component: ReactNode;
     id: string;
     name: string;
 }
