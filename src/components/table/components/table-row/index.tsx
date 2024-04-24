@@ -30,7 +30,7 @@ const TableRowContainer = ({ headers, onClick, row, onRemove }: TableRowPropsTyp
             return uuidV4();
         }
 
-        return key.value;
+        return uuidV4();
     };
 
     const getKeyValue = (key: TableKeyType, data: Object) => {
