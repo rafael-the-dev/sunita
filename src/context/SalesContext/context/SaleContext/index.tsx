@@ -5,13 +5,23 @@ import * as React from "react"
 import { CartType  } from "@/types/cart"
 import { ProductInfoType } from "@/types/product"
 import currency from "currency.js";
+
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
+import { PaymentMethodType } from "@/types/payment-method";
+import usePaymentMethods from "./hooks/usePaymentMethods"
 
 type SaleContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
     changeQuantity: (productId: string, quantity: number) => void;
     getCart: () => CartType<ProductInfoType>;
     isEmpty: boolean;
+
+    // payment method
+    addPaymentMethod: () => void;
+    changePaymentMethodId: (id: number, newMethodId: number) => void;
+    changePaymentMethodValue: (key: string, id: number | number, amount: number | string ) => void;
+    getPaymentMethods: () => PaymentMethodType[];
+    removePaymentMethod: (id: string | number) => void;
 
 }
 
@@ -65,10 +75,13 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
     }, [])
 
     const isEmpty = React.useMemo(() => getCart().items.length === 0, [ getCart ])
+
+    const paymentMethods = usePaymentMethods()
     
     return (
         <SaleContext.Provider
             value={{
+                ...paymentMethods,
                 isEmpty,
 
                 addItem,
