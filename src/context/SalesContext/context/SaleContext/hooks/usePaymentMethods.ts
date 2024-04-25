@@ -1,7 +1,9 @@
 import * as React from "react";
 import currency from "currency.js";
 
-import { PaymentMethodListItemType, PaymentMethodType } from "@/types/payment-method";
+import { PaymentMethodListItemType, PaymentMethodType, ProductPayment } from "@/types/payment-method";
+import { CartType } from "@/types/cart";
+import { getPaymentStats, setTotalReceivedAmountAndChanges } from "@/helpers/product-payment";
 
 const paymentMethodsList: PaymentMethodListItemType[] = [
     { value: 100, label: "Cash" },
@@ -12,65 +14,91 @@ const paymentMethodsList: PaymentMethodListItemType[] = [
     { value: 600, label: "P24" }
 ];
 
-const usePaymentMethods = () => {
-    const [ paymentMethods, setPaymentMethods ] = React.useState<PaymentMethodType[]>([])
+const usePaymentMethods = <T>(cart: CartType<T>) => {
+    const [ paymentMethods, setPaymentMethods ] = React.useState<ProductPayment>({
+        changes: 0,
+        paymentMethods: [
+            {
+                amount: 0, 
+                id: paymentMethodsList[0].value
+            }
+        ],
+        remainingAmount: 0,
+        totalReceived: 0
+    })
 
     const add = React.useCallback(() => {
-        setPaymentMethods(currentMethods => {
-            const listTemp = structuredClone([ ...currentMethods ]);
+        setPaymentMethods(payment => {
+            const paymentTemp = structuredClone({ ...payment });
 
             for(let i = 0; i < paymentMethodsList.length; i++) {
                 //look for not selected payment method, then add it to the list of paymentMethods
-                if(!Boolean(listTemp.find(item =>  item.id === paymentMethodsList[i].value))) {
-                    listTemp.push({ 
+                if(!Boolean(paymentTemp.paymentMethods.find(item =>  item.id === paymentMethodsList[i].value))) {
+                    paymentTemp.paymentMethods.push({ 
                         amount: 0, 
-                        id: paymentMethodsList[i].value, 
-                        receivedAmount: 0 
+                        id: paymentMethodsList[i].value
                     });
                     break;
                 }
             }
 
-            return listTemp;
+            return paymentTemp;
         })
     }, [])
 
     const changePaymentMethodValue = React.useCallback((key: string, id: number | number, amount: number | string ) => {
-        setPaymentMethods(currentMethods => {
-            const listTemp = structuredClone([ ...currentMethods ]);
+        setPaymentMethods(payment => {
+            const paymentTemp = structuredClone({ ...payment });
 
-            const paymentMethod = listTemp.find(item => item.id === id);
+            const paymentMethod = paymentTemp.paymentMethods.find(item => item.id === id);
 
             paymentMethod[key] = currency(amount).value;
 
-            return listTemp;
+            setTotalReceivedAmountAndChanges(cart, paymentTemp);
+
+            return paymentTemp;
         })
-    }, [])
+    }, [ cart ])
 
     const changePaymentMethodId = React.useCallback((id: number | number, newMethodId: number | string ) => {
-        setPaymentMethods(currentMethods => {
-            const listTemp = structuredClone([ ...currentMethods ]);
+        setPaymentMethods(payment => {
+            const paymentTemp = structuredClone({ ...payment });
 
             //return previous payment methods list, if newMethodId if already selected in another payment method
-            if(Boolean(listTemp.find(item => item.id === newMethodId))) {
-                return currentMethods;
+            if(Boolean(paymentTemp.paymentMethods.find(item => item.id === newMethodId))) {
+                return payment;
             }
 
-            const paymentMethod = listTemp.find(item => item.id === id);
+            const paymentMethod = paymentTemp.paymentMethods.find(item => item.id === id);
 
             paymentMethod.id = newMethodId;
 
-            return listTemp;
+            return paymentTemp;
         })
     }, [])
 
     const removePaymentMethod = React.useCallback((id: string | number) => {
-        setPaymentMethods(currentMethods => {
-            return structuredClone([ ...currentMethods ]).filter(paymentMethod => paymentMethod.id !== id);
-        })
-    }, [])
+        setPaymentMethods(payment => {
+            const paymentTemp = structuredClone({ ...payment });
+            paymentTemp.paymentMethods = paymentTemp.paymentMethods.filter(paymentMethod => paymentMethod.id !== id);
 
-    const getPaymentMethods = () => paymentMethods;
+            setTotalReceivedAmountAndChanges(cart, paymentTemp);
+
+            return paymentTemp;
+        })
+    }, [ cart ])
+
+    const getPaymentMethods = React.useCallback(() => paymentMethods, [ paymentMethods ]);
+
+    React.useEffect(() => {
+        setPaymentMethods(payment => {
+            const paymentTemp = structuredClone({ ...payment });
+
+            setTotalReceivedAmountAndChanges(cart, paymentTemp);
+
+            return paymentTemp;
+        })
+    }, [ cart ])
 
     return {
         addPaymentMethod: add,
