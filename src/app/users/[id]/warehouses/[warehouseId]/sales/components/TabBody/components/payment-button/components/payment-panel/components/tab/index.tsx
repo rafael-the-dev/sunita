@@ -20,7 +20,7 @@ const Tab = ({ children, changeTab, id, tab }: ButtonProps) => {
         <li className="w-1/2">
             <Button
                 className={classNames(
-                    `rounded-none w-full`,
+                    `py-3 rounded-none w-full`,
                     isSelected ? "bg-primary-700 text-white" : "bg-primary-200 text-white"
                 )}
                 onClick={clickHandler}>

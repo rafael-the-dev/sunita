@@ -23,7 +23,7 @@ const paymentMethodsList: PaymentMethodListItemType[] = [
     { value: 600, label: "P24" }
 ];
 
-const PaymentMethodContainer = ({ amount, id, receivedAmount }) => {
+const PaymentMethodContainer = ({ amount, id }) => {
 
     const { 
         changePaymentMethodId, changePaymentMethodValue,
@@ -34,7 +34,7 @@ const PaymentMethodContainer = ({ amount, id, receivedAmount }) => {
     const filter = React.useCallback((item: PaymentMethodListItemType) => {
         if(item.value === id) return true;
 
-        return !Boolean(getPaymentMethods().find(method => {
+        return !Boolean(getPaymentMethods().paymentMethods.find(method => {
             return method.id === item.value
         }));
     }, [ getPaymentMethods, id ]);
@@ -58,10 +58,10 @@ const PaymentMethodContainer = ({ amount, id, receivedAmount }) => {
     , [ changePaymentMethodValue, id ]);
 
     return (
-        <div className="border-b border-primary-300 border-solid flex flex-col pb-3 pt-8 first:pt-0 md:pb-8 md:flex-row">
+        <div className="border-b border-primary-300 border-solid flex flex-col pb-3 pt-8 first:pt-0 md:pb-8 md:flex-row md:items-center">
             <Input
                 className={classNames(styles.select)}
-                label="Metodo de pagamento"
+                label="Payment method"
                 onChange={changeMethodHandler}
                 select
                 value={id}
@@ -80,18 +80,18 @@ const PaymentMethodContainer = ({ amount, id, receivedAmount }) => {
             <div className="flex items-center justify-between w-full md:justify-normal">
                 <Input 
                     className={styles.input}
-                    label="Insere o valor"
+                    label="Insert amount"
                     onChange={changeHandler}
                     value={amount}
                     variant="outlined"
                 />
-                <Input 
+                {/*<Input 
                     className={styles.input}
                     label="Valor recebido"
                     onChange={receivedAmountChangeHandler}
                     value={receivedAmount}
                     variant="outlined"
-                />
+                />*/}
             </div>
             <div className="flex">
                 { /*getPaymentMethods().amountRemaining() > 0 && (
