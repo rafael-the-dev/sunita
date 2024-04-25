@@ -1,9 +1,15 @@
 
 
 export type PaymentMethodType = {
-    receivedAmount: number;
     id: string | number;
     amount: number;
+}
+
+export type ProductPayment = {
+    changes: number;
+    paymentMethods: PaymentMethodType[];
+    remainingAmount: number;
+    totalReceived: number;
 }
 
 export type PaymentMethodListItemType = {
