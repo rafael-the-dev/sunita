@@ -88,7 +88,7 @@ const Container = () => {
     return (
         <div className={classNames(classes.root, "input relative w12 xl:mb-0")}>
             { inputMemo }
-            { Boolean(barCode) && (
+            { Boolean(barCode) && (filteredList.length > 0) && (
                 <ClickAwayListener onClickAway={handleClickAway}>
                     <Paper 
                         className={classNames(classes.tableContainer, "absolute bottom-0 left-0 overflow-y-auto w-full z-10")}
