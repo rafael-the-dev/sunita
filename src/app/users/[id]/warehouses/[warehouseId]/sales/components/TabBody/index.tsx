@@ -1,13 +1,19 @@
 import * as React from "react"
 import classNames from "classnames"
+import Typography from "@mui/material/Typography";
+
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
 import { SaleContext } from "@/context/SalesContext/context/SaleContext"
-import { TableHeadersType } from "@/components/table/types"
+import { TableHeadersType, TableKeyType } from "@/components/table/types"
+import { CartItem } from "@/types/cart";
 import styles from "./styles.module.css"
 
 import PaymentButton from "./components/payment-button"
+import QuantityInput from "./components/quantity-input"
 import SearchField from "./components/search-field"
 import Table from "@/components/shared/table"
+import { ProductInfoType } from "@/types/product";
 
 const TabBody = () => {
     const { isEmpty, getCart } = React.useContext(SaleContext)
@@ -38,6 +44,7 @@ const TabBody = () => {
         },
         {
             label: "Quantity",
+            getComponent: ({ item, key }) => <QuantityInput cartItem={item as CartItem<ProductInfoType>} />,
             key: {
                 value: "quantity"
             }
@@ -66,7 +73,16 @@ const TabBody = () => {
             </div>
             <div className={classNames('px-3')}>
                 {
-                    !isEmpty && (
+                    isEmpty ? (
+                        <div className="flex flex-col items-center justify-center h-[45vh]">
+                            <RemoveShoppingCartIcon className="text-9xl" />
+                            <Typography
+                                component="h2"
+                                className="font-bold mt-4 text-2xl">
+                                Cart is empty
+                            </Typography>
+                        </div>
+                    ) : (
                         <Table
                             data={ cart.items }
                             headers={tableHeader}

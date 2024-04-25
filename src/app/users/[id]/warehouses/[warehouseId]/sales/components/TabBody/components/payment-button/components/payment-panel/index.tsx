@@ -4,6 +4,8 @@ import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
+import PaymentMethods from "./components/payment-methods"
+
 type ButtonProps = {
     children: React.ReactNode
 }
@@ -26,7 +28,7 @@ const PaymentPanel = () => {
     const changeTab = React.useCallback((value: string) => setTab(value), []);
 
     return (
-        <div className={classNames(styles.root)}>
+        <div className={classNames(styles.root, `flex flex-col h-full`)}>
             <ul className="flex">
                 {
                     list.map(item => (
@@ -40,6 +42,11 @@ const PaymentPanel = () => {
                     ))
                 }
             </ul>
+            {
+                {
+                    "PAYMENT": <PaymentMethods />
+                }[tab]
+            }
         </div>
     )
 }

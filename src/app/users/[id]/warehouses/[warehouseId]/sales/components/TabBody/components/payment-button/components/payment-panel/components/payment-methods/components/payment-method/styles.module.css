@@ -1,0 +1,23 @@
+
+.select {
+    width: 100%;
+}
+
+.input {
+    width: 49%;
+}
+
+@media screen and (min-width: 768px) {
+    .input, .select {
+        margin-bottom: 0;
+    }
+
+    .select {
+        width: 30%;
+    }
+    
+    .input {
+        margin-left: 1rem;
+        width: 25%;
+    }
+}
