@@ -16,7 +16,7 @@ export type TableKeyType = {
 };
 
 export type TableHeadersType = {
-    getComponent?: ({ item, key }: { item: Object, key: TableKeyType }) => ReactNode;
+    getComponent?: <T>({ item, key }: { item: T, key: TableKeyType }) => ReactNode;
     label: string;
     key: TableKeyType;
     subValue?: any;
