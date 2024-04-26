@@ -19,9 +19,9 @@ class Product {
         return products
     }
 
-    static async getAll({ warehouseId }: { warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
+    static async getAll({ filters, warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
         try {
-            const products = await getProducts({ filter: { id: warehouseId } }, { mongoDbConfig, user })
+            const products = await getProducts({ filter: { ...filters, id: warehouseId } }, { mongoDbConfig, user })
             return products;
         } catch (error) {
               console.error('Error retrieving products:', error);
