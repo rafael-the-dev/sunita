@@ -7,11 +7,50 @@ import { SaleContext } from "@/context/SalesContext/context/SaleContext"
 import Button from "@/components/shared/button"
 import PaymentMethod from "./components/payment-method"
 import Typography from "./components/Typography"
+import { AppContext } from "@/context/AppContext"
+import { CartResquestType } from "@/types/cart"
+import { SalesContext } from "@/context/SalesContext"
 
 const PaymentMethodsPanel = () => {
-    const { addPaymentMethod, getCart, getPaymentMethods } = React.useContext(SaleContext)
+    const { isLoading } = React.useContext(AppContext)
+    const { addPaymentMethod, getCart, getPaymentMethods, resetCart } = React.useContext(SaleContext)
+    const { fetchProducts } = React.useContext(SalesContext)
 
-    const showRemainingAmount =  getPaymentMethods().remainingAmount > 0 &&  getPaymentMethods().remainingAmount < getCart().total
+    const [ loading, setLoading ] = React.useState(false)
+
+    const hasChanges = getPaymentMethods().changes > 0;
+    const showRemainingAmount =  getPaymentMethods().remainingAmount > 0 &&  getPaymentMethods().remainingAmount < getCart().total;
+    const disableButton = showRemainingAmount || getPaymentMethods().totalReceived <= 0;
+
+    const submitHandler = async () => {
+        isLoading.current = true;
+        setLoading(true)
+
+        try {
+            const body: CartResquestType = {
+                changes: getPaymentMethods().changes,
+                items: getCart().items.map(item => ({ ...item, product: { id: item.product.id } })),
+                total: getCart().total,
+                totalReceived: getPaymentMethods().totalReceived
+            };
+
+            const options = {
+                body: JSON.stringify(body),
+                method: "POST"
+            }
+            const res = await fetch(`/api/users/rafaeltivane/warehouses/12345/sales`, options);
+
+            if(res.status === 201) {
+                resetCart();
+                await fetchProducts({})
+            }
+        } catch(e) {
+            console.error(e)
+        } finally {
+            isLoading.current = true;
+            setLoading(false)
+        }
+    };
 
     return (
         <form className="flex flex-col grow justify-between">
@@ -45,7 +84,7 @@ const PaymentMethodsPanel = () => {
                         />         
                     )
                     }
-                    { getPaymentMethods().changes > 0 && (
+                    { hasChanges && (
                         <Typography 
                             classes={{ root: "text-yellow-600 text-md md:text-xl", value: "font-semibold ml-3" }}
                             text="Changes"
@@ -56,8 +95,9 @@ const PaymentMethodsPanel = () => {
                 </div>
                 <Button
                     className="py-2 px-4"
-                    disabled={showRemainingAmount || getPaymentMethods().totalReceived <= 0}>
-                    Pay
+                    disabled={disableButton}
+                    onClick={submitHandler}>
+                    { loading ? "Loading..." : "Pay" }
                 </Button>
             </div>
         </form>

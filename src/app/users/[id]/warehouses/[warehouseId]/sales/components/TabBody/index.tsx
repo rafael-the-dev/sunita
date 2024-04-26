@@ -16,7 +16,7 @@ import Table from "@/components/shared/table"
 import { ProductInfoType } from "@/types/product";
 
 const TabBody = () => {
-    const { isEmpty, getCart } = React.useContext(SaleContext)
+    const { isEmpty, getCart, removeItem } = React.useContext(SaleContext)
     const cart = getCart()
     
     const tableHeader = React.useRef<TableHeadersType[]>([
@@ -63,8 +63,18 @@ const TabBody = () => {
             key: {
                 value: "total"
             }
+        },
+        {
+            label: "Remove",
+            key: {
+                value: "delete"
+            }
         }
-    ])
+    ]);
+
+    const rowDeleteHandler = React.useCallback((cartItem: CartItem<ProductInfoType>)  => () => {
+        removeItem(cartItem.product.id)
+    }, [ removeItem ]);
 
     return (
         <div className="pt-3">
@@ -86,6 +96,7 @@ const TabBody = () => {
                         <Table
                             data={ cart.items }
                             headers={tableHeader}
+                            onRemoveRow={rowDeleteHandler}
                         />
                     )
                 }

@@ -15,6 +15,8 @@ type SaleContextType = {
     changeQuantity: (productId: string, quantity: number) => void;
     getCart: () => CartType<ProductInfoType>;
     isEmpty: boolean;
+    removeItem: (productId: string) => void;
+    resetCart: () => void;
 
     // payment method
     addPaymentMethod: () => void;
@@ -25,14 +27,16 @@ type SaleContextType = {
 
 }
 
-export const SaleContext = React.createContext<SaleContextType | null>(null)
-SaleContext.displayName = "SaleContext"
+export const SaleContext = React.createContext<SaleContextType | null>(null);
+SaleContext.displayName = "SaleContext";
+
+const initialState = {
+    items: [],
+    total:0
+};
 
 export const SaleContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>({
-        items: [],
-        total: 0
-    })
+    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState)
 
     const getCart = React.useCallback(() => cart, [ cart ])
 
@@ -74,9 +78,27 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
         })
     }, [])
 
+    const removeItem = React.useCallback((productId: string) => {
+        setCart(cart => {
+            const modifiedCart = structuredClone({ ...cart });
+            
+            modifiedCart.items = modifiedCart.items.filter(cartItem => cartItem.product.id !== productId);
+
+
+            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
+            return modifiedCart;
+        });
+    }, []);
+
     const isEmpty = React.useMemo(() => getCart().items.length === 0, [ getCart ])
 
-    const paymentMethods = usePaymentMethods(getCart())
+    const paymentMethods = usePaymentMethods(getCart());
+    const resetPaymentMethods = paymentMethods.reset;
+
+    const resetCart = React.useCallback(() => {
+        setCart(initialState);
+        resetPaymentMethods();
+    }, [resetPaymentMethods ])
     
     return (
         <SaleContext.Provider
@@ -86,7 +108,9 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
 
                 addItem,
                 changeQuantity,
-                getCart
+                getCart,
+                removeItem,
+                resetCart
             }}>
             { children }
         </SaleContext.Provider>

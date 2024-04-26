@@ -14,18 +14,20 @@ const paymentMethodsList: PaymentMethodListItemType[] = [
     { value: 600, label: "P24" }
 ];
 
+const initialState = {
+    changes: 0,
+    paymentMethods: [
+        {
+            amount: 0, 
+            id: paymentMethodsList[0].value
+        }
+    ],
+    remainingAmount: 0,
+    totalReceived: 0
+};
+
 const usePaymentMethods = <T>(cart: CartType<T>) => {
-    const [ paymentMethods, setPaymentMethods ] = React.useState<ProductPayment>({
-        changes: 0,
-        paymentMethods: [
-            {
-                amount: 0, 
-                id: paymentMethodsList[0].value
-            }
-        ],
-        remainingAmount: 0,
-        totalReceived: 0
-    })
+    const [ paymentMethods, setPaymentMethods ] = React.useState<ProductPayment>(initialState)
 
     const add = React.useCallback(() => {
         setPaymentMethods(payment => {
@@ -86,7 +88,11 @@ const usePaymentMethods = <T>(cart: CartType<T>) => {
 
             return paymentTemp;
         })
-    }, [ cart ])
+    }, [ cart ]);
+
+    const reset = React.useCallback(() => {
+        setPaymentMethods(initialState)
+    }, [])
 
     const getPaymentMethods = React.useCallback(() => paymentMethods, [ paymentMethods ]);
 
@@ -98,14 +104,15 @@ const usePaymentMethods = <T>(cart: CartType<T>) => {
 
             return paymentTemp;
         })
-    }, [ cart ])
+    }, [ cart ]);
 
     return {
         addPaymentMethod: add,
         changePaymentMethodValue,
         changePaymentMethodId,
         getPaymentMethods,
-        removePaymentMethod
+        removePaymentMethod,
+        reset
     }
 
 }
