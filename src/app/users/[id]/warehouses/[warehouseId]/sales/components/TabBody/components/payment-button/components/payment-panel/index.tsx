@@ -4,7 +4,8 @@ import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
-import PaymentMethods from "./components/payment-methods"
+import PaymentMethods from "./components/payment-methods";
+import SuccessfulPayment from "./components/successful-payment";//:;
 
 type ButtonProps = {
     children: React.ReactNode
@@ -20,12 +21,19 @@ const list = [
         id: "DEBT",
         label: "Debt"
     }
-]
+];
 
-const PaymentPanel = () => {
+const PaymentPanel = ({ closeDialog }: { closeDialog: () => void }) => {
     const [ tab, setTab ] = React.useState("PAYMENT");
 
-    const changeTab = React.useCallback((value: string) => setTab(value), []);
+    const changeTab = React.useCallback((value: string) => {
+        setTab(currentTab => {
+            if(currentTab === "SUCCESS_PAYMENT") return currentTab;
+
+            return value;
+        })
+    }, []);
+    const setSuccefulPayment = React.useCallback(() => setTab("SUCCESS_PAYMENT"), []);
 
     return (
         <div className={classNames(styles.root, `flex flex-col h-full`)}>
@@ -44,11 +52,12 @@ const PaymentPanel = () => {
             </ul>
             {
                 {
-                    "PAYMENT": <PaymentMethods />
+                    "PAYMENT": <PaymentMethods setSuccefulPayment={setSuccefulPayment} />,
+                    "SUCCESS_PAYMENT": <SuccessfulPayment onClose={closeDialog} />
                 }[tab]
             }
         </div>
-    )
-}
+    );
+};
 
-export default PaymentPanel
+export default PaymentPanel;

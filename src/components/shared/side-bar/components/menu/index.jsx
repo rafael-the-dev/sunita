@@ -14,7 +14,7 @@ const Menu = () => {
         },
         {
             label: "Sales",
-            path: "/sales"
+            path: `/users/${user.username}/warehouses/${12345}/sales`
         },
         {
             label: "Products",

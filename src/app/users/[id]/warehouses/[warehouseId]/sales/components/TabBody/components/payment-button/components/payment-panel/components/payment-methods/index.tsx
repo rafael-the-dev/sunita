@@ -11,7 +11,11 @@ import { AppContext } from "@/context/AppContext"
 import { CartResquestType } from "@/types/cart"
 import { SalesContext } from "@/context/SalesContext"
 
-const PaymentMethodsPanel = () => {
+type ProsType = {
+    setSuccefulPayment: () => void;
+}
+
+const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
     const { isLoading } = React.useContext(AppContext)
     const { addPaymentMethod, getCart, getPaymentMethods, resetCart } = React.useContext(SaleContext)
     const { fetchProducts } = React.useContext(SalesContext)
@@ -41,6 +45,7 @@ const PaymentMethodsPanel = () => {
             const res = await fetch(`/api/users/rafaeltivane/warehouses/12345/sales`, options);
 
             if(res.status === 201) {
+                setSuccefulPayment()
                 resetCart();
                 await fetchProducts({})
             }

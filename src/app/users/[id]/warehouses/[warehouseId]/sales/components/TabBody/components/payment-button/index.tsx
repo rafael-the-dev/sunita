@@ -11,9 +11,11 @@ import PaymentPanel from "./components/payment-panel"
 const PaymentButton = () => {
     const { getCart, isEmpty } = React.useContext(SaleContext)
 
-    const onOpenRef = React.useRef<() => void>(null)
+    const onCloseRef = React.useRef<() => void>(null);
+    const onOpenRef = React.useRef<() => void>(null);
 
     const clickHandler = React.useCallback(() => onOpenRef.current?.(), [])
+    const closeDialog = React.useCallback(() => onCloseRef.current?.(), [])
     
     return (
         <>
@@ -25,8 +27,9 @@ const PaymentButton = () => {
             </Button>
             <Dialog
                 classes={{ paper: "m-0 md:max-w-max"}}
+                onCloseRef={onCloseRef}
                 onOpenRef={onOpenRef}>
-                <PaymentPanel />
+                <PaymentPanel closeDialog={closeDialog} />
             </Dialog>
         </>
     )
