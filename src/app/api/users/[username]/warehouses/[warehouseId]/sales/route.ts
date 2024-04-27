@@ -16,7 +16,7 @@ type URLParamsType = {
 
 export const GET = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
     return await apiHandler(async ({ mongoDbConfig, user }) => {
-        const products = await ProductModel.getAll({ warehouseId }, { mongoDbConfig, user });
+        const products = await Sale.getAll({ warehouseId }, { mongoDbConfig, user });
         return NextResponse.json(products);
     });
 };
