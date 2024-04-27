@@ -3,13 +3,63 @@ import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
-import { SaleType } from "@/types/sale";
+import { SaleType, SaleInfoType } from "@/types/sale";
 
 import ProductModel from "./Product";
-import Store from "./Warehouse"
 import Error404 from "@/errors/server/404Error";
 
 class Sale {
+    static async getAll({ warehouseId }: { warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
+        return await mongoDbConfig.collections
+            .WAREHOUSES
+            .aggregate([
+                { $match: { id: warehouseId } },
+                { $unwind: "$sales" },
+                { $unwind: "$sales.items" },
+                {
+                    $lookup: {
+                        from: "products", // Replace with the name of your external product collection
+                        localField: "sales.items.product.id",
+                        foreignField: "id",
+                        as: "product_info"
+                    }
+                },
+                { $unwind: "$product_info" },
+                {
+                    $addFields: {
+                        "sales.items.product": {
+                        item: "$product_info", // Embed product info into sales document
+                        // price: 
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$sales.id",
+                        createdAt: { $first: "$sales.createAt" },
+                        changes: { $first: "$sales.changes" },
+                        id: { $first: "$sales.id" },
+                        items: {
+                            $push: {
+                                quantity: "$sales.items.quantity",
+                                total: "$sales.items.total",
+                                product: {
+                                    barcode: "$product_info.barcode",
+                                    category: "$product_info.category",
+                                    id: "$sales.items.product.id",
+                                    name: "$product_info.name"
+                                }
+                            }
+                        },
+                        profit: { $first: "$sales.profit" },
+                        total: { $first: "$sales.total" },
+                        totalReceived: { $first: "$sales.totalReceived" },
+                        user: { $first: "$sales.user" }
+                    }
+                }
+            ]).toArray() as SaleInfoType[];
+    }
+
     static async register({ cart, warehouseId }: { cart: CartResquestType, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
         const productsIds = cart.items.map(item => item.product.id)
 
@@ -22,6 +72,7 @@ class Sale {
         
         const itemsList = [];
         const productsMap = new Map<string, RequestCartItem> ();
+        let totalProfit = 0;
 
         const totalPrice =  cart.items.reduce((prevValue, currentItem) => {
             const currentProduct = selectedProducts.find(product => currentItem.product.id === product.id);
@@ -36,13 +87,14 @@ class Sale {
                 }
             };
 
+            totalProfit = currency(totalProfit).add(currency(currentProduct.profit).multiply(currentItem.quantity).value).value;
             itemsList.push(item);
             productsMap.set(currentProduct.id, currentItem);
 
             const price = currency(currentProduct.sellPrice).multiply(currentItem.quantity);
             return currency(prevValue).add(price).value;
         }, 0)
-
+       
         if(totalPrice !== cart.total) {
             throw new InvalidArgumentError("Client total price doesn't match with server total price")
         }
@@ -51,7 +103,8 @@ class Sale {
             changes: cart.changes,
             createAt: new Date(),
             id: uuidV4(),
-            products: itemsList,
+            items: itemsList,
+            profit: totalProfit,
             total: cart.total,
             totalReceived: cart.totalReceived,
             user: "rafaeltivane"
