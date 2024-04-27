@@ -25,6 +25,8 @@ export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfi
                 category: '$productsInfo.category',
                 id: '$productsInfo.id',
                 name: '$productsInfo.name',
+                purchasePrice: '$products.purchasePrice',
+                profit: '$products.profit',
                 sellPrice: '$products.sellPrice',
                 stock: '$products.stock'
                 
@@ -33,6 +35,6 @@ export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfi
         }
     ])
     .toArray() as ProductInfoType[];
-
+    
     return products;
 }
