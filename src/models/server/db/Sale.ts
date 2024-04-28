@@ -26,6 +26,15 @@ class Sale {
                 },
                 { $unwind: "$product_info" },
                 {
+                    $lookup: {
+                        from: "users", // Replace with the name of your external product collection
+                        localField: "sales.user",
+                        foreignField: "username",
+                        as: "user_info"
+                    }
+                },
+                { $unwind: "$user_info" },
+                {
                     $addFields: {
                         "sales.items.product": {
                         item: "$product_info", // Embed product info into sales document
@@ -54,7 +63,13 @@ class Sale {
                         profit: { $first: "$sales.profit" },
                         total: { $first: "$sales.total" },
                         totalReceived: { $first: "$sales.totalReceived" },
-                        user: { $first: "$sales.user" }
+                        user: { 
+                            $first: {
+                                firstName: "$user_info.firstName",
+                                lastName: "$user_info.lastName",
+                                username: "$user_info.username"
+                            }
+                         }
                     }
                 }
             ]).toArray() as SaleInfoType[];
