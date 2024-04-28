@@ -38,7 +38,7 @@ const TableRowContainer = ({ headers, onClick, row, onRemove }: TableRowPropsTyp
 
         const result = data[value];
         
-        if(value === "date") {
+        if(value === "date" || value === "createdAt") {
             return moment(result).format("DD/MM/YYYY HH:mm:ss");
         } else if(value === "delete") {
             return <div><IconButton className="hover:text-red-600" onClick={onRemove && onRemove(row)}><DeleteIcon /></IconButton></div>;
