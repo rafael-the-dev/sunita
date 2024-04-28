@@ -18,13 +18,18 @@ export type SaleType = {
 
 export type SaleInfoType = {
     changes: number;
-    createAt: Date;
+    createdAt: Date;
     id: string;
     items: {
         product: ProductInfoType;
         quantity: number;
     }[];
+    profit: number;
     total: number;
     totalReceived: number;
-    user: string;
+    user: { 
+        firstName: string;
+        lastName: string;
+        username: string;
+     }
 }
