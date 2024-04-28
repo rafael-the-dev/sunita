@@ -1,19 +1,30 @@
-'use client';
+'use client'
 
 import { useContext } from "react";
-import { useParams } from "next/navigation";
-import Hidden from "@mui/material/Hidden";
 
-const Container = () => {
-    const { id } = useParams();
+import { TabsContext, TabsContextProvider } from "@/context/TabsContext";
+
+import TabBody from "./components/TabBody";
+import TabsList from "@/components/shared/tabs-list";
+import { AnalyticsContextProvider } from "@/context/AnalyticsContext";
+
+const AnalyticsPage = () => {
+    const { getActiveTab } = useContext(TabsContext);
 
     return (
         <main>
-            <div>
-                
-            </div>
+            <TabsList />
+            { getActiveTab().component }
         </main>
     );
 };
 
-export default Container;
+const ContextWrapper = () => (
+    <AnalyticsContextProvider>
+        <TabsContextProvider defaultComponent={<TabBody />}>
+            <AnalyticsPage />
+        </TabsContextProvider>
+    </AnalyticsContextProvider>
+);
+
+export default ContextWrapper;

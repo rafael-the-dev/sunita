@@ -1,18 +1,17 @@
 
 import classNames from "classnames";
 
-import styles from "./styles.module.css";
+import styles from "./styles.module.css"
 
 import DataShow from "./components/data-show"
+import Highlights from "./components/highlights";
 
 const TabBody = () => {
 
     return (
-        <div className={classNames("pt-4")}>
-            <div className={classNames(styles.row, "bg-primary-100 mx-3")}>
-                hello, rT
-            </div>
-            <div className="px-3">
+        <div className={classNames(styles.root, "overflow-y-auto pt-4")}>
+            <Highlights />
+            <div className="px-3 md:mt-24">
                 <DataShow />
             </div>
         </div>

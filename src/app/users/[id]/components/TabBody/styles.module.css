@@ -1,5 +1,5 @@
 
 
-.row {
-    height: 190px;
+.root {
+    height: calc(100vh - 116px);
 }

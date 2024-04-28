@@ -1,0 +1,32 @@
+
+
+.row {
+    height: 190px;
+}
+
+.slider {
+    transition: transform 2s ease;
+}
+
+.controllers {
+    transform: translate(0, -50%);
+}
+
+@media screen and (min-width: 768px) {
+    .row {
+        height: 60px;
+    }
+
+    .listWrapper {
+        left: 1%;
+        transform: translate(0, -50%);
+        top: 76%;
+        width: 98%;
+    }
+
+    .slider {
+        transform: translate(0, 0) !important;
+        justify-content: space-between;
+        width: 100% !important;
+    }
+}
