@@ -5,17 +5,28 @@ import styles from "./styles.module.css"
 
 import { TableHeadersType } from "@/components/table/types";
 
+import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
+import { ProductInfoType } from "@/types/product";
+
+import useFech from "@/hooks/useFetch";
+import useSearchParams from "@/hooks/useSearchParams";
+import useDataMemo from "@/hooks/useDataMemo";
+
+
 import CategoriesCombobox from "@/components/shared/combobox"
 import Input from "@/components/Textfield";
 import Table from "@/components/shared/table";
-import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
-import useSearchParams from "@/hooks/useSearchParams";
-import { ProductInfoType } from "@/types/product";
 
 const ProductSearchField = () => {
-    const { getCategories, getProducts } = React.useContext(AnalyticsFiltersContext);
-    const searchParams = useSearchParams()
+    const { getCategories, getData, setData } = React.useContext(AnalyticsFiltersContext);
 
+    const fetchProductsResult = useFech<ProductInfoType[]>({ 
+        autoFetch: false, 
+        url: "/api/users/rafaeltivane/warehouses/12345/products" 
+    });
+    const { fetchData, loading } = fetchProductsResult;
+
+    const searchParams = useSearchParams()
     const category = searchParams.get("category", -1);
     const searchKey = searchParams.get("search", "");
 
@@ -26,15 +37,25 @@ const ProductSearchField = () => {
         { key: { value: "sellPrice" }, label: "Price" }
     ]);
 
+    const data = React.useMemo(() => {
+        const list = getData<ProductInfoType[]>("products")
+
+        if(list.length > 0) return list;
+
+        return fetchProductsResult.data;
+    }, [ fetchProductsResult, getData ])
+
     const products = React.useMemo(() => {
-        let list = getProducts();
+        let list = data;
+
+        if(!data) return [];
         
         if(category && typeof category === "string") {
-            list = list.filter(item => item.category === category);
+            list = data.filter(item => item.category === category);
         }
 
         if(searchKey.trim()) {
-            list = list.filter(item => {
+            list = data.filter(item => {
                 const isName = item.name.toLowerCase().includes(searchKey.toLowerCase());
                 const isBarCode = item.barcode.includes(searchKey);
 
@@ -43,7 +64,7 @@ const ProductSearchField = () => {
         }
 
         return list;
-    }, [ category, getProducts, searchKey ]);
+    }, [ category, data, searchKey ]);
 
     const changeHandler = React.useCallback((key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
         searchParams.setSearchParam(key, e.target.value)
@@ -75,6 +96,14 @@ const ProductSearchField = () => {
             variant="outlined"
         />
     ), [ changeHandler, searchKey ]);
+
+    useDataMemo<ProductInfoType[]>({
+        data: fetchProductsResult.data,
+        fetchData,
+        getData,
+        key: "products",
+        setData
+    })
 
     return (
         <div>
