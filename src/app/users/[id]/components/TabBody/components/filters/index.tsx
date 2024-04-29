@@ -9,7 +9,7 @@ import { AnalyticsContext } from "@/context/AnalyticsContext";
 import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 // import SubmitButton from "./components/submit-button";
 // import TableFilter from './components/table-filter';
-// import UserFilter from './components/user-filter'
+import Users from './components/user';
 
 const FiltersContainer = () => {
     const { onToggleCollapse } = React.useContext(AnalyticsFiltersContext)
@@ -32,14 +32,14 @@ const FiltersContainer = () => {
     const productFilterMemo = React.useMemo(() => <ProductFilter />, []);
     // const submitButton = React.useMemo(() => <SubmitButton onClose={() => setOpen(false)} />, []);
     // const tableFilterMemo = React.useMemo(() => <TableFilter />, []);
-    // const userFilterMemo = React.useMemo(() => <UserFilter />, [])
+    const usersFilterMemo = React.useMemo(() => <Users />, [])
 
     const childrenList = React.useRef({
         // "BARMAN": barmenFilterMemo,
         // "DATE": datePickerMemo,
         "PRODUCT": productFilterMemo,
         // 'TABLE': tableFilterMemo,
-        // 'USERS': userFilterMemo
+        'USERS': usersFilterMemo
     })
 
     const filtersMemo = React.useMemo(() => (
@@ -75,7 +75,8 @@ const FiltersContainer = () => {
 
     return (
         <Collapse 
-            onToggle={onToggleCollapse}>
+            onToggle={onToggleCollapse}
+            showSearchParam>
             <div className=" mt-24 px-4">
                 { filtersMemo }
             </div>
