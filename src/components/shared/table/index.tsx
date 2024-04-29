@@ -8,25 +8,28 @@ import { TableClassesType, TableHeadersType } from "@/components/table/types";
 type TablePropsType = {
     classes?: TableClassesType;
     headers: React.MutableRefObject<TableHeadersType[]>
-    data: Object[];
+    data: Object & { id: string }[];
     onClickRow?: (row: Object) => (e: React.MouseEvent<HTMLTableRowElement>) => void;
+    onChange?: (row: Object) => (e: React.ChangeEvent<HTMLInputElement>) => void;
     onRemoveRow?: (row: Object) => (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const TableContainer = ({ classes, data, headers, onClickRow, onRemoveRow }: TablePropsType) => {
+const TableContainer = ({ classes, data, headers, onClickRow, onChange, onRemoveRow }: TablePropsType) => {
     
     const getBodyRows = ({ page, rowsPerPage }: { page: number, rowsPerPage: number }) => {
         const list = rowsPerPage > 0 ? data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : data;
 
         return list.map(row => (
-                <TableRow 
-                    headers={headers}
-                    key={uuidV4()}
-                    onClick={onClickRow}
-                    onRemove={onRemoveRow}
-                    row={row}
-                />
-            ))
+            <TableRow 
+                headers={headers}
+                id={row.id}
+                key={row.id}
+                onClick={onClickRow}
+                onChange={onChange}
+                onRemove={onRemoveRow}
+                row={row}
+            />
+        ))
     };
 
     return (
