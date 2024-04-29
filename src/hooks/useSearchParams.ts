@@ -9,12 +9,16 @@ const useSearchParamsHook = () => {
     const router = useRouter();
 
     const get =  React.useCallback((key: string, defaultValue: any) => {
-        const  value = params.get(key);
-        
-        return value ?? defaultValue;
+        const value = params.get(key);
+
+        if(value) {
+            return JSON.parse(value.replaceAll("--", " "));
+        }
+
+        return defaultValue;
     }, [ params ]);
     
-    const getAll = React.useCallback((key: string) => params.getAll(key), [ params ]);
+    const getAll = React.useCallback((key: string) => params.getAll(key).map(value => value.replaceAll("--", " ")), [ params ]);
 
     const isChecked = React.useCallback((origin: string | string[], value: string): boolean => origin.includes(value), []);
 
@@ -64,7 +68,7 @@ const useSearchParamsHook = () => {
     }, [ getSearchParams, params, pathname, router]);
 
     const setSearchParam = React.useCallback((key: string, value: string) => {
-        let searchParams = `${getSearchParams(key, true)}${key}=${value}`;
+        let searchParams = `${getSearchParams(key, true)}${key}=${value.replaceAll(" ", "--")}`;
 
         router.push(`${pathname}?${searchParams}`);
 
