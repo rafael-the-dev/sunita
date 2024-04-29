@@ -14,9 +14,14 @@ type PropsType = {
 }
 
 const useFech = <T>({ autoFetch= true, url }: PropsType) => {
-    const [ state, setState ] = useState<StateType<T>>({ data: null, error: null, loading: true });
+    const [ state, setState ] = useState<StateType<T>>({ data: null, error: null, loading: autoFetch });
 
     const fetchData = useCallback(async ({ signal }: { signal: AbortSignal }) => {
+        setState((state) => ({
+            ...state,
+            loading: true
+        }));
+        
         try {
             const res = await fetch(url, { signal });
             const data = await res.json();
@@ -26,12 +31,11 @@ const useFech = <T>({ autoFetch= true, url }: PropsType) => {
                 data: data as T,
                 loading: false
             });
-
             else throw new Error(data);
         } catch(err) {
             console.error(err);
             setState({
-                error: null,
+                error: err,
                 data: null,
                 loading: false
             });
@@ -41,7 +45,7 @@ const useFech = <T>({ autoFetch= true, url }: PropsType) => {
     useEffect(() => {
         const controller = new AbortController();
 
-        autoFetch && fetchData({ signal: controller.signal});
+        if(autoFetch) fetchData({ signal: controller.signal});
 
         return () => {
             controller.abort;
@@ -49,7 +53,7 @@ const useFech = <T>({ autoFetch= true, url }: PropsType) => {
         
     }, [ fetchData, autoFetch ]);
 
-    return { ...state, fetchProducts: fetchData };
+    return { ...state, fetchData };
 }
 
 export default useFech
