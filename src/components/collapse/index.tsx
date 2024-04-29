@@ -3,9 +3,9 @@ import Collapse from "@mui/material/Collapse";
 
 type CollapsePropsType = {
     children: React.ReactNode,
-    onClose: React.MutableRefObject<() => void>;
-    onOpen: React.MutableRefObject<() => void>;
-    onToggle: React.MutableRefObject<() => void>
+    onClose?: React.MutableRefObject<() => void>;
+    onOpen?: React.MutableRefObject<() => void>;
+    onToggle?: React.MutableRefObject<() => void>
 };
 
 const CollapseContainer = ({ children, onClose, onOpen, onToggle, ...rest }: CollapsePropsType) => {
