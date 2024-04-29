@@ -8,9 +8,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { TableHeadersType, TableKeyType } from "../../types"
 
+import Checkbox from "@/components/checkbox";
+import useSearchParams from "@/hooks/useSearchParams";
+
 type TableRowPropsType = {
+    id: string;
     headers: React.MutableRefObject<TableHeadersType[]>;
     onClick?: (row: Object) => (e: React.MouseEvent<HTMLTableRowElement>) => void;
+    onChange?: (row: Object) => (e: React.ChangeEvent<HTMLInputElement>) => void;
     onRemove?: (row: Object) => (e: React.MouseEvent<HTMLButtonElement>) => void;
     row: Object
 }
@@ -23,7 +28,8 @@ const concatValues = ({ obj, value }) => {
     return obj[value];
 };
 
-const TableRowContainer = ({ headers, onClick, row, onRemove }: TableRowPropsType) => {
+const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: TableRowPropsType) => {
+    const searchParams = useSearchParams();
 
     const getKey = ({ getComponent, key, value }: TableHeadersType) => {
         if(getComponent || Array.isArray(value)) {
@@ -37,7 +43,17 @@ const TableRowContainer = ({ headers, onClick, row, onRemove }: TableRowPropsTyp
         const { subKey, value } = key;
 
         const result = data[value];
-        
+        if(value.startsWith("select_")) {
+            const searchKey = value.split("_")[1];
+            const searchedValues = searchParams.getAll(searchKey);
+
+            return (
+                <Checkbox 
+                    checked={searchParams.isChecked(searchedValues, id)}
+                    onChange={onChange && onChange(row)}
+                />
+            );
+        }
         if(value === "date" || value === "createdAt") {
             return moment(result).format("DD/MM/YYYY HH:mm:ss");
         } else if(value === "delete") {
