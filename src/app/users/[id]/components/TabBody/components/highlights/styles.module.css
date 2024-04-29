@@ -29,4 +29,14 @@
         justify-content: space-between;
         width: 100% !important;
     }
+
+    .filterButtonContainer {
+        height: 124px;
+        width:22.3% !important;
+    }
+
+    .filtersButton {
+        background-color: #f3f4f6;
+        font-size: 1.2rem;
+    }
 }

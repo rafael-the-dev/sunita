@@ -1,24 +1,30 @@
 import { useCallback, useContext, useEffect, useRef } from "react";
 import classNames from "classnames";
+import Button from "@mui/material/Button"
 import Hidden from "@mui/material/Hidden";
 import IconButton from "@mui/material/IconButton";
 
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 
 import styles from "./styles.module.css";
 import { AnalyticsContext } from "@/context/AnalyticsContext";
+import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 
 import Card from "@/components/shared/card"
 
 const Highlights = () => {
     const { getAnalytics } = useContext(AnalyticsContext)
+    const { onToggleCollapse } = useContext(AnalyticsFiltersContext)
 
     const listRef = useRef<HTMLUListElement | null>(null)
     const sliderRef = useRef<HTMLUListElement | null>(null)
     const childrenList = useRef<HTMLElement[]>([])
     const currentIndex = useRef(0)
     const slideWidth = useRef(0)
+
+    const toggleHandler = useCallback(() => onToggleCollapse.current?.(), [ onToggleCollapse ])
 
     const nextSlide = useCallback(() => {
         const nextSlideIndex = currentIndex.current + 1;
@@ -98,7 +104,7 @@ const Highlights = () => {
                     className={classNames(styles.slider, "h-full relative md:flex")}
                     ref={sliderRef}>
                     <Card 
-                        color="#fafafa"
+                        color="#f3f4f6"
                         description={getAnalytics()?.sales?.total}
                         title="Total"
                     />
@@ -112,11 +118,17 @@ const Highlights = () => {
                         description={getAnalytics()?.sales?.total}
                         title="Profit"
                     />
-                    <Card 
-                        color="#f3f4f6"
-                        description={getAnalytics()?.sales?.total}
-                        title="Total Received"
-                    />
+                    <Hidden mdDown>
+                        <li className={classNames(styles.filterButtonContainer)}>
+                            <Button
+                                className={classNames(styles.filtersButton, ` 
+                                    h-full rounded-md py-6 text-black w-full hover:bg-stone-400`)}
+                                onClick={toggleHandler}
+                                startIcon={<FilterAltIcon />}>
+                                Filters
+                            </Button>
+                        </li>
+                    </Hidden>
                 </ul>
             </div>
             <Hidden mdUp>
