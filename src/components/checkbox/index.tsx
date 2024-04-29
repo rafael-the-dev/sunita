@@ -5,7 +5,7 @@ import { styled } from "@mui/material/styles";
 
 type CheckboxPropsType = {
     checked?: boolean;
-    label: string;
+    label?: string;
     onChange: (e: ChangeEvent<HTMLInputElement>, checked: boolean) => void;
     value?: string;
 };
