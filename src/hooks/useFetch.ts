@@ -8,7 +8,12 @@ type StateType<T> = {
     loading: boolean
 };
 
-const useFech = <T>({ url }) => {
+type PropsType = {
+    autoFetch?: boolean;
+    url: string;
+}
+
+const useFech = <T>({ autoFetch= true, url }: PropsType) => {
     const [ state, setState ] = useState<StateType<T>>({ data: null, error: null, loading: true });
 
     const fetchData = useCallback(async ({ signal }: { signal: AbortSignal }) => {
@@ -31,18 +36,18 @@ const useFech = <T>({ url }) => {
                 loading: false
             });
         }
-    }, []);
+    }, [ url ]);
 
     useEffect(() => {
         const controller = new AbortController();
 
-        fetchData({ signal: controller.signal});
+        autoFetch && fetchData({ signal: controller.signal});
 
         return () => {
             controller.abort;
         }
         
-    }, [ fetchData ]);
+    }, [ fetchData, autoFetch ]);
 
     return { ...state, fetchProducts: fetchData };
 }
