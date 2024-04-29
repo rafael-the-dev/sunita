@@ -18,7 +18,7 @@ export const POST = async (req: NextRequest) => {
 
     return await apiHandler(
         async ({ mongoDbConfig, user }) => {
-            await Users.register({  category, firstName, lastName, password, username }, { mongoDbConfig });
+            await Users.register({  category, firstName, id: username, lastName, password, username }, { mongoDbConfig });
             return NextResponse.json({}, { status: 201 });
         }
     )
