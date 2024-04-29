@@ -12,7 +12,7 @@ type PropsType = {
 const Highlight = ({ color, description, title }: PropsType) => {
 
     return (
-        <div
+        <li
             style={{ backgroundColor: color }}
             className={classNames(styles.container, "absolute px-3 py-4 rounded-md top-0 xl:py-6 md:relative")}>
             <Typography className={classNames(styles.content, 'font-normal text-base text-primary-800 w-fit')}>
@@ -21,7 +21,7 @@ const Highlight = ({ color, description, title }: PropsType) => {
                     { description } MT
                 </span>
             </Typography>
-        </div>
+        </li>
     );
 };
 
