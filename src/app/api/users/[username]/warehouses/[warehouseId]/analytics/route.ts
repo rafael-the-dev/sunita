@@ -18,9 +18,22 @@ type URLParamsType = {
 }
 
 export const GET = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
+    const searchParams = req.nextUrl.searchParams;
+
+    const products = searchParams.getAll("product");
+    const users = searchParams.getAll("user")
+
+    const getFilters = () => {
+
+        return {
+           ...( products.length > 0 ? { "product_info.id": { $in: products } } : {}),
+            ...(users.length > 0 ? { "user_info.username": { $in: users } } : {}),
+        }
+    }
+
     return await apiHandler(async ({ mongoDbConfig, user }) => {
         const [ sales ] = await Promise.all([
-            Sales.getAll({ warehouseId }, { mongoDbConfig, user })
+            Sales.getAll({ filters: getFilters(), warehouseId }, { mongoDbConfig, user })
         ])
 
         const salesStats = getSalesStats(sales);

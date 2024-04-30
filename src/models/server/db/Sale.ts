@@ -9,7 +9,7 @@ import ProductModel from "./Product";
 import Error404 from "@/errors/server/404Error";
 
 class Sale {
-    static async getAll({ warehouseId }: { warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
+    static async getAll({ filters,  warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
         return await mongoDbConfig.collections
             .WAREHOUSES
             .aggregate([
@@ -34,6 +34,7 @@ class Sale {
                     }
                 },
                 { $unwind: "$user_info" },
+                { $match: { ...(filters ?? {} ) } },
                 {
                     $addFields: {
                         "sales.items.product": {
