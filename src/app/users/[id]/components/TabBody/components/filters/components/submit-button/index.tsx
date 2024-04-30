@@ -29,7 +29,7 @@ const SubmitButton = () => {
         url: `/api/users/rafaeltivane/warehouses/12345/analytics?${getSearchParams()}`
     });*/
 
-    const canISubmit = () => {
+    const hasSearchParams = () => {
         const hasUsersSearchParam = searchParams.getAll("user").length > 0;
         const hasProductsSearchParam = searchParams.getAll("product").length > 0;
 
@@ -37,24 +37,21 @@ const SubmitButton = () => {
     };
 
     // const controllerRef = useRef():;
+    const canISubmit = hasSearchParams();
 
     const submitHandler = async () => {
-        // const queryParams = getSearchParams()
-        // fetchData({})
         await fetchData({
-            path: `/api/users/rafaeltivane/warehouses/12345/analytics?${getSearchParams()}`
+            ...( canISubmit ? { path: `/api/users/rafaeltivane/warehouses/12345/analytics?${getSearchParams()}` } : {})
         })
     };
 
     return (
-        canISubmit() ? (
-            <Button
-                className="px-6 py-2"
-                disabled={loading}
-                onClick={submitHandler}>
-                { loading ? "Loading..." : "Submit" }
-            </Button>
-        ) : <></> 
+        <Button
+            className="px-6 py-2"
+            disabled={loading}
+            onClick={submitHandler}>
+            { loading ? "Loading..." : ( canISubmit ? "Submit" : "Refresh" )}
+        </Button>
     );
 };
 
