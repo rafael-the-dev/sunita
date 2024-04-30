@@ -3,7 +3,7 @@ import { ProductInfoType } from "./product";
 
 export type SaleType = {
     changes: number;
-    createAt: Date;
+    createAt: Date | string;
     id: string;
     profit: number;
     items: {
