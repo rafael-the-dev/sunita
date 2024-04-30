@@ -12,7 +12,11 @@ const useSearchParamsHook = () => {
         const value = params.get(key);
 
         if(value) {
-            return JSON.parse(value.replaceAll("--", " "));
+            try {
+                return JSON.parse(value.replaceAll("--", " "));
+            } catch(e) {
+                return value;
+            }
         }
 
         return defaultValue;
