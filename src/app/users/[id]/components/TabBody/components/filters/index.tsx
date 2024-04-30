@@ -3,7 +3,7 @@ import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } fr
 
 // import BarmanFilter from "./components/barman-filter";
 import Collapse from "@/components/collapse"
-// import DatePicker from "../date-filter";
+import DateFilter from "./components/date";
 import ProductFilter from "./components/products";
 import { AnalyticsContext } from "@/context/AnalyticsContext";
 import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
@@ -15,7 +15,6 @@ import SubmitButon from "./components/submit-button";
 const FiltersContainer = () => {
     const { onToggleCollapse } = React.useContext(AnalyticsFiltersContext)
 
-    const [ open, setOpen ] = React.useState(false);
     const [ value, setValue ] = React.useState("DATE");
 
     const controls = React.useRef([
@@ -29,7 +28,7 @@ const FiltersContainer = () => {
     const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value), []);
 
     // const barmenFilterMemo = React.useMemo(() => <BarmanFilter />, []);
-    // const datePickerMemo = React.useMemo(() => <DatePicker />, []);
+    const dateFilterMemo = React.useMemo(() => <DateFilter />, []);
     const productFilterMemo = React.useMemo(() => <ProductFilter />, []);
     // const submitButton = React.useMemo(() => <SubmitButton onClose={() => setOpen(false)} />, []);
     // const tableFilterMemo = React.useMemo(() => <TableFilter />, []);
@@ -37,7 +36,7 @@ const FiltersContainer = () => {
 
     const childrenList = React.useRef({
         // "BARMAN": barmenFilterMemo,
-        // "DATE": datePickerMemo,
+        "DATE": dateFilterMemo,
         "PRODUCT": productFilterMemo,
         // 'TABLE': tableFilterMemo,
         'USERS': usersFilterMemo
