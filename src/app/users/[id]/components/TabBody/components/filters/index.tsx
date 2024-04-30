@@ -10,6 +10,7 @@ import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 // import SubmitButton from "./components/submit-button";
 // import TableFilter from './components/table-filter';
 import Users from './components/user';
+import SubmitButon from "./components/submit-button";
 
 const FiltersContainer = () => {
     const { onToggleCollapse } = React.useContext(AnalyticsFiltersContext)
@@ -77,8 +78,11 @@ const FiltersContainer = () => {
         <Collapse 
             onToggle={onToggleCollapse}
             showSearchParam>
-            <div className=" mt-24 px-4">
+            <div className="mt-24 px-4">
                 { filtersMemo }
+                <div className="px-4">
+                    <SubmitButon />
+                </div>
             </div>
         </Collapse>
     );
