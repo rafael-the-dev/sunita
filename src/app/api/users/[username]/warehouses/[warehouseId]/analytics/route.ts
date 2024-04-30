@@ -5,10 +5,11 @@ import { CartResquestType } from "@/types/cart";
 import { AnalyticsType } from "@/types/analytics";
 
 import { apiHandler } from "@/middlewares/route-handler";
+import { getSalesStats } from "@/helpers/analytics";
+import { resetDate } from "@/helpers/date";
 
 import ProductModel from "@/models/server/db/Product";
 import Sales from "@/models/server/db/Sale";
-import { getSalesStats } from "@/helpers/analytics";
 
 type URLParamsType = {
     params: {
@@ -20,12 +21,15 @@ type URLParamsType = {
 export const GET = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
     const searchParams = req.nextUrl.searchParams;
 
+    const endDate = searchParams.get("end-date")
     const products = searchParams.getAll("product");
     const users = searchParams.getAll("user")
+    const startDate = searchParams.get("start-date")
 
     const getFilters = () => {
 
         return {
+            ...( resetDate({ endDate, startDate }) ),
            ...( products.length > 0 ? { "product_info.id": { $in: products } } : {}),
             ...(users.length > 0 ? { "user_info.username": { $in: users } } : {}),
         }
