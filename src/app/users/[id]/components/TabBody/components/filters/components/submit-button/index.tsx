@@ -21,19 +21,22 @@ const SubmitButton = () => {
         const products = searchParams.getAll("product");
         if(products.length > 0) queryParams += mapValues("product", products).join("");
 
+        const startDate = searchParams.get("start-date", "")
+        if(startDate) queryParams += `start-date=${startDate}&`
+
+        const endDate = searchParams.get("end-date", "");
+        if(startDate && endDate) queryParams += `end-date=${endDate}`
+
         return queryParams;
     };
-
-    /*const { data, loading, fetchData } = useFech({
-        autoFetch: false,
-        url: `/api/users/rafaeltivane/warehouses/12345/analytics?${getSearchParams()}`
-    });*/
 
     const hasSearchParams = () => {
         const hasUsersSearchParam = searchParams.getAll("user").length > 0;
         const hasProductsSearchParam = searchParams.getAll("product").length > 0;
+        const hasStartDate = searchParams.get("start-date", "");
+        const hasEndDate = searchParams.get("end-date", "") && hasStartDate;
 
-        return hasProductsSearchParam || hasUsersSearchParam;
+        return hasProductsSearchParam || hasUsersSearchParam || hasStartDate || hasEndDate;
     };
 
     // const controllerRef = useRef():;
