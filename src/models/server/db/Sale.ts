@@ -7,6 +7,7 @@ import { SaleType, SaleInfoType } from "@/types/sale";
 
 import ProductModel from "./Product";
 import Error404 from "@/errors/server/404Error";
+import { toISOString } from "@/helpers/date";
 
 class Sale {
     static async getAll({ filters,  warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
@@ -117,7 +118,7 @@ class Sale {
 
         let sale: SaleType = {
             changes: cart.changes,
-            createAt: new Date(),
+            createAt: toISOString(Date.now()),
             id: uuidV4(),
             items: itemsList,
             profit: totalProfit,
