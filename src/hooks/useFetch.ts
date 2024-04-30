@@ -16,14 +16,14 @@ type PropsType = {
 const useFech = <T>({ autoFetch= true, url }: PropsType) => {
     const [ state, setState ] = useState<StateType<T>>({ data: null, error: null, loading: autoFetch });
 
-    const fetchData = useCallback(async ({ signal }: { signal: AbortSignal }) => {
+    const fetchData = useCallback(async ({ options, path, signal }: { options?: RequestInit, path?: string, signal?: AbortSignal }) => {
         setState((state) => ({
             ...state,
             loading: true
         }));
         
         try {
-            const res = await fetch(url, { signal });
+            const res = await fetch(path ?? url, options ?? { signal });
             const data = await res.json();
 
             if(res.status === 200) setState({
