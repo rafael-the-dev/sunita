@@ -12,7 +12,7 @@ AnalyticsContext.displayName = "AnalyticsContext";
 export const AnalyticsContextProvider = ({ children }: { children: React.ReactNode }) => {
     const { credentials } = React.useContext(LoginContext)
 
-    const { data } = useFech<AnalyticsType>({ 
+    const { data, fetchData, loading } = useFech<AnalyticsType>({ 
         url: `/api/users/${credentials?.user?.username }/warehouses/12345/analytics`
     });
 
@@ -21,6 +21,10 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
     return (
         <AnalyticsContext.Provider
             value={{
+                loading,
+
+                
+                fetchData,
                 getAnalytics
             }}>
             { children }
