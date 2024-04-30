@@ -1,5 +1,7 @@
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -19,9 +21,12 @@ const RootLayout = ({ children }) => {
             <body>
                 <AppRouterCacheProvider options={{  enableCssLayer: true  }}>
                     <ThemeProvider theme={theme}>
-                        <AppContextProvider>
-                            { children }
-                        </AppContextProvider>
+                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                            <AppContextProvider>
+                                
+                                { children }
+                            </AppContextProvider>
+                        </LocalizationProvider>
                     </ThemeProvider>
                 </AppRouterCacheProvider>
             </body>
