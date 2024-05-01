@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ProductType } from "@/types/product";
 import { apiHandler } from "@/middlewares/route-handler";
 
-import ExpenseModel from "@/models/server/db/";
+import ExpenseModel from "@/models/server/db/Expenses";
 import { ExpenseClientType } from "@/types/expense";
 
 type URLParamsType = {
