@@ -1,9 +1,9 @@
-const DefaultError = require("./DefaultError");
+import DefaultError from "./DefaultError";
 
 class InvalidArgumentError extends DefaultError {
-    constructor(message) {
+    constructor(message: string) {
         super(400, message ?? "Invalid arguments.");
     }
 }
 
-module.exports = InvalidArgumentError;
+export default InvalidArgumentError;
