@@ -2,20 +2,17 @@ import * as React from "react";
 import currency from "currency.js";
 import { v4 as uuidV4} from "uuid";
 
-type ExpensesItemType = {
-    description: string;
-    id: string;
-    price: number;
-};
+import { ExpenseItemType } from "@/types/expense"
 
 type ExpensesContextType = {
     addItem: () => void;
     addCategory: (value: string) => void;
     canISubmit: boolean;
-    getItems: () => ExpensesItemType[];
+    getItems: () => ExpenseItemType[];
     getCategory: () => string;
     removeItem: (id: string) => void;
     totalPrice: number;
+    toString: () => string;
     updateItem: (id: string, key: string, value: string) => void
 }
 
@@ -32,7 +29,7 @@ const getNewItem = () => {
 
 export const ExpensesContextProvider = ({ children }) => {
     const [ category, setCategory ] = React.useState("credelec");
-    const [ itemsList, setItemsList ] = React.useState<ExpensesItemType[]>([ getNewItem() ]);
+    const [ itemsList, setItemsList ] = React.useState<ExpenseItemType[]>([ getNewItem() ]);
 
     const canISubmit = React.useMemo(() => {
         return !Boolean(itemsList.find(({ description, price }) => {
@@ -71,7 +68,15 @@ export const ExpensesContextProvider = ({ children }) => {
     }, []);
 
     const getCategory = React.useCallback(() => category, [ category ])
-    const getItems = React.useCallback(() => itemsList, [ itemsList ]);
+    const getItems = React.useCallback(() => structuredClone(itemsList), [ itemsList ]);
+
+    const toString = React.useCallback(() => {
+        return JSON.stringify({
+            category: getCategory(),
+            items: getItems(),
+            total: totalPrice
+        })
+    }, [ getCategory, getItems, totalPrice ])
 
     return (
         <ExpensesContext.Provider
@@ -82,6 +87,7 @@ export const ExpensesContextProvider = ({ children }) => {
                 getItems,
                 removeItem,
                 totalPrice,
+                toString,
                 updateItem
             }}>
             { children }
