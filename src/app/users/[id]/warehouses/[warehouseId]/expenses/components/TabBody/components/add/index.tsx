@@ -8,6 +8,7 @@ import Button from "@/components/shared/button"
 import ListItem from "./components/expense-item";
 import TextField from "@/components/Textfield";
 import Combobox from "@/components/shared/combobox";
+import useFech from "@/hooks/useFetch";
 
 const list = [
     {
@@ -25,7 +26,18 @@ const list = [
 ]
 
 const RegisterExpenses = () => {
-    const { addItem, getItems, removeItem, totalPrice } = useContext(ExpensesContext);//:;
+    const { addItem, getItems, totalPrice, toString } = useContext(ExpensesContext);//
+
+    const { loading, fetchData } = useFech({ autoFetch: false, url: `/api/users/rafaeltivane/warehouses/12345/expenses` })
+
+    const submitHandler = async () => {
+        fetchData({
+            options: {
+                method: "POST",
+                body: toString()
+            }
+        })
+    };
 
     return (
         <form className={classNames(styles.form)}>
@@ -56,7 +68,9 @@ const RegisterExpenses = () => {
                     <Button onClick={addItem}>Add new item</Button>
                 </div>
                 <div className="flex justify-end mt-16">
-                    <Button onClick={addItem}>Submit</Button>
+                    <Button onClick={submitHandler}>
+                        { loading ? "Loading..." : "Submit" }
+                    </Button>
                 </div>
             </div>
         </form>
