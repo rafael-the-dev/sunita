@@ -7,15 +7,23 @@ import useSearchParams from "@/hooks/useSearchParams";
 import { TableHeadersType } from "@/components/table/types";
 import { AppContext } from "@/context/AppContext";
 import { ExpensesContextProvider } from "@/context/ExpensesContext";
+import useFech from "@/hooks/useFetch";
 
 import Button from "@/components/shared/button"
 import Collapse from "@/components/shared/collapse";
 import DateTimeInput from "@/components/shared/date-filter";
 import RegisterExpenses from "./components/add";
 import Table from "@/components/shared/table";
+import { AnalyticsExpenseType } from "@/types/analytics";
+import SubmitButton from "./components/submit-button";
 
 const TabBody = () => {
     const { setDialog } = React.useContext(AppContext);
+
+    const { data, fetchData, loading } = useFech<AnalyticsExpenseType>({
+        autoFetch: true,
+        url: "http://localhost:3000/api/users/rafaeltivane/warehouses/12345/analytics/expenses"
+    })
 
     const searchParams = useSearchParams()
     const startDate = searchParams.get("start-date", "");
@@ -37,7 +45,7 @@ const TabBody = () => {
             }
         },
         {
-            label: "Caategory",
+            label: "Category",
             key: {
                 value: "category"
             }
@@ -58,6 +66,8 @@ const TabBody = () => {
             }
         })
     }, [ setDialog ])
+    
+    if(!data) return <></>;
 
     return (
         <div className="py-4">
@@ -75,7 +85,7 @@ const TabBody = () => {
                         <Typography
                             component="h3"
                             className="font-semibold mt-3 text-2xl">
-                            4352 MT
+                            { data.total } MT
                         </Typography>
                     </div>
                 </div>
@@ -97,13 +107,17 @@ const TabBody = () => {
                                 />
                             )}
                         </div>
+                        <SubmitButton 
+                            fetchData={fetchData} 
+                            loading={loading}
+                        />
                     </div>
                 </Collapse>
             </div>
             <div className={classNames("mt-4 px-3 md:mt-8")}>
                 <Table 
                     headers={headers}
-                    data={[]}
+                    data={data.list}
                 />
             </div>
             <div className="absolute bottom-0 flex justify-end px-3 py-4 right-0">

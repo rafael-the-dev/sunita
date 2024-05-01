@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import currency from "currency.js";
 
-import { CartResquestType } from "@/types/cart";
 import { AnalyticsType } from "@/types/analytics";
 
 import { apiHandler } from "@/middlewares/route-handler";
-import { getSalesStats } from "@/helpers/analytics";
-import { resetDate } from "@/helpers/date";
+import { getExpensesTotalPrice, getFilters, getSalesStats } from "@/helpers/analytics";
 
-import ProductModel from "@/models/server/db/Product";
+import Expenses from "@/models/server/db/Expenses";
 import Sales from "@/models/server/db/Sale";
+import currency from "currency.js";
 
 type URLParamsType = {
     params: {
@@ -21,28 +19,21 @@ type URLParamsType = {
 export const GET = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
     const searchParams = req.nextUrl.searchParams;
 
-    const endDate = searchParams.get("end-date")
-    const products = searchParams.getAll("product");
-    const users = searchParams.getAll("user")
-    const startDate = searchParams.get("start-date")
-
-    const getFilters = () => {
-
-        return {
-            ...( resetDate({ endDate, startDate }) ),
-           ...( products.length > 0 ? { "product_info.id": { $in: products } } : {}),
-            ...(users.length > 0 ? { "user_info.username": { $in: users } } : {}),
-        }
-    }
-
     return await apiHandler(async ({ mongoDbConfig, user }) => {
-        const [ sales ] = await Promise.all([
-            Sales.getAll({ filters: getFilters(), warehouseId }, { mongoDbConfig, user })
+        const [ expenses, sales ] = await Promise.all([
+            Expenses.getAll({ filters: getFilters("expenses.createdAt", searchParams), storeId: warehouseId }, { mongoDbConfig, user }),
+            Sales.getAll({ filters: getFilters("sales.createAt", searchParams), warehouseId }, { mongoDbConfig, user })
         ])
 
         const salesStats = getSalesStats(sales);
+        const totalExpenses = getExpensesTotalPrice(expenses);
 
         const analytics: AnalyticsType = {
+            expenses: {
+                list: expenses,
+                total: totalExpenses
+            },
+            profit: currency(salesStats.profit).subtract(totalExpenses).value,
             sales: {
                 list: sales,
                 profit: salesStats.profit,

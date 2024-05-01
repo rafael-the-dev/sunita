@@ -39,7 +39,7 @@ export const resetTime = (dateTime: moment.Moment) => {
 
 export const toISOString = (date: DateType) => moment(date).toISOString();
 
-export const resetDate = ({ endDate, startDate }: { endDate: DateType, startDate: DateType }) => {
+export const resetDate = ({ endDate, key, startDate }: { endDate: DateType, key: string, startDate: DateType }) => {
     let firstDate = startDate;
 
     if(!firstDate) {
@@ -57,6 +57,6 @@ export const resetDate = ({ endDate, startDate }: { endDate: DateType, startDate
     const to = moment(lastDate);
     
     return {
-        "sales.createAt": { $gte: toISOString(from), $lte: toISOString(to) }
+        [key]: { $gte: toISOString(from), $lte: toISOString(to) }
     };
 };

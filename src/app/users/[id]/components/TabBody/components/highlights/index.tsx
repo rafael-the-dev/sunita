@@ -106,16 +106,16 @@ const Highlights = () => {
                     <Card 
                         color="#f3f4f6"
                         description={getAnalytics()?.sales?.total}
-                        title="Total"
+                        title="Sales"
                     />
                     <Card 
                         color="#f3f4f6"
-                        description={getAnalytics()?.sales?.profit}
-                        title="Profit"
+                        description={getAnalytics()?.expenses.total}
+                        title="Expenses"
                     />
                     <Card 
                         color="#f3f4f6"
-                        description={getAnalytics()?.sales?.total}
+                        description={getAnalytics()?.profit}
                         title="Profit"
                     />
                     <Hidden mdDown>

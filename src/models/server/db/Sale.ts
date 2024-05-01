@@ -4,10 +4,11 @@ import currency from "currency.js";
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
 import { SaleType, SaleInfoType } from "@/types/sale";
+import { toISOString } from "@/helpers/date";
 
 import ProductModel from "./Product";
 import Error404 from "@/errors/server/404Error";
-import { toISOString } from "@/helpers/date";
+import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
 class Sale {
     static async getAll({ filters,  warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {

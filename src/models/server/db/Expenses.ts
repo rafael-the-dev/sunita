@@ -7,6 +7,12 @@ import { WarehouseType } from "@/types/warehouse";
 
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 import Store from "./Warehouse";
+import { getId } from "@/helpers/id";
+
+type GetAllPropsType = {
+    filters?: Object;
+    storeId: string;
+}
 
 type PropsType = {
     expense: ExpenseClientType;
@@ -14,6 +20,43 @@ type PropsType = {
 }
 
 class Expense {
+    static async getAll({ filters, storeId }: GetAllPropsType, { mongoDbConfig, user }: ConfigType) {
+        return await mongoDbConfig.collections
+            .WAREHOUSES
+            .aggregate([
+                { $match: { id: storeId } },
+                { $unwind: "$expenses" },
+                { $unwind: "$expenses.items" },
+                {
+                    $lookup: {
+                        from: "users", // Replace with the name of your external product collection
+                        localField: "expenses.user",
+                        foreignField: "username",
+                        as: "user_info"
+                    }
+                },
+                { $unwind: "$user_info" },
+                { $match: { ...(filters ?? {} ) } },
+                {
+                    $group: {
+                        _id: "$expenses.id",
+                        createdAt: { $first: "$expenses.createdAt" },
+                        category: { $first: "$expenses.category" },
+                        id: { $first: "$expenses.id" },
+                        items: { $first: "$expenses.items" },
+                        status: { $first: "$expenses.status" },
+                        total: { $first: "$expenses.total" },
+                        user: { 
+                            $first: {
+                                firstName: "$user_info.firstName",
+                                lastName: "$user_info.lastName",
+                                username: "$user_info.username"
+                            }
+                         }
+                    }
+                }
+            ]).toArray() as ExpenseInfoType[];
+    }
 
     static async register({ expense, storeId }: PropsType, { mongoDbConfig, user }: ConfigType) {
         const helper = (store: WarehouseType) => {
@@ -28,6 +71,7 @@ class Expense {
             const newExpense: ExpenseType = {
                 category: expense.category,
                 createdAt: new Date(Date.now()).toISOString(),
+                id: getId(),
                 items: expense.items,
                 status: ExpenseStatus.SUCCESSFULL,
                 total: expense.total,

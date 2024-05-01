@@ -20,6 +20,7 @@ export type ExpenseClientType = {
 export type ExpenseType = {
     category: string;
     createdAt: string | Date;
+    id: string;
     items: ExpenseItemType[],
     status: ExpenseStatus;
     total: number;
@@ -29,6 +30,7 @@ export type ExpenseType = {
 export type ExpenseInfoType = {
     category: string;
     createdAt: string | Date;
+    id: string;
     items: ExpenseItemType[],
     status: ExpenseStatus;
     total: number;

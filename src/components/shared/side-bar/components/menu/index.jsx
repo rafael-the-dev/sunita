@@ -20,6 +20,10 @@ const Menu = () => {
             label: "Products",
             path: `/users/${user.username}/warehouses/${12345}/products`
         },
+        {
+            label: "Expenses",
+            path: `/users/${user.username}/warehouses/${12345}/expenses`
+        },
     ];
 
     return (
