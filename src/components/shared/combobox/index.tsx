@@ -4,17 +4,19 @@ import MenuItem from "@mui/material/MenuItem";
 import Textfield from "@/components/Textfield";
 
 type PropsType = {
-    className: string;
+    className?: string;
+    label?: string;
     list: { key: string | number ; label: string | number ; }[];
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     value: string | number;
 }
 
-const Combobox = ({ className, list, onChange, value }: PropsType) => {
+const Combobox = ({ className, label, list, onChange, value }: PropsType) => {
 
     return (
         <Textfield
             className={className}
+            label={label}
             onChange={onChange}
             select
             value={value}>

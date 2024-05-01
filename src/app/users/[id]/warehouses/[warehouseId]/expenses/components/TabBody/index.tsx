@@ -5,12 +5,18 @@ import Typography from "@mui/material/Typography";
 import styles from "./styles.module.css"
 import useSearchParams from "@/hooks/useSearchParams";
 import { TableHeadersType } from "@/components/table/types";
+import { AppContext } from "@/context/AppContext";
+import { ExpensesContextProvider } from "@/context/ExpensesContext";
 
-
+import Button from "@/components/shared/button"
 import Collapse from "@/components/shared/collapse";
 import DateTimeInput from "@/components/shared/date-filter";
+import RegisterExpenses from "./components/add";
 import Table from "@/components/shared/table";
+
 const TabBody = () => {
+    const { setDialog } = React.useContext(AppContext);
+
     const searchParams = useSearchParams()
     const startDate = searchParams.get("start-date", "");
 
@@ -43,6 +49,15 @@ const TabBody = () => {
             }
         }
     ])
+
+    const addExpenseEventHandler = React.useCallback(() => {
+        setDialog({
+            body: <ExpensesContextProvider><RegisterExpenses />,</ExpensesContextProvider>,
+            header: {
+                title: "Register expenses"
+            }
+        })
+    }, [ setDialog ])
 
     return (
         <div className="py-4">
@@ -90,6 +105,14 @@ const TabBody = () => {
                     headers={headers}
                     data={[]}
                 />
+            </div>
+            <div className="absolute bottom-0 flex justify-end px-3 py-4 right-0">
+                <Button className="mr-3 py-2 px-4">Categories</Button>
+                <Button 
+                    className="py-2 px-4"
+                    onClick={addExpenseEventHandler}>
+                    Add
+                </Button>
             </div>
         </div>
     );
