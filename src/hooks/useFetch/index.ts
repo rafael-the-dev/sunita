@@ -18,7 +18,7 @@ type PropsType = {
 const useFech = <T>({ autoFetch= true, url }: PropsType) => {
     const [ state, setState ] = useState<StateType<T>>({ data: null, error: null, loading: autoFetch });
 
-    const fetchData = useCallback(async ({ options, path, signal }: FetchDataPropsType) => {
+    const fetchData = useCallback(async ({ options, onError, onSuccess, path, signal }: FetchDataPropsType) => {
         setState((state) => ({
             ...state,
             loading: true
@@ -28,11 +28,16 @@ const useFech = <T>({ autoFetch= true, url }: PropsType) => {
             const res = await fetch(path ?? url, options ?? { signal });
             const data = await res.json();
 
-            if(res.status === 200) setState({
-                error: null,
-                data: data as T,
-                loading: false
-            });
+            if(res.status >= 200 && res.status < 300) {
+                if(onSuccess) await onSuccess<T>(res, data);
+
+                setState({
+                    error: null,
+                    data: data as T,
+                    loading: false
+                });
+            }
+
             else throw new Error(data);
         } catch(err) {
             console.error(err);
@@ -41,6 +46,8 @@ const useFech = <T>({ autoFetch= true, url }: PropsType) => {
                 data: null,
                 loading: false
             });
+
+            if(onError) onError(err)
         }
     }, [ url ]);
 
