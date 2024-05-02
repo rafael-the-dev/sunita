@@ -16,6 +16,7 @@ import RegisterExpenses from "./components/add";
 import Table from "@/components/shared/table";
 import { AnalyticsExpenseType } from "@/types/analytics";
 import SubmitButton from "./components/submit-button";
+import { ExpenseInfoType } from "@/types/expense";
 
 const TabBody = () => {
     const { setDialog } = React.useContext(AppContext);
@@ -58,14 +59,21 @@ const TabBody = () => {
         }
     ])
 
-    const addExpenseEventHandler = React.useCallback(() => {
+    const openDialog = React.useCallback(<T extends Object>(title: string, payload?: T) => {
         setDialog({
-            body: <ExpensesContextProvider><RegisterExpenses />,</ExpensesContextProvider>,
+            body: <ExpensesContextProvider><RegisterExpenses refreshData={fetchData} />,</ExpensesContextProvider>,
             header: {
-                title: "Register expenses"
-            }
+                title
+            },
+            payload
         })
-    }, [ setDialog ])
+    }, [ fetchData, setDialog ]);
+
+    const addExpenseEventHandler = React.useCallback(() => openDialog("Register expenses"), [ openDialog ])
+
+    const tableRowClickHandler = React.useCallback((expense: ExpenseInfoType) => () => {
+        openDialog("Expense details", expense)
+    }, [ openDialog ]);
     
     if(!data) return <></>;
 
@@ -118,6 +126,7 @@ const TabBody = () => {
                 <Table 
                     headers={headers}
                     data={data.list}
+                    onClickRow={tableRowClickHandler}
                 />
             </div>
             <div className="absolute bottom-0 flex justify-end px-3 py-4 right-0">

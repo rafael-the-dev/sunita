@@ -1,19 +1,23 @@
-import { useContext } from "react"
+import { ChangeEvent, useCallback, useContext, useRef } from "react"
 import classNames from "classnames";
+import DeleteButton from "@mui/material/Button"
 
 import styles from "./styles.module.css"
+import useFetch from "@/hooks/useFetch";
+import { AppContext } from "@/context/AppContext";
 import { ExpensesContext } from "@/context/ExpensesContext";
 
 import Button from "@/components/shared/button"
 import ListItem from "./components/expense-item";
 import TextField from "@/components/Textfield";
 import Combobox from "@/components/shared/combobox";
-import useFech from "@/hooks/useFetch";
+import { FetchDataFuncType } from "@/hooks/useFetch/types";
+import { ExpenseInfoType } from "@/types/expense";
 
 const list = [
     {
         label: "Credelec",
-        key: "credelect"
+        key: "credelec"
     },
     {
         label: "Food",
@@ -25,17 +29,50 @@ const list = [
     }
 ]
 
-const RegisterExpenses = () => {
-    const { addItem, getItems, totalPrice, toString } = useContext(ExpensesContext);//
+const RegisterExpenses = ({ refreshData}: { refreshData: FetchDataFuncType }) => {
+    const { dialog, setDialog } = useContext(AppContext)
+    const { addCategory, addItem, getItems, getCategory, totalPrice, toString } = useContext(ExpensesContext);//
 
-    const { loading, fetchData } = useFech({ autoFetch: false, url: `/api/users/rafaeltivane/warehouses/12345/expenses` })
+    const requestMethod = useRef("")
+
+    const changeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => addCategory(e.target.value), [ addCategory ])
+    
+    const { loading, fetchData } = useFetch({ 
+        autoFetch: false, 
+        url: `/api/users/rafaeltivane/warehouses/12345/expenses` 
+    })
+
+    const onSuccess = async () => {
+        await refreshData({});
+        setDialog(null);
+    }
+
+    const deleteHandler = () => {
+        const expense = dialog.payload as ExpenseInfoType;
+        requestMethod.current = "DELETE";
+
+        fetchData({
+            onSuccess,
+            options: {
+                method: "DELETE",
+            },
+            path: `/api/users/rafaeltivane/warehouses/12345/expenses/${expense.id}`
+        })
+    }
 
     const submitHandler = async () => {
+        const expense = dialog.payload as ExpenseInfoType;
+        requestMethod.current = expense ? "PUT" : "POST";
+
         fetchData({
+            onSuccess,
             options: {
-                method: "POST",
+                method: requestMethod.current,
                 body: toString()
-            }
+            },
+            ...( expense ? { 
+                path: `/api/users/rafaeltivane/warehouses/12345/expenses/${expense.id}`
+            } : {} )
         })
     };
 
@@ -53,8 +90,8 @@ const RegisterExpenses = () => {
                         className={classNames(styles.input)}
                         label="Category"
                         list={list}
-                        onChange={() => {}}
-                        value="credelec"
+                        onChange={changeHandler}
+                        value={ getCategory() }
                     />
                 </div>
                 <div>
@@ -68,8 +105,17 @@ const RegisterExpenses = () => {
                     <Button onClick={addItem}>Add new item</Button>
                 </div>
                 <div className="flex justify-end mt-16">
+                    {
+                        dialog.payload && (
+                            <DeleteButton
+                                className="py-2 px-6 border border-solid border-red-600 text-red-600 mr-4 hover:bg-red-600 hover:text-white"
+                                onClick={deleteHandler}>
+                                { loading && requestMethod.current === "DELETE" ? "Loading..." : "Delete" }
+                            </DeleteButton>
+                        )
+                    }
                     <Button onClick={submitHandler}>
-                        { loading ? "Loading..." : "Submit" }
+                        { loading && [ "POST", "PUT" ].includes(requestMethod.current) ? "Loading..." : (dialog.payload ? "Update" : "Submit") }
                     </Button>
                 </div>
             </div>
