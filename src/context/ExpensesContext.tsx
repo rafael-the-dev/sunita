@@ -2,7 +2,8 @@ import * as React from "react";
 import currency from "currency.js";
 import { v4 as uuidV4} from "uuid";
 
-import { ExpenseItemType } from "@/types/expense"
+import { ExpenseInfoType, ExpenseItemType } from "@/types/expense"
+import { AppContext } from "./AppContext";
 
 type ExpensesContextType = {
     addItem: () => void;
@@ -28,8 +29,23 @@ const getNewItem = () => {
 };
 
 export const ExpensesContextProvider = ({ children }) => {
-    const [ category, setCategory ] = React.useState("credelec");
-    const [ itemsList, setItemsList ] = React.useState<ExpenseItemType[]>([ getNewItem() ]);
+    const { dialog } = React.useContext(AppContext);
+
+    const [ category, setCategory ] = React.useState(() => {
+        if(dialog && dialog.payload) {
+            return (dialog.payload as ExpenseInfoType).category;
+        }
+
+        return "credelec"
+    });
+
+    const [ itemsList, setItemsList ] = React.useState<ExpenseItemType[]>(() => {
+        if(dialog && dialog.payload) {
+            return (dialog.payload as ExpenseInfoType).items;
+        }
+        
+        return [ getNewItem() ];
+    });
 
     const canISubmit = React.useMemo(() => {
         return !Boolean(itemsList.find(({ description, price }) => {
