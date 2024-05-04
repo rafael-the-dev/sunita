@@ -9,6 +9,7 @@ import currency from "currency.js";
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
 import { PaymentMethodType, ProductPayment } from "@/types/payment-method";
 import usePaymentMethods from "./hooks/usePaymentMethods"
+import { getId } from "@/helpers/id";
 
 type SaleContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
@@ -51,6 +52,7 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
                 item.total = calculateProductTotalPrice(item.product.sellPrice, item.quantity);
             } else {
                 modifiedCart.items.push({
+                    id: getId(),
                     product,
                     quantity,
                     total: calculateProductTotalPrice(product.sellPrice, quantity)
