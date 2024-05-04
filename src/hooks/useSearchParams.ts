@@ -26,6 +26,17 @@ const useSearchParamsHook = () => {
 
     const isChecked = React.useCallback((origin: string | string[], value: string): boolean => origin.includes(value), []);
 
+    const removeSearchParam = React.useCallback((key: string) => {
+        let searchParams = "";
+
+        params.forEach((value, currentKey) => {
+            if(currentKey === key) searchParams += ``;
+            else searchParams += `${currentKey}=${value}&`;
+        });
+
+        router.push(`${pathname}?${searchParams}`);
+    }, [ params, pathname, router ])
+
     const getSearchParams = React.useCallback((key: string, isUnique: boolean = false) => {
         let searchParams = "";
 
@@ -81,6 +92,7 @@ const useSearchParamsHook = () => {
     return {
         get, getAll,
         isChecked,
+        removeSearchParam,
         setSearchParam, setSearchParams
     }
 };
