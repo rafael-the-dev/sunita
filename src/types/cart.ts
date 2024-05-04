@@ -1,6 +1,7 @@
 import {} from "./payment-method"
 
 export type CartItem<T> = {
+    id: string;
     product: T;
     quantity: number;
     total: number;
