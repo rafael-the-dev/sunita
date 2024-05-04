@@ -31,12 +31,14 @@ const concatValues = ({ obj, value }) => {
 const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: TableRowPropsType) => {
     const searchParams = useSearchParams();
 
-    const getKey = ({ getComponent, key, value }: TableHeadersType) => {
-        if(getComponent || Array.isArray(value)) {
-            return uuidV4();
+    const getKey = (key: TableKeyType) => {
+        const { subKey, value } = key;
+
+        if(subKey) {
+            return `${value}-${getKey(key.subKey)}`;
         }
 
-        return uuidV4();
+        return value
     };
 
     const getKeyValue = (key: TableKeyType, data: Object) => {
@@ -81,7 +83,7 @@ const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: Ta
                 headers.current.map(header => (
                     <TableCell
                         align="center"
-                        key={getKey(header)}>
+                        key={getKey(header.key)}>
                         { getLabel(header) }
                     </TableCell>
                 ))
