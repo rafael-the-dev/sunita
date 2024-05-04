@@ -9,6 +9,8 @@ import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
 import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
 
+import AddStock from "./components/add-stock";
+import Button from "@/components/shared/button"
 import DialogBody from "./components/register-product/components/body";
 import Main from "@/components/main";
 import RegisterProduct from "./components/register-product";
@@ -16,6 +18,8 @@ import SearchBox from "@/components/shared/product-search-box";
 import Table from "@/components/shared/table";
 import { TableHeadersType } from "@/components/table/types";
 import useFechProducts from "@/hooks/useFetchProducts";
+import LinkContainer from "@/components/link";
+import { StockContextProvider } from "@/context/StockContext";
 
 const Container = () => {
     const { setDialog } = React.useContext(AppContext);
@@ -99,6 +103,15 @@ const Container = () => {
         });
     }, [ setDialog ]);
 
+    const addStockClickHandler = React.useCallback(() => {
+        setDialog({
+            header: {
+                title: "Add stock"
+            },
+            body: <StockContextProvider productsList={productsList}><AddStock refreshProducts={fetchProducts} /></StockContextProvider>
+        })
+    }, [ fetchProducts, productsList, setDialog ])
+
     return (
         <Main className="flex flex-col items-stretch justify-between">
             <div className="px-3">
@@ -113,14 +126,29 @@ const Container = () => {
                     </SearchBox>
                 </form>
                 <div className={classNames(styles.body, `mt-6 table-body`)}>
-                    { productsList && <Table 
+                    { productsList.length > 0 && <Table 
                         data={productsListFiltered}
                         headers={headers}
                         onClickRow={rowClickHandler}
                     /> }
                 </div>
             </div>
-            <div className="flex justify-end px-3">
+            <div className="flex flex-col items-stretch justify-end px-3 sm:flex-row">
+                { productsList && (
+                    <Button 
+                        className="mb-3 sm:mb-0 sm:mr-3" 
+                        onClick={addStockClickHandler}
+                        variant="outlined">
+                        Add stock
+                    </Button>
+                )}
+                <LinkContainer 
+                    className="mb-3 sm:mb-0 sm:mr-3"
+                    href="/users/rafaeltivane/warehouses/12345/products/stock">
+                    <Button className="w-full" variant="outlined">
+                        View stock report
+                    </Button>
+                </LinkContainer>
                 <RegisterProduct />
             </div>
         </Main>

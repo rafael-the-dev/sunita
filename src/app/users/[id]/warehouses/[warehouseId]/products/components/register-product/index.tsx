@@ -16,13 +16,11 @@ const RegisterProductContainer = () => {
     }), [ setDialog ])
 
     return (
-        <div>
-            <Button 
-                className=""
-                onClick={clickHandler}>
-                Register
-            </Button>
-        </div>
+        <Button 
+            className=""
+            onClick={clickHandler}>
+            Register
+        </Button>
     );
 };
 
