@@ -1,13 +1,15 @@
+import moment from "moment";
+import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { WarehouseType } from "@/types/warehouse";
-
-import Store from "./Warehouse"
-import { getId } from "@/helpers/id";
-import Product from "./Product";
-import { ProductInfoType, ProductType, WarehouseProductType } from "@/types/product";
+import { WarehouseProductType } from "@/types/product";
 import { StockClientRequestBodyType, StockClientRequestItemType, StockReportType } from "@/types/stock";
-import currency from "currency.js";
+import { isValidDate, isValidPrice, isValidReference } from "@/helpers/stock-report";
+import { getId } from "@/helpers/id";
+
+import Store from "./Warehouse";
+
 
 type AddPropsType = {
     storeId: string;
@@ -15,24 +17,43 @@ type AddPropsType = {
 }
 
 class Stock {
-    static async add({ storeId, stockDetails }: AddPropsType, { mongoDbConfig, user }: ConfigType) {
+    static async add({ storeId, stockDetails }: AddPropsType, { mongoDbConfig, user }: ConfigType) {        
+        const createdAt = moment(stockDetails.createdAt);
+
+        //check if date is not greater than current date, Date.now()
+        isValidDate(createdAt);
+
+        //check if cart's total price is valid
+        isValidPrice(structuredClone(stockDetails))
+
         const reportId = getId();
 
-        let currentProducts: ProductInfoType[] = [];
+        let currentProducts: WarehouseProductType[] = [];
+        let currentStockReports: StockReportType[] = [];
+        let hasRetrieveCurrentStoreDetails = false;
+
         const productsMap = new Map<string, StockClientRequestItemType>()
 
+        const config = {
+            mongoDbConfig,
+            user
+        };
+
         try {
-            const productsIds = stockDetails.items.map(item => {
-                productsMap.set(item.product.id, item)
-                return item.product.id
+            const storeDetails = await Store.get({ id: storeId }, { mongoDbConfig, user });
+
+            //throw an InvalidArgumentError if reference is invalid
+            isValidReference(storeDetails, stockDetails.reference);
+            
+            stockDetails.items.forEach(item => {
+                productsMap.set(item.product.id, item);
             });
 
-            const products = await Product.getAll(
-                { filters: { "products.id": { $in: productsIds }}, warehouseId: storeId }, 
-                { mongoDbConfig, user }
-            );
+            //clone products and stock-reports upcoming use, in case an error occur
+            currentProducts = structuredClone(storeDetails.products);
+            currentStockReports = structuredClone(storeDetails["stock-reports"]);
 
-            currentProducts = structuredClone(products);
+            hasRetrieveCurrentStoreDetails = true;
 
             await Promise.all([
                 Store.update<StockReportType[]>(
@@ -41,7 +62,7 @@ class Stock {
                             const reports = structuredClone(store['stock-reports']);
 
                             const report: StockReportType = {
-                                createdAt: new Date(Date.now()).toISOString(),
+                                createdAt: createdAt.toISOString(),
                                 id: reportId,
                                 items: stockDetails.items,
                                 modifiedAt: null,
@@ -56,10 +77,7 @@ class Stock {
                         id: storeId,
                         key: "stock-reports"
                     },
-                    {
-                        mongoDbConfig,
-                        user
-                    }  
+                    config  
                 ),
                 Store.update<WarehouseProductType[]>(
                     {
@@ -67,12 +85,19 @@ class Stock {
                             const products = structuredClone(store.products);
 
                             products.forEach(product => {
+                                // get current product from mappedStockItem map
                                 const mappedStockItem = productsMap.get(product.id);
 
+                                /**
+                                 * it was mapped update its quantity, sellPrice, purchasePrice and profit fields base on mapped details
+                                 */
                                 if(mappedStockItem) {
+                                    const mappedStockItemProduct = mappedStockItem.product;
+
                                     product.stock.quantity = currency(product.stock.quantity).add(mappedStockItem.quantity).value;
-                                    product.sellPrice = mappedStockItem.product.sellPrice;
-                                    product.purchasePrice = mappedStockItem.product.purchasePrice;
+                                    product.sellPrice = mappedStockItemProduct.sellPrice;
+                                    product.purchasePrice = mappedStockItemProduct.purchasePrice;
+                                    product.profit = currency(mappedStockItemProduct.sellPrice).subtract(mappedStockItemProduct.purchasePrice).value
                                 }
                             })
 
@@ -81,13 +106,36 @@ class Stock {
                         id: storeId,
                         key: "products"
                     },
-                    {
-                        mongoDbConfig,
-                        user
-                    }  
+                    config 
                 )
             ])
         } catch(e) {
+            /**
+             * update store with its previous stock-reports and products with occurend an errory
+             */
+            await Promise.all([
+                Store.update<StockReportType[]>(
+                    {
+                        helper(store: WarehouseType) {
+                            return hasRetrieveCurrentStoreDetails ? currentStockReports : store["stock-reports"];
+                        },
+                        id: storeId,
+                        key: "stock-reports"
+                    },
+                    config  
+                ),
+                Store.update<WarehouseProductType[]>(
+                    {
+                        helper(store: WarehouseType) {
+                            return hasRetrieveCurrentStoreDetails ? currentProducts : store.products;
+                        },
+                        id: storeId,
+                        key: "products"
+                    },
+                    config 
+                )
+            ])
+
             throw e
         }
     }
