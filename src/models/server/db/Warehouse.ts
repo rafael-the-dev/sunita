@@ -26,7 +26,7 @@ class Product {
 
         if(!warehouse) throw new Error404("Warehouse not found");
 
-        return warehouse;
+        return warehouse as WarehouseType;
     }
 
     /** Get selected warehouse, then pass it to the helper function that return updated value of type T of the selected key*/
