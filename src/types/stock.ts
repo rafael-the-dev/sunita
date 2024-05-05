@@ -10,13 +10,13 @@ export type StockClientRequestItemType = {
 };
 
 export type StockClientRequestBodyType = {
+    createdAt: Date | string;
     items: StockClientRequestItemType[];
     reference: string;
     total: number;
 }
 
 export type StockReportType = StockClientRequestBodyType & {
-    createdAt: Date | string;
     id: string;
     modifiedAt: string | Date | null;
 }
