@@ -1,21 +1,24 @@
 import { ChangeEvent, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
+import currency from "currency.js";
 
-import styles from "./styles.module.css"
+
+import styles from "./styles.module.css";
 
 import useFech from "@/hooks/useFetch";
 import { ProductInfoType } from "@/types/product";
 import { TableHeadersType } from "@/components/table/types";
 
-import Button from "@/components/shared/button"
-import Collapse from "@/components/collapse"
-import Table from "@/components/shared/table";
-import Textfield from "@/components/Textfield"
 import { StockContext } from "@/context/StockContext";
 import useSearchParams from "@/hooks/useSearchParams";
 import { CartItem } from "@/types/cart";
-import currency from "currency.js";
 import { getId } from "@/helpers/id";
+import { isInvalidNumber } from "@/helpers/validation";
+
+import Button from "@/components/shared/button";
+import Collapse from "@/components/collapse";
+import Table from "@/components/shared/table";
+import Textfield from "@/components/Textfield";
 
 const SearchProduct = () => {
     const { addItem, productsList } = useContext(StockContext)
@@ -85,6 +88,11 @@ const SearchProduct = () => {
             const clonedItem = structuredClone(currentItem);
 
             clonedItem[key] = currency(value).value;
+
+            if(isInvalidNumber(clonedItem[key])) {
+                clonedItem[key] = 1;
+            }
+
             clonedItem.product.purchasePrice = currency(clonedItem.total).divide(clonedItem.quantity).value
 
             return clonedItem;
@@ -141,7 +149,7 @@ const SearchProduct = () => {
     }, [ filteredProductsList ])
 
     return (
-        <div className="px-3">
+        <div className="mb-6 px-3">
             <div>
                 <Textfield
                     className="w-full"
@@ -162,7 +170,7 @@ const SearchProduct = () => {
                     {
                         cartItem && (
                             <>
-                                <div className="pt-4 md:flex justify-between">
+                                <div className="mb-8 pt-4 sm:flex justify-between">
                                     <Textfield 
                                         className={classNames(styles.input)}
                                         label="Insert quantity"

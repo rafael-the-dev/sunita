@@ -3,9 +3,11 @@ import currency from "currency.js"
 
 import { CartItem, CartType } from "@/types/cart";
 import { ProductInfoType } from "@/types/product";
-import { SetterFuncType, StockContextType, StockReportInputProps } from "../types";
+import { SetterFuncType, StockContextType } from "../types";
+
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
 import { getId } from "@/helpers/id";
+import { isInvalidNumber } from "@/helpers/validation";
 
 export const StockContext = React.createContext<StockContextType | null>(null);
 StockContext.displayName = "StockContext";
@@ -30,12 +32,18 @@ const useCart = () => {
                 item.quantity = currency(item.quantity).add(quantity).value;
                 item.total = calculateProductTotalPrice(item.product.purchasePrice, item.quantity);
             } else {
-                modifiedCart.items.push({
+                const item = {
                     id: getId(),
-                    product,
+                    product: {
+                        ...product
+                    },
                     quantity,
                     total: calculateProductTotalPrice(product.purchasePrice, quantity)
-                });
+                };
+
+                item.product.profit = currency(item.product.sellPrice).subtract(item.product.purchasePrice).value;
+
+                modifiedCart.items.push(item)
             }
             
             modifiedCart.total = calculaCartTotalPrice(modifiedCart);
@@ -54,22 +62,27 @@ const useCart = () => {
             }
 
             modifierFunc(item);
-            item.product.profit = currency(item.product.sellPrice).subtract(item.product.purchasePrice).value
+            item.product.profit = currency(item.product.sellPrice).subtract(item.product.purchasePrice).value;
             
             modifiedCart.total = calculaCartTotalPrice(modifiedCart);
             return modifiedCart;
         })
-    }, []); //:;
-    
+    }, []); 
+
     const setQuantity: SetterFuncType = React.useCallback(( product, value, type) => {
         setHelper(
             product, 
             value, 
             item => { 
+                const currentQuantity = item.quantity;
+
                 if(type === "CHANGE") item.quantity = currency(value).value;
                 else item.quantity = currency(item.quantity).add(value).value;
 
-                item.total = calculateProductTotalPrice(item.product.purchasePrice, item.quantity);
+                //validate quantity, then set its value to 1 if is not valid
+                if(isInvalidNumber(item.quantity)) item.quantity = 1;
+
+                item.product.purchasePrice = currency(item.total).divide(item.quantity).value;
             }
         )
     }, [ setHelper ]);
@@ -81,6 +94,9 @@ const useCart = () => {
             item => { 
                 if(type === "CHANGE") item.product.sellPrice = currency(value).value;
                 else item.product.sellPrice = currency(item.product.sellPrice).add(value).value; 
+
+                //validate sellPrice, then set its value to 1 if is not valid
+                if(isInvalidNumber(item.product.sellPrice)) item.product.sellPrice = 1;
             }
         )
     }, [ setHelper ]);
@@ -93,33 +109,23 @@ const useCart = () => {
                 if(type === "CHANGE") item.total = currency(value).value;
                 else item.total = currency(item.total).add(value).value; 
 
+                if(isInvalidNumber(item.total)) item.total = 1;
+
+                //validate Total, then set its value to 1 if is not valid
                 item.product.purchasePrice = currency(item.total).divide(item.quantity).value;
             }
         )
     }, [ setHelper ]);
 
-    const changeQuantity = React.useCallback((productId: string, quantity: number) => {
-        setCart(cart => {
-            const modifiedCart = structuredClone({ ...cart });
-            
-            const item = modifiedCart.items.find(cartItem => cartItem.product.id === productId);
-
-            if(item) {
-                item.quantity = currency(quantity).value;
-                item.total = calculateProductTotalPrice(item.product.sellPrice, item.quantity);
-            } 
-
-            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
-            return modifiedCart;
-        })
-    }, []);
+    const reset = React.useCallback(() => {
+        setCart(structuredClone(initialState))
+    }, [])
 
     const removeItem = React.useCallback((productId: string) => {
         setCart(cart => {
             const modifiedCart = structuredClone({ ...cart });
             
             modifiedCart.items = modifiedCart.items.filter(cartItem => cartItem.product.id !== productId);
-
 
             modifiedCart.total = calculaCartTotalPrice(modifiedCart);
             return modifiedCart;
@@ -128,12 +134,11 @@ const useCart = () => {
 
     return {
         addItem,
-        changeQuantity,
         getCart,
         setQuantity,
         setSellPrice,
         setTotal,
-        removeItem,
+        removeItem, reset,
         toString
     }
 }

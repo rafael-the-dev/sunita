@@ -26,7 +26,7 @@ const Container = () => {
 
     return (
         <Dialog
-            classes={{ paper: "m-0 md:max-w-max" }}
+            classes={{ paper: "m-0 sm:max-w-max" }}
             customClose={closeHandler}
             onCloseRef={onCloseRef}
             onOpenRef={onOpenRef}>

@@ -16,10 +16,10 @@ export type StockReportType = {
 
 export type StockContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
-    changeQuantity: (id: string, quantity: number) => void;
     getCart: () => CartType<ProductInfoType>;
     getStockReport: () => StockReportType;
     hasErrors: () => boolean;
+    reset: () => void;
     setQuantity: SetterFuncType;
     setSellPrice: SetterFuncType;
     setDate: (value: string) => void;

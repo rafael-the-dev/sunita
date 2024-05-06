@@ -1,137 +1,80 @@
 import * as React from "react";
-import currency from "currency.js"
+import moment from "moment";
 
-import { CartItem, CartType } from "@/types/cart";
 import { ProductInfoType } from "@/types/product";
-import { SetterFuncType, StockContextType } from "./types";
-import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
-import { getId } from "@/helpers/id";
+import { StockContextType, StockReportInputProps } from "./types";
 import { StockClientRequestBodyType } from "@/types/stock";
+
+import useCart from "./hooks/useCart";
+import { isValidPrice } from "./ts/validation";
 
 export const StockContext = React.createContext<StockContextType | null>(null);
 StockContext.displayName = "StockContext";
 
-const initialState = {
-    items: [],
-    total:0
+const inputProps: StockReportInputProps = {
+    error: false,
+    helperText: "",
+    value: ""
 };
 
 export const StockContextProvider = ({ children, productsList }: { children : React.ReactNode, productsList: ProductInfoType[] }) => {
-    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState);
+    const { getCart, ...cartRest } = useCart();
 
-    const getCart = React.useCallback(() => structuredClone(cart), [ cart ]);
+    const [ stockReport, setStockReport ] = React.useState({
+        date: structuredClone({ ...inputProps, value: moment(Date.now()).toISOString() }),
+        reference: structuredClone(inputProps)
+    })
 
-    const addItem = React.useCallback((product: ProductInfoType, quantity: number) => {
-        setCart(cart => {
-            const modifiedCart = structuredClone({ ...cart });
-            
-            const item = modifiedCart.items.find(cartItem => cartItem.product.id === product.id);
+    const getStockReport = React.useCallback(() => structuredClone(stockReport), [ stockReport ]);
 
-            if(item) {
-                item.quantity = currency(item.quantity).add(quantity).value;
-                item.total = calculateProductTotalPrice(item.product.purchasePrice, item.quantity);
-            } else {
-                modifiedCart.items.push({
-                    id: getId(),
-                    product,
-                    quantity,
-                    total: calculateProductTotalPrice(product.purchasePrice, quantity)
-                });
+
+    const hasErrors = React.useCallback(() => {
+        const stockReport = getStockReport();
+        return Boolean([ !isValidPrice(getCart()), stockReport.date.error, stockReport.reference.error ].find(item => item));
+    }, [ getCart, getStockReport ])
+
+    const setDate = React.useCallback((value: string) => {
+        const date = moment(value)
+        const isInvalid = !date.isValid();
+        
+        setStockReport(stockReport => ({
+            ...stockReport,
+            date: {
+                error: isInvalid,
+                helperText: isInvalid ? "Date is invalid" : "",
+                value: date.toISOString()
             }
-            
-            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
-            return modifiedCart;
-        })
+        }));
     }, [])
 
-    const setHelper = React.useCallback(( product: ProductInfoType, quantity: number | string, modifierFunc: (item: CartItem<ProductInfoType>) => void) => {
-        setCart(cart => {
-            const modifiedCart = structuredClone({ ...cart });
-            
-            const item = modifiedCart.items.find(cartItem => cartItem.product.id === product.id);
+    const setReference = React.useCallback((value: string) => {
+        const isEmpty = !Boolean(value.trim());
 
-            if(!item) {
-                throw new Error("Item not found")
+        setStockReport(stockReport => ({
+            ...stockReport,
+            reference: {
+                error: isEmpty,
+                helperText: isEmpty ? "Reference must not be empty" : "",
+                value
             }
+        }));
+    }, [])
 
-            modifierFunc(item);
-            item.product.profit = currency(item.product.sellPrice).subtract(item.product.purchasePrice).value
-            
-            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
-            return modifiedCart;
+    const resetCart = cartRest.reset
+
+    const reset = React.useCallback(() => {
+        resetCart()
+        setStockReport({
+            date: structuredClone({ ...inputProps, value: moment(Date.now()).toISOString() }),
+            reference: structuredClone(inputProps)
         })
-    }, []); //:;
-    
-    const setQuantity: SetterFuncType = React.useCallback(( product, value, type) => {
-        setHelper(
-            product, 
-            value, 
-            item => { 
-                if(type === "CHANGE") item.quantity = currency(value).value;
-                else item.quantity = currency(item.quantity).add(value).value;
-
-                item.total = calculateProductTotalPrice(item.product.purchasePrice, item.quantity);
-            }
-        )
-    }, [ setHelper ]);
-
-    const setSellPrice: SetterFuncType = React.useCallback(( product, value, type) => {
-        setHelper(
-            product, 
-            value, 
-            item => { 
-                if(type === "CHANGE") item.product.sellPrice = currency(value).value;
-                else item.product.sellPrice = currency(item.product.sellPrice).add(value).value; 
-            }
-        )
-    }, [ setHelper ]);
-
-    const setTotal: SetterFuncType = React.useCallback(( product, value, type ) => {
-        setHelper(
-            product, 
-            value, 
-            item => { 
-                if(type === "CHANGE") item.total = currency(value).value;
-                else item.total = currency(item.total).add(value).value; 
-
-                item.product.purchasePrice = currency(item.total).divide(item.quantity).value;
-            }
-        )
-    }, [ setHelper ]);
-
-    const changeQuantity = React.useCallback((productId: string, quantity: number) => {
-        setCart(cart => {
-            const modifiedCart = structuredClone({ ...cart });
-            
-            const item = modifiedCart.items.find(cartItem => cartItem.product.id === productId);
-
-            if(item) {
-                item.quantity = currency(quantity).value;
-                item.total = calculateProductTotalPrice(item.product.sellPrice, item.quantity);
-            } 
-
-            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
-            return modifiedCart;
-        })
-    }, []);
-
-    const removeItem = React.useCallback((productId: string) => {
-        setCart(cart => {
-            const modifiedCart = structuredClone({ ...cart });
-            
-            modifiedCart.items = modifiedCart.items.filter(cartItem => cartItem.product.id !== productId);
-
-
-            modifiedCart.total = calculaCartTotalPrice(modifiedCart);
-            return modifiedCart;
-        });
-    }, []);
-
+    }, [ resetCart ])
 
     const toString = React.useCallback(() => {
         const cart = getCart();
 
         const requestBody: StockClientRequestBodyType = {
+            createdAt: getStockReport().date.value,
             items: cart.items.map(item => ({
                 product: {
                     id: item.product.id,
@@ -141,24 +84,22 @@ export const StockContextProvider = ({ children, productsList }: { children : Re
                 quantity: item.quantity,
                 total: item.total
             })),
-            reference: "AB2029212",
+            reference: getStockReport().reference.value,
             total: cart.total
         };
 
         return JSON.stringify(requestBody);
-    }, [ getCart ])
+    }, [ getCart, getStockReport ])
 
     return (
         <StockContext.Provider
             value={{
-                addItem,
-                changeQuantity,
-                getCart,
-                setQuantity,
-                setSellPrice,
-                setTotal,
+                ...cartRest,
+                getCart, getStockReport,
+                hasErrors,
                 productsList,
-                removeItem,
+                reset,
+                setDate, setReference,
                 toString
             }}>
             { children }

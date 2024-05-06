@@ -134,14 +134,13 @@ const Container = () => {
                 </div>
             </div>
             <div className="flex flex-col items-stretch justify-end px-3 sm:flex-row">
-                { productsList && (
-                    <Button 
-                        className="mb-3 sm:mb-0 sm:mr-3" 
-                        onClick={addStockClickHandler}
-                        variant="outlined">
-                        Add stock
-                    </Button>
-                )}
+                <Button 
+                    className="mb-3 sm:mb-0 sm:mr-3" 
+                    disabled={!data}
+                    onClick={addStockClickHandler}
+                    variant="outlined">
+                    Add stock
+                </Button>
                 <LinkContainer 
                     className="mb-3 sm:mb-0 sm:mr-3"
                     href="/users/rafaeltivane/warehouses/12345/products/stock">
