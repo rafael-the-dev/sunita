@@ -5,10 +5,15 @@ import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
 import { SaleType, SaleInfoType } from "@/types/sale";
 import { toISOString } from "@/helpers/date";
+import { isInvalidNumber } from "@/helpers/validation";
 
 import ProductModel from "./Product";
+import Store from "./Warehouse";
 import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
+import { getId } from "@/helpers/id";
+import { isValidCartTotalPrice, isValidReceivedAmount } from "@/validation/sale";
+
 
 class Sale {
     static async getAll({ filters,  warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
@@ -81,21 +86,30 @@ class Sale {
     static async register({ cart, warehouseId }: { cart: CartResquestType, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
         const productsIds = cart.items.map(item => item.product.id)
 
-        const [ products, warehouse ] = await Promise.all([
-            await ProductModel.getAll({ warehouseId }, { mongoDbConfig, user }),
-            mongoDbConfig.collections.WAREHOUSES.findOne({ id: warehouseId })
-        ]);
+        const store = await Store.get({ id: warehouseId }, { mongoDbConfig, user });
+        const products = store.products;
+        const sales = store.sales;
 
-        const selectedProducts = products.filter(product => productsIds.includes(product.id))
+        const selectedProducts = products.filter(product => productsIds.includes(product.id));
         
         const itemsList = [];
-        const productsMap = new Map<string, RequestCartItem> ();
+        const productsMap = new Map<string, RequestCartItem>();
         let totalProfit = 0;
 
+        // sum all quantity values, then throws an InvalidArgumentError if quantity is invalid
         const totalPrice =  cart.items.reduce((prevValue, currentItem) => {
+            //check if current item quantity value is valid, then throws an error if not
+            if(isInvalidNumber(currentItem.quantity)) {
+                throw new InvalidArgumentError("Quantity must not be less than or equal to zero");
+            }
+
             const currentProduct = selectedProducts.find(product => currentItem.product.id === product.id);
 
             if(!currentProduct) throw new Error404(`Product with '${currentItem.product.id}' id not found`);
+
+            if(currentItem.quantity > currentProduct.stock.quantity) {
+                throw new InvalidArgumentError(`Quantity is greater than available stock`);
+            }
 
             const item = {
                 ...currentItem,
@@ -105,48 +119,61 @@ class Sale {
                 }
             };
 
+            //sum profit
             totalProfit = currency(totalProfit).add(currency(currentProduct.profit).multiply(currentItem.quantity).value).value;
             itemsList.push(item);
             productsMap.set(currentProduct.id, currentItem);
 
             const price = currency(currentProduct.sellPrice).multiply(currentItem.quantity);
             return currency(prevValue).add(price).value;
-        }, 0)
+        }, 0);
+
+        //check if total received amount is valid and it is greater than or equal to total price
+        isValidReceivedAmount(cart.totalReceived, totalPrice);
        
-        if(totalPrice !== cart.total) {
-            throw new InvalidArgumentError("Client total price doesn't match with server total price")
-        }
+        //check if server total price match with the client total price, then throw an error if not
+        isValidCartTotalPrice(totalPrice, cart.total);
 
-        let sale: SaleType = {
-            changes: cart.changes,
-            createAt: toISOString(Date.now()),
-            id: uuidV4(),
-            items: itemsList,
-            profit: totalProfit,
-            total: cart.total,
-            totalReceived: cart.totalReceived,
-            user: "rafaeltivane"
-        };
-
-        const sales = structuredClone(warehouse.sales);
-        sales.push(sale)
-        
-        const updatedProducts = products.map(product => {
-            const mappedProduct = productsMap.get(product.id);
-
-            if(mappedProduct) {
-                return {
-                    ...product,
-                    stock: {
-                        quantity: currency(product.stock.quantity).subtract(mappedProduct.quantity).value
+        try {
+            let sale: SaleType = {
+                changes: cart.changes,
+                createAt: toISOString(Date.now()),
+                id: getId(),
+                items: itemsList,
+                profit: totalProfit,
+                total: cart.total,
+                totalReceived: cart.totalReceived,
+                user: "rafaeltivane"
+            };
+    
+            const salesClone = structuredClone(sales);
+            salesClone.push(sale);
+            
+            const updatedProducts = products.map(product => {
+                const mappedProduct = productsMap.get(product.id);
+    
+                if(mappedProduct) {
+                    return {
+                        ...product,
+                        stock: {
+                            quantity: currency(product.stock.quantity).subtract(mappedProduct.quantity).value
+                        }
                     }
                 }
-            }
+    
+                return product;
+            });
+    
+            await mongoDbConfig.collections
+                .WAREHOUSES
+                .updateOne({ id: warehouseId }, { $set: { products: updatedProducts, sales: salesClone }});
+        } catch(e) {
+            await mongoDbConfig.collections.
+                WAREHOUSES
+                .updateOne({ id: warehouseId }, { $set: { products, sales }});
 
-            return product
-        })
-
-        await mongoDbConfig.collections.WAREHOUSES.updateOne({}, { $set: { products: updatedProducts, sales }});
+            throw e;
+        }
     }
 }
 

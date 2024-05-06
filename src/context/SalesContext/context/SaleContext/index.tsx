@@ -10,6 +10,7 @@ import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/car
 import { PaymentMethodType, ProductPayment } from "@/types/payment-method";
 import usePaymentMethods from "./hooks/usePaymentMethods"
 import { getId } from "@/helpers/id";
+import { isInvalidNumber } from "@/helpers/validation";
 
 type SaleContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
@@ -49,6 +50,11 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
 
             if(item) {
                 item.quantity = currency(item.quantity).add(quantity).value;
+
+                if(isInvalidNumber(item.quantity)) {
+                    item.quantity = 1;
+                }
+
                 item.total = calculateProductTotalPrice(item.product.sellPrice, item.quantity);
             } else {
                 modifiedCart.items.push({
@@ -72,6 +78,11 @@ export const SaleContextProvider = ({ children }: { children: React.ReactNode })
 
             if(item) {
                 item.quantity = currency(quantity).value;
+
+                if(isInvalidNumber(item.quantity)) {
+                    item.quantity = 1;
+                }
+
                 item.total = calculateProductTotalPrice(item.product.sellPrice, item.quantity);
             } 
 

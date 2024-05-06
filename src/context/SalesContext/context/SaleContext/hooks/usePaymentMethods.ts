@@ -4,6 +4,7 @@ import currency from "currency.js";
 import { PaymentMethodListItemType, PaymentMethodType, ProductPayment } from "@/types/payment-method";
 import { CartType } from "@/types/cart";
 import { getPaymentStats, setTotalReceivedAmountAndChanges } from "@/helpers/product-payment";
+import { isInvalidNumber } from "@/helpers/validation";
 
 const paymentMethodsList: PaymentMethodListItemType[] = [
     { value: 100, label: "Cash" },
@@ -55,6 +56,10 @@ const usePaymentMethods = <T>(cart: CartType<T>) => {
             const paymentMethod = paymentTemp.paymentMethods.find(item => item.id === id);
 
             paymentMethod[key] = currency(amount).value;
+
+            if(isInvalidNumber(paymentMethod[key])) {
+                paymentMethod[key] = 1;
+            }
 
             setTotalReceivedAmountAndChanges(cart, paymentTemp);
 

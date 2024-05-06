@@ -1,24 +1,41 @@
 import * as React from "react"
+import currency from "currency.js";
 import classNames from "classnames"
 import Typography from "@mui/material/Typography";
 
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
+import styles from "./styles.module.css"
+
 import { SaleContext } from "@/context/SalesContext/context/SaleContext"
 import { TableHeadersType, TableKeyType } from "@/components/table/types"
 import { CartItem } from "@/types/cart";
-import styles from "./styles.module.css"
+import { ProductInfoType } from "@/types/product";//:;
 
 import PaymentButton from "./components/payment-button"
-import QuantityInput from "./components/quantity-input"
+import QuantityInput from "@/components/shared/quantity-input"
 import SearchField from "./components/search-field"
 import Table from "@/components/shared/table"
-import { ProductInfoType } from "@/types/product";
+import { isInvalidNumber } from "@/helpers/validation";
 
 const TabBody = () => {
-    const { isEmpty, getCart, removeItem } = React.useContext(SaleContext)
+    const { 
+        addItem, 
+        changeQuantity,
+        isEmpty, 
+        getCart, 
+        removeItem 
+    } = React.useContext(SaleContext);
+
     const cart = getCart()
+
+    const clickHandler = React.useCallback((cartItem: CartItem<ProductInfoType>, value: number) => () => addItem(cartItem.product, value), [ addItem ]);
     
+    const changeHandler = React.useCallback((cartItem: CartItem<ProductInfoType>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const quantity = currency(e.target.value).value;
+        changeQuantity(cartItem.product.id, quantity);
+    }, [ changeQuantity ]);
+
     const tableHeader = React.useRef<TableHeadersType[]>([
         {
             label: "Name",
@@ -44,7 +61,19 @@ const TabBody = () => {
         },
         {
             label: "Quantity",
-            getComponent: ({ item, key }) => <QuantityInput cartItem={item as CartItem<ProductInfoType>} />,
+            getComponent: ({ item, key }) => {
+                const cartItem = item as CartItem<ProductInfoType>
+
+                return (
+                    <QuantityInput 
+                        hasError={isInvalidNumber(cartItem.quantity)}
+                        onChange={changeHandler(cartItem)}
+                        onDecrement={clickHandler(cartItem, -1)}
+                        onIncrement={clickHandler(cartItem, 1)}
+                        value={cartItem.quantity}
+                    />
+                )
+            },
             key: {
                 value: "quantity"
             }
