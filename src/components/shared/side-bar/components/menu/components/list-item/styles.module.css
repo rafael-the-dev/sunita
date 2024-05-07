@@ -10,7 +10,7 @@
     width: 100% !important;
 }
 
-.listItemSelected::before, .listItemSelected::after {
+.listItemSelected::before {
     border-color: #FFF;
     border-style: solid;
     content: "";

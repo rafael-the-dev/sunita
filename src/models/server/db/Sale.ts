@@ -13,6 +13,7 @@ import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 import { getId } from "@/helpers/id";
 import { isValidCartTotalPrice, isValidReceivedAmount } from "@/validation/sale";
+import { WarehouseProductType } from "@/types/product";
 
 
 class Sale {
@@ -88,10 +89,18 @@ class Sale {
         const productsIds = cart.items.map(item => item.product.id)
 
         const store = await Store.get({ id: warehouseId }, { mongoDbConfig, user });
-        const products = store.products;
-        const sales = store.sales;
+        const { products, sales } = store;
 
-        const selectedProducts = products.filter(product => productsIds.includes(product.id));
+        const productsClone = structuredClone(products)
+        const salesClone = structuredClone(sales);
+        
+        const selectedProductsMap = new Map<string, WarehouseProductType>();
+
+        productsClone.forEach(product => {
+            if(productsIds.includes(product.id)) {
+                selectedProductsMap.set(product.id, product)
+            }
+        });
         
         const itemsList: SaleItemType[] = [];
         const productsMap = new Map<string, RequestCartItem>();
@@ -104,7 +113,7 @@ class Sale {
                 throw new InvalidArgumentError("Quantity must not be less than or equal to zero");
             }
 
-            const currentProduct = selectedProducts.find(product => currentItem.product.id === product.id);
+            const currentProduct = selectedProductsMap.get(currentItem.product.id);
 
             if(!currentProduct) throw new Error404(`Product with '${currentItem.product.id}' id not found`);
 
@@ -148,27 +157,20 @@ class Sale {
                 user: "rafaeltivane"
             };
     
-            const salesClone = structuredClone(sales);
             salesClone.push(sale);
             
-            const updatedProducts = products.map(product => {
-                const mappedProduct = productsMap.get(product.id);
-    
-                if(mappedProduct) {
-                    return {
-                        ...product,
-                        stock: {
-                            quantity: currency(product.stock.quantity).subtract(mappedProduct.quantity).value
-                        }
-                    }
-                }
-    
-                return product;
+            cart.items.forEach(item => {
+                const mappedProduct = productsMap.get(item.product.id);
+                const productInfo = selectedProductsMap.get(item.product.id)
+                
+                productInfo.stock = {
+                    quantity: currency(productInfo.stock.quantity).subtract(mappedProduct.quantity).value
+                };
             });
     
             await mongoDbConfig.collections
                 .WAREHOUSES
-                .updateOne({ id: warehouseId }, { $set: { products: updatedProducts, sales: salesClone }});
+                .updateOne({ id: warehouseId }, { $set: { products: productsClone, sales: salesClone }});
         } catch(e) {
             await mongoDbConfig.collections.
                 WAREHOUSES
