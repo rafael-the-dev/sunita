@@ -6,7 +6,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogAction from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogHeader from "./components/dialog-header";
-import { DialogClasses } from "@mui/material/Dialog/dialogClasses"
 
 type HandlerRef = MutableRefObject<() => void>;
 

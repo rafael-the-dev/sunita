@@ -22,6 +22,7 @@ export type RequestCartItem = {
 
 export type CartResquestType = {
     changes: number;
+    id?: string;
     items: RequestCartItem[],
     total: number;
     totalReceived: number;

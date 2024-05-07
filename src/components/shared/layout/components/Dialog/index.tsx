@@ -1,5 +1,5 @@
-import { useCallback, useContext, useEffect, useRef, MutableRefObject} from "react";
-import classNames from "classnames";
+import { useCallback, useContext, useEffect, useRef } from "react";
+import { usePathname, useRouter } from "next/navigation"
 
 import { AppContext } from "@/context/AppContext";
 
@@ -8,10 +8,14 @@ import Dialog from "@/components/dialog"
 const Container = () => {
     const { dialog, isLoading, setDialog } = useContext(AppContext);
 
+    const pathname = usePathname()
+    const pathnameRef = useRef(pathname)
+
     const onCloseRef = useRef<() => void | null>(null);
     const onOpenRef = useRef<() => void | null>(null);
 
     const closeHandler = useCallback(() => {
+        console.log(dialog)
         if(isLoading.current) return;
 
         dialog?.header?.onClose?.();
@@ -23,6 +27,15 @@ const Container = () => {
         if(dialog) onOpenRef.current?.();
         else closeHandler();
     }, [ closeHandler, dialog ]);
+
+    useEffect(() => {
+        if(dialog && pathname !== pathnameRef.current) {
+            closeHandler();
+            return;
+        }
+
+        pathnameRef.current = pathname;
+    }, [ closeHandler, dialog, pathname ]);
 
     return (
         <Dialog

@@ -29,7 +29,7 @@ const useFech = <T>({ autoFetch= true, url }: PropsType) => {
             const data = await res.json();
 
             if(res.status >= 200 && res.status < 300) {
-                if(onSuccess) await onSuccess<T>(res, data);
+                if(onSuccess) onSuccess<T>(res, data);
 
                 setState({
                     error: null,

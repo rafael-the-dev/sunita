@@ -1,29 +1,38 @@
 import { ProductInfoType } from "./product";
 
+export type SaleItemType =  {
+    id: string;
+    product: {
+        id: string;
+        price: number;
+    }
+    quantity: number;
+    total: number;
+};
 
 export type SaleType = {
     changes: number;
     createAt: Date | string;
     id: string;
     profit: number;
-    items: {
-        id: string;
-        price: number;
-        quantity: number;
-    }[];
+    items: SaleItemType[];
     total: number;
     totalReceived: number;
     user: string;
-}
+};
+
+export type SaleInfoItemType = {
+    id: string;
+    product: ProductInfoType;
+    quantity: number;
+    total: number;
+};
 
 export type SaleInfoType = {
     changes: number;
     createdAt: Date;
     id: string;
-    items: {
-        product: ProductInfoType;
-        quantity: number;
-    }[];
+    items: SaleInfoItemType[];
     profit: number;
     total: number;
     totalReceived: number;
@@ -32,4 +41,4 @@ export type SaleInfoType = {
         lastName: string;
         username: string;
      }
-}
+};

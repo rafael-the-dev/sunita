@@ -1,11 +1,18 @@
-import { useContext, useRef } from "react";
+import { useCallback, useContext, useRef } from "react";
 
-import Table from "@/components/shared/table"
 import { AnalyticsContext } from "@/context/AnalyticsContext";
 import { TableHeadersType } from "@/components/table/types";
 
+import { AppContext } from "@/context/AppContext"
+import { SaleInfoType } from "@/types/sale";
+
+import SaleDetails from "./components/sale-details"
+import Table from "@/components/shared/table";
+import { SaleDetailsContextProvider } from "@/context/SaleDetailsContext";
+
 const TableContainer = () => {
-    const { getAnalytics } = useContext(AnalyticsContext);
+    const { fetchData, getAnalytics } = useContext(AnalyticsContext);
+    const { setDialog } = useContext(AppContext)
 
     const headers = useRef<TableHeadersType[]>([
         {
@@ -47,12 +54,22 @@ const TableContainer = () => {
                 value: "profit"
             }
         }
-    ])
+    ]);
+
+    const clickHandler = useCallback((row: SaleInfoType) => () => {
+        setDialog({
+            header: {
+                title: "Sale details"
+            },
+            body: <SaleDetailsContextProvider initial={row} refreshData={fetchData}><SaleDetails /></SaleDetailsContextProvider>
+        })
+    }, [ fetchData, setDialog ])
 
     return (
         <Table 
             data={getAnalytics()?.sales?.list}
             headers={headers}
+            onClickRow={clickHandler}
         />
     )
 };

@@ -37,7 +37,7 @@ const initialState = {
     total:0
 };
 
-export const SaleContextProvider = ({ children }: { children: React.ReactNode }) => {
+export const SaleContextProvider = ({ children, initial }: { children: React.ReactNode, initial?: CartType<ProductInfoType> }) => {
     const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState)
 
     const getCart = React.useCallback(() => cart, [ cart ])

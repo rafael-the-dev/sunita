@@ -1,0 +1,10 @@
+
+.listItem {
+    width: 150px;
+}
+
+@media screen and (min-width: 600px) {
+    .listItem {
+        width: 33.3333%;
+    }
+}
