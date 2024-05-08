@@ -1,31 +1,15 @@
 'use client'
 
-import { useContext } from "react"
-
 import { SalesContextProvider } from "@/context/SalesContext"
-import { TabsContext, TabsContextProvider } from "@/context/TabsContext"
 import { SaleContextProvider } from "@/context/SalesContext/context/SaleContext"
 
 import TabBody from "./components/TabBody"
-import TabsList from "@/components/shared/tabs-list"
+import TabBodyContainer from "@/components/shared/tab-body-container"
 
-const SalesPage = () => {
-    const { getActiveTab } = useContext(TabsContext)
-
-    return (
-        <main>
-            <TabsList />
-            { getActiveTab().component }
-        </main>
-    )
-}
-
-const ContextWrapper = () => (
+const Container = () => (
     <SalesContextProvider>
-        <TabsContextProvider defaultComponent={<SaleContextProvider><TabBody /></SaleContextProvider>}>
-            <SalesPage />
-        </TabsContextProvider>
+        <TabBodyContainer component={<SaleContextProvider><TabBody /></SaleContextProvider>} />
     </SalesContextProvider>
-)
+);
 
-export default ContextWrapper
+export default Container
