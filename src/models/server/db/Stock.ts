@@ -4,7 +4,7 @@ import currency from "currency.js";
 import { ConfigType } from "@/types/app-config-server";
 import { WarehouseType } from "@/types/warehouse";
 import { WarehouseProductType } from "@/types/product";
-import { StockClientRequestBodyType, StockClientRequestItemType, StockReportType } from "@/types/stock";
+import { AnalyticStockReportInfoType, StockClientRequestBodyType, StockClientRequestItemType, StockReportInfoType, StockReportType } from "@/types/stock";
 import { isValidDate, isValidPrice, isValidReference } from "@/helpers/stock-report";
 import { getId } from "@/helpers/id";
 
@@ -16,7 +16,81 @@ type AddPropsType = {
     stockDetails: StockClientRequestBodyType
 }
 
+type GetAllProspType = {
+    storeId: string;
+}
+
 class Stock {
+    static async getAll({ storeId }: GetAllProspType, { mongoDbConfig, user }: ConfigType): Promise<AnalyticStockReportInfoType> {
+        const list =  await mongoDbConfig.collections
+            .WAREHOUSES
+            .aggregate([
+                { $match: { id: storeId }},
+                { $unwind: "$stock-reports" },
+                { $unwind: "$stock-reports.items" },
+                {
+                    $lookup: {
+                        from: "products",
+                        foreignField: "id",
+                        localField: "stock-reports.items.product.id",
+                        as: "product_info"
+                    }
+                },
+                { $unwind: "$product_info" },
+                {
+                    $addFields: {
+                        "stock-reports.items.product": {
+                            item: "$product_info", // Embed product info into sales document:;
+                            // price: 
+                        }
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$stock-reports.id",
+                        createdAt: { $first: "$stock-reports.createdAt" },
+                        id: { $first: "$stock-reports.id" },
+                        items: {
+                            $push: {
+                                quantity: "$stock-reports.items.quantity",
+                                total: "$stock-reports.items.total",
+                                product: {
+                                    barcode: "$product_info.barcode",
+                                    category: "$product_info.category",
+                                    id: "$stock-reports.items.product.id",
+                                    name: "$product_info.name",
+                                    purchasePrice: "$stock-reports.items.product.purchasePrice",
+                                    sellPrice: "$stock-reports.items.product.sellPrice",
+                                }
+                            }
+                        },
+                        modifiedAt: { $first: "$stock-reports.modifiedAt" },
+                        reference: { $first: "$stock-reports.reference" },
+                        total: { $first: "$stock-reports.total" },
+                        /*user: { 
+                            $first: {
+                                firstName: "$user_info.firstName",
+                                lastName: "$user_info.lastName",
+                                username: "$user_info.username"
+                            }
+                        }*/
+                    }
+                }
+            ])
+            .toArray() as StockReportInfoType[];
+
+        const total = list.reduce((prevValue, currentReport) => {
+            return currency(prevValue).add(currentReport.total).value
+        }, 0)
+
+
+        return {
+            list,
+            total
+        }
+        
+    }
+
     static async add({ storeId, stockDetails }: AddPropsType, { mongoDbConfig, user }: ConfigType) {        
         const createdAt = moment(stockDetails.createdAt);
 

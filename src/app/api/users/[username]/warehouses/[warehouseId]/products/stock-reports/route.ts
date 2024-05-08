@@ -14,10 +14,10 @@ type URLParamsType = {
     }
 }
 
-export const DELETE = async (_, { params: { productId, warehouseId } }: URLParamsType) => {
+export const GET = async (_, { params: { productId, warehouseId } }: URLParamsType) => {
     return await apiHandler(async ({ mongoDbConfig, user }) => {
-        await Product.delete({ id: productId, warehouseId }, { mongoDbConfig, user });
-        return NextResponse.json("Product was successfully deleted");
+        const result = await Stock.getAll({ storeId: warehouseId }, { mongoDbConfig, user });
+        return NextResponse.json(result);
     });
 };
 
