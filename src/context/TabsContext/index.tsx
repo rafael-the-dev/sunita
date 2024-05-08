@@ -1,27 +1,33 @@
 "use client"
 
 import * as React from "react"
-import { v4 as uuidV4 } from "uuid"
 
 import { TabType, TabsPropsType } from "./types"
 
+import { getId } from "@/helpers/id"
+
+import TabWrapper from "./Container"
+
 type TabsContextPropsType = { 
     children: React.ReactNode;
-    defaultComponent: React.ReactNode;
+    component: React.ReactNode;
 }
 
 export const TabsContext = React.createContext<TabsPropsType | null>(null)
 TabsContext.displayName = "TabsContext"
 
-export const TabsContextProvider = ({ children,  defaultComponent }: TabsContextPropsType) => {
+export const TabsContextProvider = ({ children, component }: TabsContextPropsType) => {
 
-    const getNewTab = React.useCallback((index: number, component: React.ReactNode): TabType => ({
-        component,
-        id: uuidV4(),
-        name: `Tab ${index}`
-    }), [])
+    const getNewTab = React.useCallback((index: number): TabType => {
+        const id = getId()
+        return {
+            component: <TabWrapper key={id} id={id}>{ component }</TabWrapper>,
+            id,
+            name: `Tab ${index}`
+        }
+    }, [ component ])
 
-    const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => [ getNewTab(1, defaultComponent ) ])
+    const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => [ getNewTab(1) ])
     const [ activeTab, setActiveTab ] = React.useState<TabType>(() => tabsList[0])
 
     const addTab = React.useCallback(() => {
@@ -30,13 +36,13 @@ export const TabsContextProvider = ({ children,  defaultComponent }: TabsContext
 
             return [
                 ...tabs,
-                getNewTab(tabs.length + 1, defaultComponent)
+                getNewTab(tabs.length + 1)
             ]
         })
-    }, [ defaultComponent, getNewTab ])
+    }, [ getNewTab ])
 
     const activateTab = React.useCallback((id: string) => {
-        const tab = tabsList.find((tab) => tab.id ===id)
+        const tab = tabsList.find((tab) => tab.id === id)
         
         if(tab) setActiveTab(tab)
     }, [ tabsList ])
