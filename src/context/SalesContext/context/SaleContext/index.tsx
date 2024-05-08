@@ -11,6 +11,7 @@ import { PaymentMethodType, ProductPayment } from "@/types/payment-method";
 import usePaymentMethods from "./hooks/usePaymentMethods"
 import { getId } from "@/helpers/id";
 import { isInvalidNumber } from "@/helpers/validation";
+import { SalesContext } from "../..";
 
 type SaleContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
@@ -38,6 +39,8 @@ const initialState = {
 };
 
 export const SaleContextProvider = ({ children, initial }: { children: React.ReactNode, initial?: CartType<ProductInfoType> }) => {
+    const { getProducts } = React.useContext(SalesContext)
+
     const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState)
 
     const getCart = React.useCallback(() => cart, [ cart ])
@@ -112,6 +115,27 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
         setCart(initialState);
         resetPaymentMethods();
     }, [resetPaymentMethods ])
+
+    React.useEffect(() => {
+        const products = getProducts()
+
+        setCart(cart => {
+            const cartClone = structuredClone(cart);
+            
+            cartClone.items = cartClone.items.map((item => {
+                const product = products.find(product => product.id === item.product.id)
+
+                if(!product) return item;
+
+                return {
+                    ...item,
+                    product
+                }
+            }))
+
+            return cartClone;
+        })
+    }, [ getProducts ])
     
     return (
         <SaleContext.Provider
