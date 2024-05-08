@@ -143,7 +143,7 @@ const Container = () => {
                 </Button>
                 <LinkContainer 
                     className="mb-3 sm:mb-0 sm:mr-3"
-                    href="/users/rafaeltivane/warehouses/12345/products/stock">
+                    href="/users/rafaeltivane/warehouses/12345/products/stock-reports">
                     <Button className="w-full" variant="outlined">
                         View stock report
                     </Button>
