@@ -3,25 +3,28 @@ import classNames from "classnames";
 import Typography from "@mui/material/Typography";
 
 import styles from "./styles.module.css"
-import useSearchParams from "@/hooks/useSearchParams";
+
+import { ExpenseInfoType } from "@/types/expense";
+import { AnalyticsExpenseType } from "@/types/analytics";
 import { TableHeadersType } from "@/components/table/types";
+
 import { AppContext } from "@/context/AppContext";
 import { ExpensesContextProvider } from "@/context/ExpensesContext";
-import useFech from "@/hooks/useFetch";
+
+import useSearchParams from "@/hooks/useSearchParams";
+import useFetch from "@/hooks/useFetch";
 
 import Button from "@/components/shared/button"
 import Collapse from "@/components/shared/collapse";
 import DateTimeInput from "@/components/shared/date-filter";
 import RegisterExpenses from "./components/add";
 import Table from "@/components/shared/table";
-import { AnalyticsExpenseType } from "@/types/analytics";
 import SubmitButton from "./components/submit-button";
-import { ExpenseInfoType } from "@/types/expense";
 
 const TabBody = () => {
     const { setDialog } = React.useContext(AppContext);
 
-    const { data, fetchData, loading } = useFech<AnalyticsExpenseType>({
+    const { data, fetchData, loading } = useFetch<AnalyticsExpenseType>({
         autoFetch: true,
         url: "http://localhost:3000/api/users/rafaeltivane/warehouses/12345/analytics/expenses"
     })
