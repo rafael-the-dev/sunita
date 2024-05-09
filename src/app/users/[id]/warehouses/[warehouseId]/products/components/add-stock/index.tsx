@@ -30,7 +30,7 @@ const alertSuccessProps = {
 };
 
 const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal: AbortSignal }) => Promise<void> }) => {
-    const { setDialog } = useContext(AppContext)
+    const { dialog, setDialog } = useContext(AppContext)
 
     const changeHandler = useCallback((product: ProductInfoType, func: SetterFuncType) => (e: ChangeEvent<HTMLInputElement>) => {
         func(product, e.target.value, "CHANGE");
@@ -51,18 +51,6 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
                 value: "product",
                 subKey: {
                     value: "name"
-                }
-            }
-        },
-        {
-            label: "Current stock",
-            key: {
-                value: "product",
-                subKey: {
-                    value: "stock",
-                    subKey: {
-                        value: "quantity"
-                    }
                 }
             }
         },
@@ -249,18 +237,24 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
                             </div>
                         </div>
                         <div className="flex flex-col mt-8 sm:flex-row sm:justify-end">
-                            <Button 
-                                className="mb-3 sm:mb-0 sm:mr-3" 
-                                onClick={cancelHandler}
-                                variant="outlined">
-                                Cancel
-                            </Button>
-                            <Button 
-                                className=""
-                                disabled={hasErrors()}
-                                type="submit">
-                                { loading ? "Loading..." : "Submit" }
-                            </Button>
+                           {
+                                !dialog?.payload && (
+                                    <>
+                                         <Button 
+                                            className="mb-3 sm:mb-0 sm:mr-3" 
+                                            onClick={cancelHandler}
+                                            variant="outlined">
+                                            Cancel
+                                        </Button>
+                                        <Button 
+                                            className=""
+                                            disabled={hasErrors()}
+                                            type="submit">
+                                            { loading ? "Loading..." : "Submit" }
+                                        </Button>
+                                    </>
+                                )
+                           }
                         </div>
                     </div>
                 )
