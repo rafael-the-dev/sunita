@@ -77,32 +77,34 @@ const RegisterExpenses = ({ refreshData}: { refreshData: FetchDataFuncType }) =>
     };
 
     return (
-        <form className={classNames(styles.form)}>
-            <div className="px-3 pb-6 pt-8">
-                <div className="flex flex-col items-stretch justify-between sm:flex-row">
-                    <TextField
-                        className={classNames(styles.input, `font-semibold`)}
-                        inputProps={{ readOnly: true }}
-                        label="Total Price"
-                        value={totalPrice}
-                    />
-                    <Combobox 
-                        className={classNames(styles.input)}
-                        label="Category"
-                        list={list}
-                        onChange={changeHandler}
-                        value={ getCategory() }
-                    />
-                </div>
+        <form className={classNames(styles.form, `h-fit`)}>
+            <div className="flex flex-col h-full justify-between px-3 pb-4 pt-8">
                 <div>
-                    {
-                        getItems().map(item => (
-                            <ListItem { ...item } key={item.id} />
-                        ))
-                    }
-                </div>
-                <div className="flex justify-center">
-                    <Button onClick={addItem}>Add new item</Button>
+                    <div className="flex flex-col items-stretch justify-between sm:flex-row">
+                        <TextField
+                            className={classNames(styles.input, `font-semibold`)}
+                            inputProps={{ readOnly: true }}
+                            label="Total Price"
+                            value={totalPrice}
+                        />
+                        <Combobox 
+                            className={classNames(styles.input)}
+                            label="Category"
+                            list={list}
+                            onChange={changeHandler}
+                            value={ getCategory() }
+                        />
+                    </div>
+                    <div>
+                        {
+                            getItems().map(item => (
+                                <ListItem { ...item } key={item.id} />
+                            ))
+                        }
+                    </div>
+                    <div className="flex justify-center">
+                        <Button onClick={addItem}>Add new item</Button>
+                    </div>
                 </div>
                 <div className="flex justify-end mt-16">
                     {

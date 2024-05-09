@@ -1,7 +1,7 @@
 
 
 .form {
-    height: 80vh;
+    max-height: 80vh;
     width: 90vw;
 }
 

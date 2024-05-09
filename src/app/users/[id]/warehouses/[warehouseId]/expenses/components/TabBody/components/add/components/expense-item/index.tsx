@@ -28,24 +28,26 @@ const ListItem = ({ description, id, price }: PropsType) => {
 
     return (
         <Paper 
-            className="flex flex-wrap justify-between mb-6 px-3 py-6 rounded-none"
+            className={classNames(styles.container, "flex flex-wrap justify-between mb-6 px-3 py-6 rounded-none")}
             elevation={1}>
             <TextField 
-                className={classNames(styles.input, { "md:mb-0": hasOneItemLeft })}
-                label="Description"
-                onChange={changeHandler("description")}
-                required
-                value={description}
-            />
-            <TextField 
-                className={classNames(styles.input, { "mb-0": hasOneItemLeft })}
+                className={classNames(`mb-4 w-full`, { "mb-0": hasOneItemLeft })}
                 label="Price"
                 onChange={changeHandler("price")}
                 required
                 value={price}
             />
+            <TextField 
+                className={classNames(`mb-0 w-full`)}
+                label="Description"
+                multiline
+                minRows={4}
+                onChange={changeHandler("description")}
+                required
+                value={description}
+            />
             <IconButton
-                className={classNames("bg-stone-50 opacity-65 hover:text-red-600", { "hidden": hasOneItemLeft })}
+                className={classNames("bg-stone-50 mt-4 opacity-65 hover:text-red-600", { "hidden": hasOneItemLeft })}
                 onClick={removeHandler}>
                 <DeleteIcon />
             </IconButton>

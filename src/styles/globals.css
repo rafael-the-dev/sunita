@@ -1,5 +1,9 @@
 
 
+.scrollable {
+    height: calc(100vh - 141px);
+}
+
 .hover-primary-button:hover {
     background-color: #FFF;
     color: #000;
