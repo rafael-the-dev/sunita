@@ -11,6 +11,7 @@ import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
 type LoginContextType = {
     credentials: CredentialsType,
     user: UserType | {},
+    logout: () => void,
     setCredentials: React.Dispatch<React.SetStateAction<CredentialsType>>
 };
 
@@ -23,6 +24,11 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
     const [ credentials, setCredentials ] = React.useState<CredentialsType | null>(null);
 
     const user = React.useMemo<UserType | {}>(() => !credentials ? {} : credentials.user, [ credentials ]);
+
+    const logout = React.useCallback(() => {
+        setCredentials(null)
+        router.push("/login")
+    }, [ router ])
 
     React.useEffect(() => {
         try {
@@ -80,6 +86,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
                 user,
 
                 // ========== METHODS ===========
+                logout,
                 setCredentials,
             }}>
             { children }
