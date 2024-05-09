@@ -7,6 +7,7 @@ import styles from "./styles.module.css";
 
 import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
+import { StockContextProvider } from "@/context/StockContext";
 import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
 
 import AddStock from "./components/add-stock";
@@ -19,7 +20,6 @@ import Table from "@/components/shared/table";
 import { TableHeadersType } from "@/components/table/types";
 import useFechProducts from "@/hooks/useFetchProducts";
 import LinkContainer from "@/components/link";
-import { StockContextProvider } from "@/context/StockContext";
 
 const Container = () => {
     const { setDialog } = React.useContext(AppContext);
