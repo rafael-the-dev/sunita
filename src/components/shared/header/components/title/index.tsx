@@ -17,6 +17,7 @@ const Title = () => {
         const title = {
             [`${start}/warehouses/12345/expenses`]: "Expenses",
             [`${start}/warehouses/12345/products`]: "Products",
+            [`${start}/warehouses/12345/products/stock-reports`]: "Stock reports",
             [`${start}/warehouses/12345/sales`]: "Sale",
             [start]: "Dashboard",
         }[pathname];
