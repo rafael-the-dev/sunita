@@ -29,3 +29,8 @@ export type StockContextType = {
     removeItem: (productId: string) => void;
     toString: () => string;
 }
+
+export type StockContextProviderPropsType = { 
+    children: React.ReactNode;
+    productsList: ProductInfoType[];
+}

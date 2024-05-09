@@ -1,12 +1,12 @@
 import * as React from "react";
 import moment from "moment";
 
-import { ProductInfoType } from "@/types/product";
-import { StockContextType, StockReportInputProps } from "./types";
-import { StockClientRequestBodyType } from "@/types/stock";
+import { StockContextProviderPropsType, StockContextType, StockReportInputProps } from "./types";
+import { StockClientRequestBodyType, StockReportInfoType } from "@/types/stock";
 
 import useCart from "./hooks/useCart";
 import { isValidPrice } from "./ts/validation";
+import { AppContext } from "../AppContext";
 
 export const StockContext = React.createContext<StockContextType | null>(null);
 StockContext.displayName = "StockContext";
@@ -17,12 +17,24 @@ const inputProps: StockReportInputProps = {
     value: ""
 };
 
-export const StockContextProvider = ({ children, productsList }: { children : React.ReactNode, productsList: ProductInfoType[] }) => {
+export const StockContextProvider = ({ children, productsList }: StockContextProviderPropsType) => {
+    const { dialog } = React.useContext(AppContext);
+
     const { getCart, ...cartRest } = useCart();
 
-    const [ stockReport, setStockReport ] = React.useState({
-        date: structuredClone({ ...inputProps, value: moment(Date.now()).toISOString() }),
-        reference: structuredClone(inputProps)
+    const [ stockReport, setStockReport ] = React.useState(() => {
+        const initial = {
+            date: structuredClone({ ...inputProps, value: moment(Date.now()).toISOString() }),
+            reference: structuredClone(inputProps)
+        }
+
+        if(dialog?.payload) {
+            const stockReport = dialog.payload as StockReportInfoType;
+            initial.date.value = stockReport.createdAt;
+            initial.reference.value = stockReport.reference
+        }
+
+        return initial;
     })
 
     const getStockReport = React.useCallback(() => structuredClone(stockReport), [ stockReport ]);

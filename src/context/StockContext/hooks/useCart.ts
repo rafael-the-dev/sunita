@@ -4,6 +4,8 @@ import currency from "currency.js"
 import { CartItem, CartType } from "@/types/cart";
 import { ProductInfoType } from "@/types/product";
 import { SetterFuncType, StockContextType } from "../types";
+import { StockReportInfoType } from "@/types/stock"
+import { AppContext } from "@/context/AppContext";
 
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
 import { getId } from "@/helpers/id";
@@ -18,7 +20,19 @@ const initialState = {
 };
 
 const useCart = () => {
-    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState);
+    const { dialog } = React.useContext(AppContext);
+
+    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(() => {
+        if(dialog?.payload) {
+            const { items, total } = dialog.payload as StockReportInfoType;
+            return {
+                items,
+                total
+            }
+        }
+
+        return initialState;
+    });
 
     const getCart = React.useCallback(() => structuredClone(cart), [ cart ]);
 
