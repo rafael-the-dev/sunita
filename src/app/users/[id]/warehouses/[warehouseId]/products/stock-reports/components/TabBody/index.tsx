@@ -10,11 +10,15 @@ import { AnalyticStockReportInfoType, StockReportInfoType } from "@/types/stock"
 
 import useSearchParams from "@/hooks/useSearchParams";
 import useFetch from "@/hooks/useFetch";
+import { StockContextProvider } from "@/context/StockContext";
 
+import AddStock from "../../../components/add-stock";
 import Button from "@/components/shared/button"
 import Collapse from "@/components/shared/collapse";
 import DateTimeInput from "@/components/shared/date-filter";
 import Table from "@/components/shared/table";
+import { CartType } from "@/types/cart";
+import { ProductInfoType } from "@/types/product";
 // import SubmitButton from "./components/submit-button";
 
 const TabBody = () => {
@@ -48,6 +52,25 @@ const TabBody = () => {
             }
         }
     ])
+
+    const rowClickHandler = React.useCallback((stockReport: StockReportInfoType) => () => {
+        try {
+            setDialog({
+                header: {
+                    title: "Stock Report"
+                },
+                body: (
+                    <StockContextProvider 
+                        productsList={[]}>
+                        <AddStock refreshProducts={fetchData} />
+                    </StockContextProvider>
+                ),
+                payload: stockReport
+            });
+        } catch(e) {
+            console.error(e)
+        }
+    }, [ fetchData, setDialog ])
 
     
     const tableRowClickHandler = React.useCallback((report: StockReportInfoType) => () => {
@@ -105,7 +128,7 @@ const TabBody = () => {
                 <Table 
                     headers={headers}
                     data={data.list}
-                    onClickRow={tableRowClickHandler}
+                    onClickRow={rowClickHandler}
                 />
             </div>
             
