@@ -1,4 +1,7 @@
-import * as React from "react"
+import * as React from "react";
+import classNames from "classnames";
+
+import styles from "./styles.module.css";
 
 import { ProductFilterContext } from "@/context/ProductFilterContext";
 
@@ -14,8 +17,8 @@ const Price = () => {
 
     return (
         <Collapse title="Price">
-            <div className="flex items-center">
-                <div className="flex flex-col">
+            <div className="flex items-center justify-between">
+                <div className={classNames(styles.input, "flex flex-col")}>
                     <label htmlFor="min-price">Min</label>
                     <Input 
                         className="!border mt-2 !py-2"
@@ -25,8 +28,8 @@ const Price = () => {
                         value={ price.min }
                     />
                 </div>
-                <span className="mx-4 text-2xl">|</span>
-                <div className="flex flex-col">
+                <span className="mx-[2%] text-2xl">|</span>
+                <div className={classNames(styles.input, "flex flex-col")}>
                     <label htmlFor="max-price">Max</label>
                     <Input 
                         className="!border mt-2 !py-2"

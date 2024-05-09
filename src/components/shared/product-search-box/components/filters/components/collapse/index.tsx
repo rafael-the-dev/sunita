@@ -13,7 +13,7 @@ const Container = ({ children, open, title }: { children: ReactNode, open?: bool
     const clickHandler = useCallback(() => setState(state => !state), []);
 
     return (
-        <div>
+        <div className="border-b border-primary-200 border-solid last:border-0">
             <Button 
                 className="capitalize font-semibold justify-between text-primary-800 shadow-none w-full hover-secondary-button"
                 endIcon={ state ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon /> }

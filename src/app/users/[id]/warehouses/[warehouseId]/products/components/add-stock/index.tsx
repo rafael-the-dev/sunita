@@ -142,8 +142,6 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
 
     const referenceChangeHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setReference(e.target.value), [ setReference ])
 
-    // const dateChangeHandler = useCallback((value: string) => setDate(), [])
-
     const alertProps = useRef(alertSuccessProps)
 
     const onCloseAlertRef = useRef<() => void>(null);
@@ -223,7 +221,7 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
                             onRemoveRow={removeHandler}
                         />
                         <div className="flex justify-end mt-16">
-                            <div className={classNames(styles.formTotal, `bg-primary-700 mb-4 text-white px-3 py-4 md:flex flex-col
+                            <div className={classNames(styles.formTotal, `bg-primary-700 mb-4 text-white px-6 py-4 md:flex flex-col
                                 justify-around md:mb-0 md:pl-8`)}>
                                 <Typography
                                     component="h2"
