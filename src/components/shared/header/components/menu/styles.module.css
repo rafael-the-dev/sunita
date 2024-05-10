@@ -2,3 +2,16 @@
 .paper {
     width: 70%;
 }
+
+
+@media screen and (min-width: 400px) {
+    .paper {
+        width: 260px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .paper {
+        width: fit-content;
+    }
+}
