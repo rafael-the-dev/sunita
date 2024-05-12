@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,12 +7,12 @@ import TableFooter from "@mui/material/TableFooter";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { v4 as uuidV4 } from "uuid";
-import classNames from "classnames"
+import classNames from "classnames";
 
-import { TableClassesType, TableHeadersType } from "./types"
+import { TableClassesType, TableHeadersType } from "./types";
+import { getColumnCellKey } from "@/helpers/table";
 
-import TablePaginationActions from "./components/TablePaginationActions"
+import TablePaginationActions from "./components/TablePaginationActions";
 
 type TablePropsType<T> = {
     classes?: TableClassesType;
@@ -44,7 +44,7 @@ const Container = <T extends Object>({ classes, data, isDefault = true, getBodyR
                         <TableCell 
                             align="center"
                             className={classNames(classes?.tableHeadCell, `text-current`)}
-                            key={uuidV4()}>
+                            key={getColumnCellKey(header.key)}>
                             { header.label }
                         </TableCell>
                     ))
@@ -54,8 +54,8 @@ const Container = <T extends Object>({ classes, data, isDefault = true, getBodyR
     ), [ classes, headers, isDefault ]);
 
     return (
-        <TableContainer className={classNames(classes?.root)}>
-            <Table className={classNames(classes?.table, "border border-solid border-stone-300")} sx={{ minWidth: 500 }} aria-label="custom pagination table">
+        <TableContainer className={classNames(classes?.root, `h-full`)}>
+            <Table className={classNames(classes?.table, "border border-solid border-stone-300 h-full")} sx={{ minWidth: 500 }} aria-label="custom pagination table">
                 { tableHeader }
                 <TableBody>
                     { getBodyRows({ page, rowsPerPage }) }

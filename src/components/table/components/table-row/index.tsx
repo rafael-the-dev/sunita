@@ -1,24 +1,17 @@
 import * as React from "react";
 import classNames from "classnames";
 import moment from "moment";
-import { v4 as uuidV4 } from "uuid"
 import { IconButton, TableCell, TableRow } from "@mui/material";
 
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { TableHeadersType, TableKeyType } from "../../types"
 
-import Checkbox from "@/components/checkbox";
 import useSearchParams from "@/hooks/useSearchParams";
+import { getColumnCellKey } from "@/helpers/table";
 
-type TableRowPropsType = {
-    id: string;
-    headers: React.MutableRefObject<TableHeadersType[]>;
-    onClick?: (row: Object) => (e: React.MouseEvent<HTMLTableRowElement>) => void;
-    onChange?: (row: Object) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onRemove?: (row: Object) => (e: React.MouseEvent<HTMLButtonElement>) => void;
-    row: Object
-}
+import Checkbox from "@/components/checkbox";
+import { PropsType } from "./types";
 
 const concatValues = ({ obj, value }) => {
     if(Array.isArray(value)) {
@@ -28,18 +21,8 @@ const concatValues = ({ obj, value }) => {
     return obj[value];
 };
 
-const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: TableRowPropsType) => {
+const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: PropsType) => {
     const searchParams = useSearchParams();
-
-    const getKey = (key: TableKeyType) => {
-        const { subKey, value } = key;
-
-        if(subKey) {
-            return `${value}-${getKey(key.subKey)}`;
-        }
-
-        return value
-    };
 
     const getKeyValue = (key: TableKeyType, data: Object) => {
         const { subKey, value } = key;
@@ -83,7 +66,7 @@ const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: Ta
                 headers.current.map(header => (
                     <TableCell
                         align="center"
-                        key={getKey(header.key)}>
+                        key={getColumnCellKey(header.key)}>
                         { getLabel(header) }
                     </TableCell>
                 ))
