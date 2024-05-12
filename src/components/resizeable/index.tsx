@@ -21,7 +21,7 @@ const Container = ({ children, classes, helper, minHeight, minWidth, onResize }:
     const initDrag = (e) => {
         startX = e.clientX;
         startY = e.clientY;
-        startWidth = parseInt(document.defaultView.getComputedStyle(paperRef.current).width, 10);
+        // startWidth = parseInt(document.defaultView.getComputedStyle(paperRef.current).width, 10);
         startHeight = parseInt(document.defaultView.getComputedStyle(paperRef.current).height, 10);
         document.documentElement.addEventListener('mousemove', doDrag, false);
         document.documentElement.addEventListener('mouseup', stopDrag, false);
@@ -60,7 +60,7 @@ const Container = ({ children, classes, helper, minHeight, minWidth, onResize }:
 
     return (
         <div 
-            className={classNames(classes?.root, `w-fit max-w-full relative`)}
+            className={classNames(classes?.root, `w-fit min-h-fit max-w-full relative`)}
             ref={paperRef}
             style={{ minHeight, minWidth }}>
             { children }
