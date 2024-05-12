@@ -1,11 +1,9 @@
-@media screen and (min-width: 600px) {
-    .datePicker {
-        width: 36% !important;
-    }
+.datePicker {
+    width: 106%;
 }
 
-@media screen and (min-width: 950px) {
+@media screen and (min-width: 600px) {
     .datePicker {
-        width: 300px !important;
+        width: 49%;
     }
 }

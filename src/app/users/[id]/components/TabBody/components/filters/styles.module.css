@@ -1,0 +1,10 @@
+
+.container {
+    background-color: #edededba;
+}
+
+@media screen and (min-width: 900px) {
+    .container {
+        background-color: #ededed63;
+    }
+}

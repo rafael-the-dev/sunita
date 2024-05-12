@@ -1,6 +1,7 @@
 import classNames from "classnames";
 
-import classes from "./styles.module.css";
+import styles from "./styles.module.css";
+
 import useSearchParams from "@/hooks/useSearchParams";
 import { toISOString } from "@/helpers/date";
 
@@ -12,15 +13,15 @@ const DateFilters = () => {
     const startDate = searchParams.get("start-date", "");
 
     return (
-        <div className="flex flex-wrap items-center">
+        <div className="flex flex-wrap items-center justify-between">
             <DateTimeInput
-                className={classNames(classes.datePicker, "input sm:mr-4 sm:mb-0")}
+                className={classNames(styles.datePicker, "input sm:mb-0")}
                 id="start-date"
                 label="Date"
             />
             { Boolean(startDate) && (
                 <DateTimeInput
-                    className={classNames(classes.datePicker, "input sm:mr-4 sm:mb-0")}
+                    className={classNames(styles.datePicker, "input sm:mb-0")}
                     id="end-date"
                     label="End date"
                     minDate={toISOString(startDate)}

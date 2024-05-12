@@ -1,5 +1,8 @@
 import * as React from "react";
 import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@mui/material";
+import classNames from "classnames";
+
+import styles from "./styles.module.css"
 
 // import BarmanFilter from "./components/barman-filter";
 import Collapse from "@/components/collapse"
@@ -44,7 +47,7 @@ const FiltersContainer = () => {
 
     const filtersMemo = React.useMemo(() => (
         <Paper 
-            className="p-4"
+            className="mb-6 p-4 pb-6"
             elevation={0}>
             <FormControl>
                 <FormLabel id="filters-title">Filters</FormLabel>
@@ -67,9 +70,6 @@ const FiltersContainer = () => {
             <div className="pt-3">
                 { childrenList.current[value] }
             </div>
-            <div className="flex mt-8">
-                {/* { submitButton } */}
-            </div>
         </Paper>
     ), [ changeHandler, value ])
 
@@ -77,9 +77,9 @@ const FiltersContainer = () => {
         <Collapse 
             onToggle={onToggleCollapse}
             showSearchParam>
-            <div className="mt-24 px-4">
+            <div className={classNames(styles.container, "rounded-md mt-24 mx-4 p-4 sm:px-4")}>
                 { filtersMemo }
-                <div className="px-4">
+                <div className="">
                     <SubmitButon />
                 </div>
             </div>
