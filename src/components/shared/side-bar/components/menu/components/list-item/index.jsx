@@ -13,7 +13,6 @@ import Link from "@/components/link";
 const ListItem = ({ icon, label, path }) => {
     const pathname = usePathname();
 
-    // console.log(pathname, path)
     const isSelected = path === pathname;
 
     return (

@@ -15,7 +15,6 @@ const Container = () => {
     const onOpenRef = useRef<() => void | null>(null);
 
     const closeHandler = useCallback(() => {
-        console.log(dialog)
         if(isLoading.current) return;
 
         dialog?.header?.onClose?.();
