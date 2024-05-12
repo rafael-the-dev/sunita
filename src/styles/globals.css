@@ -1,5 +1,9 @@
 
 
+table td, table th {
+    text-wrap: nowrap;
+}
+
 .scrollable {
     height: calc(100vh - 141px);
 }
