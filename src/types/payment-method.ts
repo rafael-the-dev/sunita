@@ -16,3 +16,9 @@ export type PaymentMethodListItemType = {
     label: string;
     value: string | number
 }
+
+export type SaleClientPaymentMethodsType = {
+    changes: number;
+    list: PaymentMethodType[];
+    totalReceived: number;
+}
