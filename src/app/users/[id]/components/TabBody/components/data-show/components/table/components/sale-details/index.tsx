@@ -8,9 +8,11 @@ import { LoginContext } from "@/context/LoginContext"
 import { SaleDetailsContext } from "@/context/SaleDetailsContext";
 
 import Alert from "@/components/alert"
-import Button from "@/components/shared/button"
+import Button from "@/components/shared/button";
+import PaymentMethodsPanel from "./components/payment-methods";
 import ProductsPanel from "./components/products";
-import Tab from "./components/tab-button"
+import Tab from "./components/tab-button";
+
 import useFetch from "@/hooks/useFetch";
 
 const successAlertData = {
@@ -40,14 +42,8 @@ const SelectedSaleContaienr = () => {
         { id: "OTHERS", label: "Others" }
     ])
 
-    const paymentMethodsHeaders = React.useRef([
-        { label: "Payment Method", value: "description" },
-        { label: "Amount", value: "amount" },
-        { label: "Received", value: "received" },
-        { label: "Changes", value: "changes" },
-    ]);
-
     const productsPanel = React.useMemo(() => <ProductsPanel />, []);
+    const paymentMethodsPanel = React.useMemo(() => <PaymentMethodsPanel />, [])
 
     const tabClickHandler = React.useCallback((tabId: string) => () => setTab(tabId), []);
 
@@ -111,7 +107,7 @@ const SelectedSaleContaienr = () => {
                     <div className={classNames(styles.itemsContainer, "px-2 md:px-4")}>
                         {
                             {
-                                // "PAYMENT_METHODS": paymentMethodsTableMemo,
+                                "PAYMENT_METHODS": paymentMethodsPanel,
                                 "PRODUCTS": productsPanel
                             }[tab]
                         }
