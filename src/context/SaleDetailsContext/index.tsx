@@ -99,7 +99,7 @@ export const SaleDetailsContextProvider = ({ children, initial, refreshData }: P
     const getSaleDetails = React.useCallback(() => structuredClone(saleDetails), [ saleDetails ]);
     
     const toString = React.useCallback(() => {
-        const { changes, items, total, totalReceived } = getSaleDetails();
+        const { changes, items, paymentMethods, total, totalReceived } = getSaleDetails();
 
         const body: CartResquestType = {
             changes,
@@ -109,6 +109,11 @@ export const SaleDetailsContextProvider = ({ children, initial, refreshData }: P
                     id: item.product.id
                 }
             })),
+            paymentMethods: {
+                changes,
+                list: paymentMethods,
+                totalReceived
+            },
             total,
             totalReceived
         };
