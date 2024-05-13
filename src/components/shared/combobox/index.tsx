@@ -1,15 +1,9 @@
 import * as React from "react";
 import MenuItem from "@mui/material/MenuItem";
 
-import Textfield from "@/components/Textfield";
+import { PropsType } from "./types";
 
-type PropsType = {
-    className?: string;
-    label?: string;
-    list: { key: string | number ; label: string | number ; }[];
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    value: string | number;
-}
+import Textfield from "@/components/Textfield";
 
 const Combobox = ({ className, label, list, onChange, value }: PropsType) => {
 
@@ -21,12 +15,12 @@ const Combobox = ({ className, label, list, onChange, value }: PropsType) => {
             select
             value={value}>
             {
-                list.map(item => (
+                list.map(({ label, value }) => (
                     <MenuItem
-                        key={item.key} 
-                        value={item.key}
+                        key={value} 
+                        value={value}
                         >
-                        { item.label }
+                        { label }
                     </MenuItem>
                 ))
             }
