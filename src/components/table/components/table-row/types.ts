@@ -4,10 +4,10 @@ import { TableHeadersType } from "../../types";
 import { ChangeEventFunc, MouseEventFunc } from "@/types/events";
 
 export type PropsType = {
-    id: string;
+    id: string | number;
     headers: MutableRefObject<TableHeadersType[]>;
-    onClick?: (row: Object) => MouseEventFunc;
-    onChange?: (row: Object) => ChangeEventFunc;
-    onRemove?: (row: Object) => MouseEventFunc;
+    onClick?: (row: Object) => MouseEventFunc<HTMLTableRowElement>;
+    onChange?: (row: Object) => ChangeEventFunc<HTMLInputElement>;
+    onRemove?: (row: Object) => MouseEventFunc<HTMLButtonElement>;
     row: Object
 }

@@ -34,7 +34,7 @@ const TableRowContainer = ({ headers, id, onClick, onChange, row, onRemove }: Pr
 
             return (
                 <Checkbox 
-                    checked={searchParams.isChecked(searchedValues, id)}
+                    checked={searchParams.isChecked(searchedValues, id.toString())}
                     onChange={onChange && onChange(row)}
                 />
             );
