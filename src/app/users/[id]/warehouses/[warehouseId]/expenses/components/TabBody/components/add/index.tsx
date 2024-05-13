@@ -13,19 +13,20 @@ import TextField from "@/components/Textfield";
 import Combobox from "@/components/shared/combobox";
 import { FetchDataFuncType } from "@/hooks/useFetch/types";
 import { ExpenseInfoType } from "@/types/expense";
+import { ChangeEventFunc } from "@/types/events";
 
 const list = [
     {
         label: "Credelec",
-        key: "credelec"
+        value: "credelec"
     },
     {
         label: "Food",
-        key: "food"
+        value: "food"
     },
     {
         label: "Fuel",
-        key: "fuel"
+        value: "fuel"
     }
 ]
 
@@ -35,7 +36,7 @@ const RegisterExpenses = ({ refreshData}: { refreshData: FetchDataFuncType }) =>
 
     const requestMethod = useRef("")
 
-    const changeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => addCategory(e.target.value), [ addCategory ])
+    const changeHandler: ChangeEventFunc<HTMLInputElement> = useCallback((e) => addCategory(e.target.value), [ addCategory ])
     
     const { loading, fetchData } = useFetch({ 
         autoFetch: false, 
