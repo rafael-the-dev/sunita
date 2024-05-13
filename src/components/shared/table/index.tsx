@@ -1,5 +1,6 @@
 import * as React from "react";
-import { v4 as uuidV4 } from "uuid"
+
+import { ChangeEventFunc, MouseEventFunc } from "@/types/events"
 
 import Table from "@/components/table";
 import TableRow from "@/components/table/components/table-row";
@@ -8,10 +9,10 @@ import { TableClassesType, TableHeadersType } from "@/components/table/types";
 type TablePropsType = {
     classes?: TableClassesType;
     headers: React.MutableRefObject<TableHeadersType[]>
-    data: Object & { id: string }[];
-    onClickRow?: (row: Object) => (e: React.MouseEvent<HTMLTableRowElement>) => void;
-    onChange?: (row: Object) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onRemoveRow?: (row: Object) => (e: React.MouseEvent<HTMLButtonElement>) => void;
+    data: Object & { id: string | number }[];
+    onClickRow?: (row: Object) => MouseEventFunc<HTMLTableRowElement>;
+    onChange?: (row: Object) => ChangeEventFunc<HTMLInputElement>;
+    onRemoveRow?: (row: Object) => MouseEventFunc<HTMLButtonElement>;
 }
 
 const TableContainer = ({ classes, data, headers, onClickRow, onChange, onRemoveRow }: TablePropsType) => {
