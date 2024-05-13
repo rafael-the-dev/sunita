@@ -1,3 +1,4 @@
+import { PaymentMethodType } from "./payment-method";
 import { ProductInfoType } from "./product";
 
 export type SaleItemType =  {
@@ -16,6 +17,7 @@ export type SaleType = {
     id: string;
     profit: number;
     items: SaleItemType[];
+    paymentMethods: PaymentMethodType[];
     total: number;
     totalReceived: number;
     user: string;
@@ -34,6 +36,7 @@ export type SaleInfoType = {
     id: string;
     items: SaleInfoItemType[];
     profit: number;
+    paymentMethods: PaymentMethodType[];
     total: number;
     totalReceived: number;
     user: { 
