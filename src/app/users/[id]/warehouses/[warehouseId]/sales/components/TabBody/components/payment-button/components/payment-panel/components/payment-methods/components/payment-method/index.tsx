@@ -1,27 +1,19 @@
 import * as React from "react";
 import { IconButton, MenuItem } from "@mui/material"
-import { v4 as uuidV4 } from "uuid";
 import classNames from "classnames"
 
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import styles from "./styles.module.css";
 
 // import { CheckoutContext } from "src/context"
 
-import Input from "@/components/Textfield";
 import { SaleContext } from "@/context/SalesContext/context/SaleContext";
 import { PaymentMethodListItemType } from "@/types/payment-method";
+import { paymentMethodsList } from "@/config/payment-methods";
 
-const paymentMethodsList: PaymentMethodListItemType[] = [
-    { value: 100, label: "Cash" },
-    { value: 200, label: "M-pesa" },
-    { value: 300, label: "E-mola" },
-    { value: 400, label: "M-kesh" },
-    { value: 500, label: "POS" },
-    { value: 600, label: "P24" }
-];
+import Input from "@/components/Textfield";
 
 const PaymentMethodContainer = ({ amount, id }) => {
 

@@ -10,6 +10,7 @@ import Typography from "./components/Typography"
 import { AppContext } from "@/context/AppContext"
 import { CartResquestType } from "@/types/cart"
 import { SalesContext } from "@/context/SalesContext"
+import useFetch from "@/hooks/useFetch"
 
 type ProsType = {
     setSuccefulPayment: () => void;
@@ -18,9 +19,12 @@ type ProsType = {
 const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
     const { isLoading } = React.useContext(AppContext)
     const { addPaymentMethod, getCart, getPaymentMethods, resetCart } = React.useContext(SaleContext)
-    const { fetchProducts } = React.useContext(SalesContext)
+    const { fetchProducts } = React.useContext(SalesContext);
 
-    const [ loading, setLoading ] = React.useState(false)
+    const { fetchData, loading } = useFetch({
+        autoFetch: false,
+        url: `/api/users/rafaeltivane/warehouses/12345/sales`
+    });
 
     const hasChanges = getPaymentMethods().changes > 0;
     const showRemainingAmount =  getPaymentMethods().remainingAmount > 0 &&  getPaymentMethods().remainingAmount < getCart().total;
@@ -28,33 +32,40 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
 
     const submitHandler = async () => {
         isLoading.current = true;
-        setLoading(true)
+        
+        const cart = getCart();
+        const paymentMethods = getPaymentMethods();
 
-        try {
-            const body: CartResquestType = {
-                changes: getPaymentMethods().changes,
-                items: getCart().items.map(item => ({ ...item, product: { id: item.product.id } })),
-                total: getCart().total,
-                totalReceived: getPaymentMethods().totalReceived
-            };
+        const body: CartResquestType = {
+            changes: paymentMethods.changes,
+            items: cart.items.map(item => ({ ...item, product: { id: item.product.id } })),
+            paymentMethods: {
+                changes: paymentMethods.changes,
+                list: paymentMethods.paymentMethods,
+                totalReceived: paymentMethods.totalReceived,
+            },
+            total: cart.total,
+            totalReceived: paymentMethods.totalReceived
+        };
 
-            const options = {
-                body: JSON.stringify(body),
-                method: "POST"
-            }
-            const res = await fetch(`/api/users/rafaeltivane/warehouses/12345/sales`, options);
+        const options = {
+            body: JSON.stringify(body),
+            method: "POST"
+        }
 
-            if(res.status === 201) {
+        await fetchData({
+            options,
+            onError() {
+
+            },
+            async onSuccess() {
                 setSuccefulPayment()
                 resetCart();
                 await fetchProducts({})
             }
-        } catch(e) {
-            console.error(e)
-        } finally {
-            isLoading.current = true;
-            setLoading(false)
-        }
+        });
+
+        isLoading.current = false;
     };
 
     return (
