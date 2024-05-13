@@ -14,11 +14,12 @@ import Store from "./Warehouse";
 import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 import { getProduct, isValidCartItemTotalPrice, isValidPaymentMethods } from "@/helpers/sales";
+import { sort } from "@/helpers/sort";
 
 
 class Sale {
     static async getAll({ filters,  warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
-        return await mongoDbConfig.collections
+        const list = await mongoDbConfig.collections
             .WAREHOUSES
             .aggregate([
                 { $match: { id: warehouseId } },
@@ -84,6 +85,9 @@ class Sale {
                     }
                 }
             ]).toArray() as SaleInfoType[];
+        
+        sort(list);
+        return list;
     }
 
     static async register({ cart, warehouseId }: { cart: CartResquestType, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
