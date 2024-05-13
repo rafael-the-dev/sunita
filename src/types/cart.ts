@@ -1,4 +1,4 @@
-import {} from "./payment-method"
+import { SaleClientPaymentMethodsType } from "./payment-method"
 
 export type CartItem<T> = {
     id: string;
@@ -23,7 +23,8 @@ export type RequestCartItem = {
 export type CartResquestType = {
     changes: number;
     id?: string;
-    items: RequestCartItem[],
+    items: RequestCartItem[];
+    paymentMethods: SaleClientPaymentMethodsType;
     total: number;
     totalReceived: number;
 }
