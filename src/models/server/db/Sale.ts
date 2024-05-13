@@ -1,19 +1,19 @@
-import { v4 as uuidV4} from "uuid"
 import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
+import { WarehouseProductType } from "@/types/product";
 import { SaleType, SaleInfoType, SaleItemType } from "@/types/sale";
+
 import { toISOString } from "@/helpers/date";
+import { getId } from "@/helpers/id";
+import { isValidCartTotalPrice, isValidReceivedAmount } from "@/validation/sale";
 import { isInvalidNumber } from "@/helpers/validation";
 
-import ProductModel from "./Product";
 import Store from "./Warehouse";
 import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
-import { getId } from "@/helpers/id";
-import { isValidCartTotalPrice, isValidReceivedAmount } from "@/validation/sale";
-import { WarehouseProductType } from "@/types/product";
+import { getProduct, isValidCartItemTotalPrice, isValidPaymentMethods } from "@/helpers/sales";
 
 
 class Sale {
@@ -71,6 +71,7 @@ class Sale {
                             }
                         },
                         profit: { $first: "$sales.profit" },
+                        paymentMethods: { $first: "$sales.paymentMethods" },
                         total: { $first: "$sales.total" },
                         totalReceived: { $first: "$sales.totalReceived" },
                         user: { 
@@ -113,13 +114,13 @@ class Sale {
                 throw new InvalidArgumentError("Quantity must not be less than or equal to zero");
             }
 
-            const currentProduct = selectedProductsMap.get(currentItem.product.id);
-
-            if(!currentProduct) throw new Error404(`Product with '${currentItem.product.id}' id not found`);
+            const currentProduct = getProduct(selectedProductsMap, currentItem.product.id);
 
             if(currentItem.quantity > currentProduct.stock.quantity) {
                 throw new InvalidArgumentError(`Quantity is greater than available stock`);
             }
+
+            isValidCartItemTotalPrice(currentItem, currentProduct);
 
             const item = {
                 ...currentItem,
@@ -145,6 +146,8 @@ class Sale {
         //check if server total price match with the client total price, then throw an error if not
         isValidCartTotalPrice(totalPrice, cart.total);
 
+        isValidPaymentMethods(cart.paymentMethods.list, cart.totalReceived);
+
         try {
             let sale: SaleType = {
                 changes: cart.changes,
@@ -152,6 +155,7 @@ class Sale {
                 id: getId(),
                 items: itemsList,
                 profit: totalProfit,
+                paymentMethods: cart.paymentMethods.list,
                 total: cart.total,
                 totalReceived: cart.totalReceived,
                 user: "rafaeltivane"
