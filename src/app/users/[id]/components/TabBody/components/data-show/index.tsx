@@ -8,8 +8,7 @@ import classes from "./styles.module.css"
 
 import { AnalyticsContext } from "@/context/AnalyticsContext";
 
-
-// import Chart from "../../../chart"//:;
+import Chart from "./components/chart";
 import Resizeable from "@/components/resizeable";
 import Table from "./components/table"
 
@@ -37,7 +36,7 @@ const Container = () => {
         });
     }, [ getAnalytics ]);
 
-    const chartMemo = React.useMemo(() => <></>, [])
+    const chartMemo = React.useMemo(() => <Chart />, [])
     const tableMemo = React.useMemo(() => <Table />, [])
 
     const titleMemo = React.useMemo(() => (
