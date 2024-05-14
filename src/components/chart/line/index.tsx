@@ -1,16 +1,7 @@
 import Chart from "react-apexcharts";
 import { PropsType } from "./types";
-// import { } from "react-apexcharts";
 
 const ChartContainer = ({ series, type, xAxis }: PropsType) => {
-    
-    const options = {
-        stroke: {
-            curve: "smooth",
-        },
-        xaxis: xAxis.current
-    };
-
     return (
         <Chart
             height="100%"
