@@ -1,11 +1,10 @@
 import { AnalyticsType } from "@/types/analytics";
-import { ChartSerieType } from "@/types/chart";
-
+import { ChartSeriesType } from "@/types/chart";
 
 export type AnalyticsContextType = {
-    dailySalesStats: ChartSerieType[];
+    dailySalesStats: ChartSeriesType;
     fetchData: ({ options, path, signal }: { options?: RequestInit, path?: string, signal?: AbortSignal }) => Promise<void>
     getAnalytics: () => AnalyticsType;
     loading: boolean;
-    weeklySalesStats: ChartSerieType[];
+    weeklySalesStats: ChartSeriesType;
 }
