@@ -140,6 +140,8 @@ const ChartContainer = () => {
         if(isIncluded("SALES")) list.push(...chartSeries.total);
 
         if(isIncluded("PROFIT")) list.push(...chartSeries.profit);
+
+        if(isIncluded("EXPENSES")) list.push(...chartSeries.expenses);
        
         return list;
     }, [ yAxis ])
