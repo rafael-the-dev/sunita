@@ -3,19 +3,20 @@ import dynamic from "next/dynamic";
 
 import styles from "./styles.module.css"
 
-import { AnalyticsContext  } from "@/context/AnalyticsContext";
-import { ChartXAxisType } from "@/types/chart";
+import { ChartSerieType, ChartSeriesType, ChartXAxisType } from "@/types/chart";
+import { ChangeEventFunc, MouseEventFunc } from "@/types/events";
 
+import { AnalyticsContext  } from "@/context/AnalyticsContext";
+import { daysOfWeek } from "@/config/chart";
 import { getDayXAxis } from "./helper";
 
 import Button from "./components/Button";
 import Collapse from "@/components/collapse";
 import RadioGroup from "./components/RadioGroup"
-import { ChangeEventFunc, MouseEventFunc } from "@/types/events";
-import { daysOfWeek } from "@/config/chart";
+import { getId } from "@/helpers/id";
 
 // const BarChart = dynamic(() => import( "./components/bar-chart"), { ssr: false });
-const LineChart = dynamic(() => import( "@/components/chart/line"), { ssr: false });
+const Chart = dynamic(() => import( "@/components/chart/line"), { ssr: false });
 
 const filtersList = [
     {
@@ -36,7 +37,7 @@ const ChartContainer = () => {
     const [ chart, setChart ] = React.useState("LINE");
     const [ open, setOpen ] = React.useState("");
     const [ xAxis, setXAxis ] = React.useState("DAY");
-    const [ yAxis, setYAxis ] = React.useState("total");
+    const [ yAxis, setYAxis ] = React.useState<string[]>([ "SALES" ]);
 
     const { dailySalesStats, weeklySalesStats } = React.useContext(AnalyticsContext);
 
@@ -76,7 +77,23 @@ const ChartContainer = () => {
         func(e.target.value);
     }, []);
 
-    const isSelected = React.useCallback((currentValue: string) => (itemValue: string) => currentValue === itemValue, []);
+    const yAxisChangeHandler: ChangeEventFunc<HTMLInputElement> = React.useCallback((e) => {
+        const { value } = e.target;
+
+        setYAxis(list => {
+            const listClone = [ ...list ]
+            if(list.includes(value)) return listClone.filter(item => item !== value);
+            
+            listClone.push(value);
+
+            return listClone;
+        });
+    }, []);
+
+    const isSelected = React.useCallback((currentValue: string | string[]) => (itemValue: string) => {
+        if(Array.isArray(currentValue)) return currentValue.includes(itemValue);
+        return currentValue === itemValue;
+    }, []);
 
     const chartType = React.useMemo(() => (
         <RadioGroup 
@@ -98,9 +115,10 @@ const ChartContainer = () => {
         <RadioGroup 
             isSelected={isSelected(yAxis)}
             list={yAxeList}
-            onChange={changeHandler(setYAxis)}
+            onChange={yAxisChangeHandler}
+            radio={false}
         />
-    ), [ changeHandler, isSelected, yAxis ]);
+    ), [ isSelected, yAxis, yAxisChangeHandler ]);
 
     const filters = React.useMemo(() => (
         filtersList.map(item => (
@@ -114,25 +132,22 @@ const ChartContainer = () => {
         ))
     ), [ clickHandler, open ])
 
-    /*const optionsByDay = React.useMemo(() => {:;
-        const salesList = getSales().list;
-        const params = { data: salesList, isBarChart: chart === "BAR", yAxis: yAxe };
+    const getSeries = React.useCallback((chartSeries: ChartSeriesType) => {
+        const list: ChartSerieType[] = []
 
-        if([ "DAY", "WEEK" ].includes(xAxe)) {
-            return getChartOptionsGroupedByDay({ 
-                ...params,
-                isWeekly: xAxe !== "DAY", 
-            })
-        }
-        else if(xAxe === "MONTH") {
-            return groupByMonth(params);
-        }
-    }, [ chart, getSales, xAxe,  yAxe ]);*/
+        const isIncluded = (id: string) => yAxis.includes(id);
+
+        if(isIncluded("SALES")) list.push(...chartSeries.total);
+
+        if(isIncluded("PROFIT")) list.push(...chartSeries.profit);
+       
+        return list;
+    }, [ yAxis ])
 
     const options = {
         series: {
-            "DAY": dailySalesStats,
-            "WEEK": weeklySalesStats
+            "DAY": getSeries(dailySalesStats),
+            "WEEK": getSeries(weeklySalesStats)
         }[xAxis],
         type: {
             "BAR": "bar",
@@ -143,7 +158,6 @@ const ChartContainer = () => {
             "WEEK": weekXAxis
         }[xAxis]
     }
-    console.log(xAxis, options)
 
 
     React.useEffect(() => {
@@ -172,8 +186,8 @@ const ChartContainer = () => {
             <div className={Boolean(open) ? styles.chartContainerOpen : styles.chartContainer}>
                 {
                     {
-                        // "BAR": <BarChart { ...optionsByDay } />,:;
-                        "LINE": <LineChart { ...options } />
+                        "BAR": <Chart key={getId()} { ...options} />,
+                        "LINE": <Chart key={getId()} { ...options } />
                     }[chart]
                 }
             </div>
