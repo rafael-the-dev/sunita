@@ -1,21 +1,24 @@
 import * as React from "react";
 
-
-import { AnalyticsContextType } from "./types"
-import useFech from "@/hooks/useFetch";
 import { LoginContext } from "../LoginContext";
+
 import { AnalyticsType } from "@/types/analytics";
-import { getDailySaleStats, getWeeklySaleStats, monthlySalesStats } from "./helper";
-import { getSalesStats } from "@/helpers/analytics";
-import { ChartSerieType } from "@/types/chart";
+import { AnalyticsContextType } from "./types"
+import { ChartSeriesType } from "@/types/chart";
+
+import useFetch from "@/hooks/useFetch";
+import { getDailySaleStats, getWeeklySaleStats, monthlySalesStats } from "./helpers/sales";
+import { getDailyExpensesStats, getWeeklyExpensesStats } from "./helpers/expenses";
 
 export const AnalyticsContext = React.createContext<AnalyticsContextType | null>(null);
 AnalyticsContext.displayName = "AnalyticsContext";
 
+const initialStats = { expenses: [], profit: [], total: [] };
+
 export const AnalyticsContextProvider = ({ children }: { children: React.ReactNode }) => {
     const { credentials } = React.useContext(LoginContext)
 
-    const { data, fetchData, loading } = useFech<AnalyticsType>({ 
+    const { data, fetchData, loading } = useFetch<AnalyticsType>({ 
         url: `/api/users/${credentials?.user?.username }/warehouses/12345/analytics`
     });
 
@@ -32,20 +35,26 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
         return result;
     }, [ getAnalytics ]);
 
-    const weeklySalesStats: ChartSerieType[] = React.useMemo(() => {
+    const weeklySalesStats: ChartSeriesType = React.useMemo(() => {
         const analytics = getAnalytics();
 
-        if(!analytics) return [];
+        if(!analytics) return initialStats;
 
-        return getWeeklySaleStats(analytics.sales.list);
+        return {
+            ...getWeeklySaleStats(analytics.sales.list),
+            expenses: getWeeklyExpensesStats(analytics.expenses.list)
+        };
     }, [ getAnalytics ]);
 
-    const dailySalesStats: ChartSerieType[] = React.useMemo(() => {
+    const dailySalesStats: ChartSeriesType = React.useMemo(() => {
         const analytics = getAnalytics();
 
-        if(!analytics) return [];
+        if(!analytics) return initialStats;
 
-        return getDailySaleStats(analytics.sales.list);
+        return {
+            ...getDailySaleStats(analytics.sales.list),
+            expenses: getWeeklyExpensesStats(analytics.expenses.list)
+        }
     }, [ getAnalytics ]);
 
     return (
