@@ -70,9 +70,9 @@ const Container = () => {
     if(!getAnalytics()) return <></>
 
     return (
-        <Resizeable classes={{ root: "bg-white" }} onResize={resizeHandler} helper={resizeHandler}>
+        <Resizeable classes={{ root: "bg-white rounded-md" }} onResize={resizeHandler} helper={resizeHandler}>
             <Paper 
-                className="flex flex-col h-full mt-4 overflow-y-auto w-full"
+                className="flex flex-col h-full mt-4 overflow-y-auto rounded-md w-full"
                 elevation={0}>
                 <div className="flex flex-col justify-between p-4 sm:flex-row sm:items-center">
                     { titleMemo }

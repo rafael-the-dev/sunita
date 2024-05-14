@@ -3,3 +3,13 @@
 .root {
     height: calc(100vh - 116px);
 }
+
+.content {
+    background-color: #ededed63;
+}
+
+@media screen and (min-width: 1000px) {
+    .content {
+        background-color: #ededed33;
+    }
+}

@@ -17,7 +17,7 @@ const TabBody = () => {
             <AnalyticsFiltersContextProvider>
                 <Highlights />
                 <FiltersContainer />
-                <div className={classNames("mb-16 px-3 md:mb-8", hasCollapse ? "md:mt-8" : "md:mt-24")}>
+                <div className={classNames(styles.content, "mt-8 mb-16 mx-3 pt-3 pb-5 px-3 rounded-md md:mb-8 xl:mx-4 xl:px-4", hasCollapse ? "md:mt-8" : "md:mt-28")}>
                     <DataShow />
                 </div>
             </AnalyticsFiltersContextProvider>
