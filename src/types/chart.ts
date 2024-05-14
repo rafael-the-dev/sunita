@@ -6,6 +6,7 @@ export type ChartSerieType = {
 }
 
 export type ChartSeriesType = {
+    expenses: ChartSerieType[];
     profit: ChartSerieType[];
     total: ChartSerieType[];
 };
