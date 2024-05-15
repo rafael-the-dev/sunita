@@ -12,7 +12,7 @@ import styles from "./styles.module.css";
 import { AnalyticsContext } from "@/context/AnalyticsContext";
 import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 
-import Card from "@/components/shared/card"
+import Card from "./components/card"
 
 const Highlights = () => {
     const { getAnalytics } = useContext(AnalyticsContext)
@@ -48,33 +48,9 @@ const Highlights = () => {
         const parentWidth = sliderRef.current.parentElement.clientWidth;
 
         let width = innerWidth / 1 - 35;
-        // widthReducer.current = 0;
         let maxHeight = 0;
         
         childrenList.current.forEach((child, index) => {
-
-           /* if(innerWidth > 1280 && Boolean(spacing['2xl'])) {
-                width = parentWidth / spacing['2xl'].width;
-                widthReducer.current = spacing['2xl'].gap;
-            } 
-            else if(innerWidth > 1024 && Boolean(spacing.xl)) {
-                width = parentWidth / spacing.xl.width;
-                widthReducer.current = spacing.xl.gap;
-            } 
-            else if(innerWidth > 900 && Boolean(spacing.lg)) {
-                width = parentWidth / spacing.lg.width;
-                widthReducer.current = spacing.lg.gap;
-            } 
-            else if(innerWidth > 768 && Boolean(spacing.md)) {
-                width = parentWidth / spacing.md.width;
-                widthReducer.current = spacing.md.gap;
-            } 
-            else if(innerWidth > 600 && Boolean(spacing.sm)) {
-                width = parentWidth / spacing.sm.width;
-                widthReducer.current = spacing.sm.gap;
-            }  */
-
-
             const { height } = child.getBoundingClientRect();
             if(height > maxHeight) maxHeight = height;
             
@@ -83,8 +59,6 @@ const Highlights = () => {
             child.style.left = `${(width - (0)) * index}px`;
         });
         
-        //widthRef.current = width;
-        // sliderRef.current.style.height = `${maxHeight}px`
         slideWidth.current = width
         sliderRef.current.style.width = `${width * childrenList.current.length}px`;
     }, [ ]);
@@ -96,6 +70,16 @@ const Highlights = () => {
         layout();
         // setChildrenListRef.current?.(list);
     }, [ layout ]);
+
+    useEffect(() => {
+        const currentWindow = window;
+
+        window.addEventListener("resize", layout);
+
+        return () => {
+            currentWindow.removeEventListener("resize", layout);
+        }
+    }, [ layout ])
 
     return (
         <div className={classNames(styles.row, "bg-primary-700 mx-3 p-2 rounded-md relative")}>
@@ -118,7 +102,7 @@ const Highlights = () => {
                         description={getAnalytics()?.profit}
                         title="Profit"
                     />
-                    <Hidden mdDown>
+                    <Hidden xlDown>
                         <li className={classNames(styles.filterButtonContainer)}>
                             <Button
                                 className={classNames(styles.filtersButton, ` 
@@ -132,7 +116,7 @@ const Highlights = () => {
                 </ul>
             </div>
             <Hidden mdUp>
-                <div className={classNames(styles.controllers, "absolute flex justify-between left-0 top-1/2 w-full z-10")}>
+                <div className={classNames(styles.controllers, "absolute flex justify-between left-0 top-1/2 w-full z-10 md:hidden")}>
                     <IconButton onClick={previousSlide}>
                         <ArrowBackIosNewIcon />
                     </IconButton>
