@@ -77,7 +77,7 @@ const FiltersContainer = () => {
         <Collapse 
             onToggle={onToggleCollapse}
             showSearchParam>
-            <div className={classNames(styles.container, "rounded-md mt-24 mx-4 p-4 sm:px-4")}>
+            <div className={classNames(styles.container, "rounded-md mt-3 xl:mt-10 mx-4 p-4 sm:px-4")}>
                 { filtersMemo }
                 <div className="">
                     <SubmitButon />
