@@ -1,19 +1,12 @@
 import * as React from "react";
 import currency from "currency.js";
 
-import { PaymentMethodListItemType, PaymentMethodType, ProductPayment } from "@/types/payment-method";
+import { ProductPayment } from "@/types/payment-method";
 import { CartType } from "@/types/cart";
-import { getPaymentStats, setTotalReceivedAmountAndChanges } from "@/helpers/product-payment";
+import { setTotalReceivedAmountAndChanges } from "@/helpers/product-payment";
 import { isInvalidNumber } from "@/helpers/validation";
 
-const paymentMethodsList: PaymentMethodListItemType[] = [
-    { value: 100, label: "Cash" },
-    { value: 200, label: "M-pesa" },
-    { value: 300, label: "E-mola" },
-    { value: 400, label: "M-kesh" },
-    { value: 500, label: "POS" },
-    { value: 600, label: "P24" }
-];
+import { paymentMethodsList } from "@/config/payment-methods";
 
 const initialState = {
     changes: 0,
