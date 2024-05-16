@@ -4,6 +4,7 @@ import classNames from "classnames"
 import styles from "./styles.module.css"
 import { SaleContext } from "@/context/SalesContext/context/SaleContext"
 
+import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
 import PaymentMethod from "./components/payment-method"
 import Typography from "./components/Typography"
@@ -28,11 +29,27 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
 
     const hasChanges = getPaymentMethods().changes > 0;
     const showRemainingAmount =  getPaymentMethods().remainingAmount > 0 &&  getPaymentMethods().remainingAmount < getCart().total;
-    const disableButton = showRemainingAmount || getPaymentMethods().totalReceived <= 0;
+    const disableButton = showRemainingAmount || getPaymentMethods().totalReceived <= 0 || loading;
+
+    const errorMessage = React.useRef("");
+    const onCloseFuncRef = React.useRef<() => void | null>(null);
+    const onOpenFuncRef = React.useRef<() => void | null>(null);
+
+    const alertMemo = React.useMemo(() => (
+        <Alert 
+            className={`mx-2 mt-4 ${loading && ""}`}
+            description={errorMessage.current}
+            onClose={onCloseFuncRef}
+            onOpen={onOpenFuncRef}
+            severity="error"
+            title="Error"
+        />
+    ), [ loading ]);
 
     const submitHandler = async () => {
         isLoading.current = true;
-        
+        onCloseFuncRef.current?.();
+
         const cart = getCart();
         const paymentMethods = getPaymentMethods();
 
@@ -55,11 +72,12 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
 
         await fetchData({
             options,
-            onError() {
-
+            onError(error) {
+                errorMessage.current = error.message;
+                onOpenFuncRef.current?.();
             },
             async onSuccess() {
-                setSuccefulPayment()
+                setSuccefulPayment();
                 resetCart();
                 await fetchProducts({})
             }
@@ -70,6 +88,7 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
 
     return (
         <form className="flex flex-col grow justify-between">
+            { alertMemo }
             <div className={classNames("overflow-y-auto px-2 pt-6 md:pt-8", styles.paymentMethods)}>
                 <div>
                     {
