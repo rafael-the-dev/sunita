@@ -66,7 +66,7 @@ const TabBody = () => {
 
                 return (
                     <QuantityInput 
-                        hasError={isInvalidNumber(cartItem.quantity)}
+                        hasError={isInvalidNumber(cartItem.quantity) || cartItem.quantity > cartItem.product.stock.quantity}
                         onChange={changeHandler(cartItem)}
                         onDecrement={clickHandler(cartItem, -1)}
                         onIncrement={clickHandler(cartItem, 1)}
