@@ -1,22 +1,25 @@
 "use client"
 
 import * as React from "react"
-
-import { CartType  } from "@/types/cart"
-import { ProductInfoType } from "@/types/product"
 import currency from "currency.js";
 
+import { SalesContext } from "../..";
+
+import { ProductInfoType } from "@/types/product";
+import { ProductPayment } from "@/types/payment-method";
+import { CartType  } from "@/types/cart";
+
+import usePaymentMethods from "./hooks/usePaymentMethods";
+
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
-import { PaymentMethodType, ProductPayment } from "@/types/payment-method";
-import usePaymentMethods from "./hooks/usePaymentMethods"
 import { getId } from "@/helpers/id";
 import { isInvalidNumber } from "@/helpers/validation";
-import { SalesContext } from "../..";
 
 type SaleContextType = {
     addItem: (product: ProductInfoType, quantity: number) => void;
     changeQuantity: (productId: string, quantity: number) => void;
     getCart: () => CartType<ProductInfoType>;
+    hasQuantityErrors: boolean;
     isEmpty: boolean;
     removeItem: (productId: string) => void;
     resetCart: () => void;
@@ -39,11 +42,11 @@ const initialState = {
 };
 
 export const SaleContextProvider = ({ children, initial }: { children: React.ReactNode, initial?: CartType<ProductInfoType> }) => {
-    const { getProducts } = React.useContext(SalesContext)
+    const { getProducts } = React.useContext(SalesContext);
 
-    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState)
+    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState);
 
-    const getCart = React.useCallback(() => cart, [ cart ])
+    const getCart = React.useCallback(() => cart, [ cart ]);
 
     const addItem = React.useCallback((product: ProductInfoType, quantity: number) => {
         setCart(cart => {
@@ -71,7 +74,7 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
             modifiedCart.total = calculaCartTotalPrice(modifiedCart);
             return modifiedCart;
         })
-    }, [])
+    }, []);
 
     const changeQuantity = React.useCallback((productId: string, quantity: number) => {
         setCart(cart => {
@@ -92,7 +95,7 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
             modifiedCart.total = calculaCartTotalPrice(modifiedCart);
             return modifiedCart;
         })
-    }, [])
+    }, []);
 
     const removeItem = React.useCallback((productId: string) => {
         setCart(cart => {
@@ -100,13 +103,17 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
             
             modifiedCart.items = modifiedCart.items.filter(cartItem => cartItem.product.id !== productId);
 
-
             modifiedCart.total = calculaCartTotalPrice(modifiedCart);
             return modifiedCart;
         });
     }, []);
 
-    const isEmpty = React.useMemo(() => getCart().items.length === 0, [ getCart ])
+    //iterate through cart's items to find item with quantity greater than available stock
+    const hasQuantityErrors = React.useMemo(() => {
+        return Boolean(getCart().items.find(item => item.quantity > item.product.stock.quantity));
+    }, [ getCart ])
+
+    const isEmpty = React.useMemo(() => getCart().items.length === 0, [ getCart ]);
 
     const paymentMethods = usePaymentMethods(getCart());
     const resetPaymentMethods = paymentMethods.reset;
@@ -116,6 +123,7 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
         resetPaymentMethods();
     }, [resetPaymentMethods ])
 
+    //update cart products when getProducts methods changes
     React.useEffect(() => {
         const products = getProducts()
 
@@ -127,6 +135,7 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
 
                 if(!product) return item;
 
+                //if product was found, return its updated version from products list
                 return {
                     ...item,
                     product
@@ -141,6 +150,7 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
         <SaleContext.Provider
             value={{
                 ...paymentMethods,
+                hasQuantityErrors,
                 isEmpty,
 
                 addItem,
