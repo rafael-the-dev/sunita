@@ -79,14 +79,14 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
             const result = (await res.json()) as CredentialsType;
             
             setCredentials(result);
-            router.push(`/users/${result.user.username}`);
+            router.push(pathname)//`/users/${result.user.username}`);
         } catch(e) {
             console.error(e);
             router.push("/login");
         } finally {
             setRevalidatingToken(false)
         }
-    }, [ router ]);
+    }, [ pathname, router ]);
 
     React.useEffect(() => {
         if(isFirstRender.current) {
