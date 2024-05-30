@@ -11,15 +11,15 @@ type URLParamsType = {
     }
 }
 
-export const DELETE = async (_, { params: { productId, warehouseId } }: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+export const DELETE = async (req: NextRequest, { params: { productId, warehouseId } }: URLParamsType) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         await Product.delete({ id: productId, warehouseId }, { mongoDbConfig, user });
         return NextResponse.json("Product was successfully deleted");
     });
 };
 
 export const GET = async (req: NextRequest, { params: { productId, warehouseId } }: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const product = await Product.get({ productId, warehouseId }, { mongoDbConfig, user });
         return NextResponse.json(product);
     });

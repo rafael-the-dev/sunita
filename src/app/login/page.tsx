@@ -65,9 +65,22 @@ const Login = () => {
 
     const [ state, formAction ] = useFormState(submitHandler, { error: null });
 
+    const beforeUnloadHandler = React.useCallback(() => {
+        console.log("hello...")
+        router.push("/login")
+    }, [ router ])
+
     React.useEffect(() => {
         if(state.error) onOpenHandlerRef.current?.(); 
     }, [ state ]);
+
+    React.useEffect(() => {
+        const currentWindow = window
+
+        currentWindow.addEventListener("beforeunload", beforeUnloadHandler)
+
+        return () => currentWindow.removeEventListener("beforeunload", beforeUnloadHandler)
+    }, [ beforeUnloadHandler ])
     
     return (
         <main className="bg-primary-50 flex items-center justify-center min-h-screen">

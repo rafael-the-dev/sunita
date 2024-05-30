@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 
 import DefaultError from "@/errors/server/DefaultError";
 
-//const Access = require("src/models/server/Acess");
+import Access from "@/models/server/db/Auth";
 
-import { closeDbConnections, createMongoDBConnection, mongoDBConfig } from "@/connections/mongo_db";
 import { MongoDbConfigType } from "@/types/mongoDb";
 import { UserType } from "@/types/user";
-//const RtComercial = require("src/connections/import-data");
+import { getToken } from "@/helpers/auth"
+import { closeDbConnections, createMongoDBConnection, mongoDBConfig } from "@/connections/mongo_db";
 
 export type APIHandlerType = ({ user, mongoDbConfig }: { mongoDbConfig: MongoDbConfigType, user: UserType | null }) => Promise<any>;
 
@@ -15,33 +15,33 @@ let mongoDbConfig = {
     isConnected: false 
 };
 
+const ignorePaths = (path: string) => {
+    const ignorablePaths = [
+        "/auth/login",
+        "/auth/refresh"
+    ];
+    console.log(path)
+    return ignorablePaths.includes(path);
+}
 
-export const apiHandler = async (handler: APIHandlerType) => {
-    if(!mongoDBConfig.isConnected) {
-        await createMongoDBConnection();
-        mongoDbConfig = mongoDBConfig
-    }
-    //const { authorization } = req.headers;
-    
-    //const { token } = cookie.parse(req.headers.cookie ?? "");
-
+export const apiHandler = async (req: NextRequest, handler: APIHandlerType) => {
     try {
-        /*res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader(
-            "Access-Control-Allow-Headers",
-            "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-        );
-
-        if (req.method === "OPTIONS") {
-            res.setHeader("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-            return res.status(200).json({});
-        }*/
-
         let user = null;
-        
-        /*if(!hasFreeAccess(req)) {
-            user = Access.getUser(authorization ?? token);
-        } */ 
+
+        const replaceDomain = req.url.replace("http://localhost:3000/api", "");
+        const replaceQueryParams = replaceDomain.replace( /\?[A-z0-9.+-=]*/g,"");
+
+        if(!ignorePaths(replaceQueryParams)) {
+            const token = getToken(req);
+            user = Access.decode(token);
+        }
+
+        const isAuthRefreshPage = replaceQueryParams === "/auth/refresh";
+
+        if(!mongoDBConfig.isConnected && !isAuthRefreshPage) {
+            await createMongoDBConnection();
+            mongoDbConfig = mongoDBConfig;
+        }
 
         return await handler({ user, mongoDbConfig: mongoDBConfig });
     } catch(err) {

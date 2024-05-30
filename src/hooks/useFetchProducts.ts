@@ -1,52 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useContext } from "react";
 
 import { ProductInfoType } from "@/types/product";
 
-type StateType = {
-    data: ProductInfoType[] | null,
-    error: Error | null,
-    loading: boolean
-};
+import { LoginContext } from "@/context/LoginContext";
+
+import useFetch from "./useFetch";
+
 
 const useFechProducts = () => {
-    const [ state, setState ] = useState<StateType>({ data: null, error: null, loading: true });
+    const { credentials: { user } } = useContext(LoginContext)
 
-    const fetchData = useCallback(async ({ signal }: { signal: AbortSignal }) => {
-        try {
-            const res = await fetch("http://localhost:3000/api/users/rafaeltivane/warehouses/12345/products", { signal });
-            const data = await res.json();
+    const { data, error, fetchData, loading } = useFetch<ProductInfoType[]>({
+        url: `/api/users/${user.username}/warehouses/12345/products`
+    })
 
-            if(res.status === 200) setState({
-                error: null,
-                data: data as ProductInfoType[],
-                loading: false
-            });
-
-            else throw new Error(data);
-        } catch(err) {
-            console.error(err);
-            setState({
-                error: null,
-                data: null,
-                loading: false
-            });
-        }
-    }, []);
-
-    useEffect(() => {
-        const controller = new AbortController();
-
-        fetchData({ signal: controller.signal});
-
-        return () => {
-            controller.abort;
-        }
-        
-    }, [ fetchData ]);
-
-    return { ...state, fetchProducts: fetchData };
+    return { data, error, fetchProducts: fetchData, loading };
 }
 
-export default useFechProducts
+export default useFechProducts;

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { CredentialsType } from "@/types/login" ;
 import { UserType } from "@/types/user";
@@ -10,6 +10,7 @@ import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
 
 type LoginContextType = {
     credentials: CredentialsType,
+    revalidatingToken: boolean,
     user: UserType | {},
     logout: () => void,
     setCredentials: React.Dispatch<React.SetStateAction<CredentialsType>>
@@ -19,9 +20,11 @@ export const LoginContext = React.createContext<LoginContextType | null>(null);
 LoginContext.displayName = "LoginContext";
 
 export const LoginContextProvider = ({ children }: { children: React.ReactNode }) => {
+    const pathname = usePathname();
     const router = useRouter();
 
     const [ credentials, setCredentials ] = React.useState<CredentialsType | null>(null);
+    const [ revalidatingToken, setRevalidatingToken ] = React.useState(true)
 
     const user = React.useMemo<UserType | {}>(() => !credentials ? {} : credentials.user, [ credentials ]);
 
@@ -50,13 +53,26 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         }
     }, [ credentials ]);
 
+    const isFirstRender = React.useRef(true)
+
     const validateSavedToken = React.useCallback(async ({ signal }) => {
         try {
             const { access: { token } } = getItem<CredentialsType>("credentials");
 
             if(!token) throw new Error("Undefined local storage");
 
-            const res = await fetch(`/api/auth/refresh?token=${token}`, { signal });
+            const options = {
+                headers: {
+                    authorization: `bearer ${token}`
+                },
+                signal
+            }
+            const res = await fetch(`/api/auth/refresh?token=${token}`, options);
+
+            if(res.status === 401) {
+                router.push("/login");
+                return;
+            }
 
             if(res.status !== 200) throw new Error("Refresh token error");
 
@@ -67,22 +83,42 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         } catch(e) {
             console.error(e);
             router.push("/login");
+        } finally {
+            setRevalidatingToken(false)
         }
     }, [ router ]);
 
     React.useEffect(() => {
+        if(isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        
         const controller = new AbortController();
 
         validateSavedToken({ signal: controller.signal });
 
         return () => controller.abort();
     }, [ validateSavedToken ]);
+    
+    React.useEffect(() => {
+        const ignorablePaths = [
+            "/login"
+        ];
+
+        const isIgnorablePath = ignorablePaths.includes(pathname);
+
+        if(!isIgnorablePath && !credentials && !revalidatingToken) {
+            router.push("/login")
+        }
+    }, [ credentials, pathname, router, revalidatingToken ]);
 
     return (
         <LoginContext.Provider
             value={{
                 // ========== PROPS ===========
                 credentials,
+                revalidatingToken,
                 user,
 
                 // ========== METHODS ===========

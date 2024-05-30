@@ -14,7 +14,7 @@ type URLParamsType = {
 }
 
 export const GET = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         // const products = await ProductModel.getAll({ warehouseId }, { mongoDbConfig, user });
         // return NextResponse.json(products);
     });
@@ -23,7 +23,7 @@ export const GET = async (req: NextRequest, { params: { username, warehouseId }}
 export const POST = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
     const expense = await req.json() as ExpenseClientType;
 
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         await ExpenseModel.register({ expense, storeId: warehouseId }, { mongoDbConfig, user });
         return NextResponse.json("Expense was successfully registed", { status: 201});
     });

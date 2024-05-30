@@ -16,7 +16,7 @@ type URLParamsType = {
 export const GET = async (req: NextRequest, { params: { username, warehouseId }}: URLParamsType) => {
     const searchParams = req.nextUrl.searchParams;
 
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const expenses = await Expenses.getAll({ filters: getFilters("expenses.createdAt", searchParams), storeId: warehouseId }, { mongoDbConfig, user })
 
         const analytics:AnalyticsExpenseType = {

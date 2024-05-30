@@ -11,14 +11,14 @@ type URLParamsType = {
 }
 
 export const DELETE = async (req: NextRequest, { params: { username } }: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig }) => {
+    return await apiHandler(req, async ({ mongoDbConfig }) => {
         await Users.delete({ username }, { mongoDbConfig });
         return NextResponse.json({});
     });
 };
 
 export const GET = async (req: NextRequest, { params: { username } }: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig }) => {
+    return await apiHandler(req, async ({ mongoDbConfig }) => {
         const requestedUser = await Users.get({ username }, { mongoDbConfig });
         return NextResponse.json(requestedUser);
     });

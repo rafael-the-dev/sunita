@@ -14,15 +14,15 @@ type URLParamsType = {
     }
 }
 
-export const GET = async (_, { params: { productId, warehouseId } }: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+export const GET = async (req: NextRequest, { params: { productId, warehouseId } }: URLParamsType) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const result = await Stock.getAll({ storeId: warehouseId }, { mongoDbConfig, user });
         return NextResponse.json(result);
     });
 };
 
 export const POST = async (req: NextRequest, { params: { productId, warehouseId } }: URLParamsType) => {
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const stockDetails = await req.json() as StockClientRequestBodyType;
 
         const product = await Stock.add({ storeId: warehouseId, stockDetails }, { mongoDbConfig, user });

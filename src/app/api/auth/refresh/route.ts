@@ -8,7 +8,7 @@ export const GET = async (req: NextRequest) => {
     const { searchParams } = req.nextUrl
     const token = searchParams.get('token');
 
-    return apiHandler(async ({ mongoDbConfig, user }) => {
+    return apiHandler(req, async ({ mongoDbConfig, user }) => {
         const credentials = await Auth.refreshToken({ token });
         return NextResponse.json(credentials);
     });

@@ -14,6 +14,7 @@ import "@/styles/globals.css";
 
 import { theme } from "./mui/theme";
 import { AppContextProvider } from "@/context/AppContext";
+import { LoginContextProvider } from "@/context/LoginContext";
 
 const RootLayout = ({ children }) => {
     return (
@@ -23,8 +24,9 @@ const RootLayout = ({ children }) => {
                     <ThemeProvider theme={theme}>
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <AppContextProvider>
-                                
-                                { children }
+                                <LoginContextProvider>
+                                    { children }
+                                </LoginContextProvider>
                             </AppContextProvider>
                         </LocalizationProvider>
                     </ThemeProvider>

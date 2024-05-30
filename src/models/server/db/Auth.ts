@@ -14,6 +14,11 @@ import Users  from "./Users";
 
 class Auth {
 
+    static decode(token: string) {
+        const { _id, exp, iat, password, ...userDetails } = verifyToken<DecodedUserType>(token);
+        return userDetails
+    }
+
     static async login({ password, username }: LoginCredentialsType, { mongoDbConfig }: SettingsType): Promise<CredentialsType> {
         try {
             const user = await Users.get({ username }, { mongoDbConfig });
