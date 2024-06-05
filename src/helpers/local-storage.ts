@@ -1,8 +1,11 @@
 
+import { CartType } from "@/types/cart";
 import { CredentialsType } from "@/types/login"
+import { ProductInfoType } from "@/types/product";
 
 type LocalStorageType = {
-    credentials: CredentialsType
+    credentials: CredentialsType;
+    cart: CartType<ProductInfoType>;
 };
 
 const LOCAL_STORAGE = "__my-app__";

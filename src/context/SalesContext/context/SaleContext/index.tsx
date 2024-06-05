@@ -10,6 +10,7 @@ import { ProductPayment } from "@/types/payment-method";
 import { CartType  } from "@/types/cart";
 
 import usePaymentMethods from "./hooks/usePaymentMethods";
+import { useLocalStorage } from "./hooks/useLocalStorage";
 
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
 import { getId } from "@/helpers/id";
@@ -37,6 +38,7 @@ export const SaleContext = React.createContext<SaleContextType | null>(null);
 SaleContext.displayName = "SaleContext";
 
 const initialState = {
+    id: getId(),
     items: [],
     total:0
 };
@@ -44,7 +46,7 @@ const initialState = {
 export const SaleContextProvider = ({ children, initial }: { children: React.ReactNode, initial?: CartType<ProductInfoType> }) => {
     const { getProducts } = React.useContext(SalesContext);
 
-    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initialState);
+    const [ cart, setCart ] = React.useState<CartType<ProductInfoType>>(initial ?? initialState);
 
     const getCart = React.useCallback(() => cart, [ cart ]);
 
@@ -116,10 +118,12 @@ export const SaleContextProvider = ({ children, initial }: { children: React.Rea
     const isEmpty = React.useMemo(() => getCart().items.length === 0, [ getCart ]);
 
     const paymentMethods = usePaymentMethods(getCart());
+    useLocalStorage(cart);
+
     const resetPaymentMethods = paymentMethods.reset;
 
     const resetCart = React.useCallback(() => {
-        setCart(initialState);
+        setCart(currentCart => ({ ...initialState, id: currentCart.id }));
         resetPaymentMethods();
     }, [resetPaymentMethods ])
 

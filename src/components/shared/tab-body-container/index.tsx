@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useContext } from "react";
+import { FC, ReactNode, useContext } from "react";
 
 import { TabsContext, TabsContextProvider } from "@/context/TabsContext";
 
@@ -19,8 +19,11 @@ const Container = () => {
     );
 };
 
-const Provider = ({ component }: { component: ReactNode }) => (
-    <TabsContextProvider component={component} >
+const Provider = <T, >({ component, Component, initialList }: { component: ReactNode, Component: FC, initialList?: T[] }) => (
+    <TabsContextProvider 
+        component={component} 
+        Component={Component}
+        initialList={initialList}>
         <Container />
     </TabsContextProvider>
 );

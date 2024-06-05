@@ -8,26 +8,44 @@ import { getId } from "@/helpers/id"
 
 import TabWrapper from "./Container"
 
-type TabsContextPropsType = { 
+type TabsContextPropsType<T> = { 
     children: React.ReactNode;
     component: React.ReactNode;
+    Component?: React.FC;
+    initialList?: T[];
 }
 
 export const TabsContext = React.createContext<TabsPropsType | null>(null)
 TabsContext.displayName = "TabsContext"
 
-export const TabsContextProvider = ({ children, component }: TabsContextPropsType) => {
-
+export const TabsContextProvider = <T, >({ children, component, Component, initialList }: TabsContextPropsType<T>) => {
+    
     const getNewTab = React.useCallback((index: number): TabType => {
         const id = getId()
+        
         return {
             component: <TabWrapper key={id} id={id}>{ component }</TabWrapper>,
             id,
             name: `Tab ${index}`
         }
-    }, [ component ])
+    }, [ component ]);
+    //:;
+    const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => {
+        if(Array.isArray(initialList) && initialList.length > 0) {
+            return initialList.map((item, index) => {
+                const id = getId();
 
-    const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => [ getNewTab(1) ])
+                return {
+                    //@ts-ignore
+                    component: <TabWrapper id={id} key={id}><Component initial={item} /></TabWrapper>,
+                    id,
+                    name: `Tab ${index + 1}`
+                }
+            })
+        }
+
+        return [ getNewTab(1) ]
+    })
     const [ activeTab, setActiveTab ] = React.useState<TabType>(() => tabsList[0])
 
     const addTab = React.useCallback(() => {
