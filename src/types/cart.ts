@@ -8,6 +8,7 @@ export type CartItem<T> = {
 }
 
 export type CartType<T> = {
+    id?: string | number;
     items: CartItem<T>[];
     total:  number;
 }
