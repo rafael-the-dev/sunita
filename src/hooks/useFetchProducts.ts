@@ -10,10 +10,10 @@ import useFetch from "./useFetch";
 
 
 const useFechProducts = () => {
-    const { credentials: { user } } = useContext(LoginContext)
+    const { credentials } = useContext(LoginContext)
 
     const { data, error, fetchData, loading } = useFetch<ProductInfoType[]>({
-        url: `/api/users/${user.username}/warehouses/12345/products`
+        url: `/api/users/${credentials?.user?.username}/warehouses/12345/products`
     })
 
     return { data, error, fetchProducts: fetchData, loading };
