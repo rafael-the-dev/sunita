@@ -9,6 +9,7 @@ import { isValidDate, isValidPrice, isValidReference } from "@/helpers/stock-rep
 import { getId } from "@/helpers/id";
 
 import Store from "./Warehouse";
+import { sort } from "@/helpers/sort";
 
 
 type AddPropsType = {
@@ -83,9 +84,10 @@ class Stock {
             return currency(prevValue).add(currentReport.total).value
         }, 0)
 
+        sort(list)
 
         return {
-            list,
+            list, 
             total
         }
         
