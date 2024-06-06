@@ -1,8 +1,5 @@
 import * as React from "react";
 import classNames from "classnames";
-import Typography from "@mui/material/Typography";
-
-import styles from "./styles.module.css"
 
 import { ExpenseInfoType } from "@/types/expense";
 import { AnalyticsExpenseType } from "@/types/analytics";
@@ -10,27 +7,23 @@ import { TableHeadersType } from "@/components/table/types";
 
 import { AppContext } from "@/context/AppContext";
 import { ExpensesContextProvider } from "@/context/ExpensesContext";
+import { FiltersContext } from "@/context/FiltersContext"
 
-import useSearchParams from "@/hooks/useSearchParams";
 import useFetch from "@/hooks/useFetch";
+import { formatDates } from "@/helpers/date";
 
 import Button from "@/components/shared/button"
-import Collapse from "@/components/shared/collapse";
-import DateTimeInput from "@/components/shared/date-filter";
+import Card from "@/components/shared/report-card"
+import Filters from "./components/Filters"
 import RegisterExpenses from "./components/add";
 import Table from "@/components/shared/table";
-import SubmitButton from "./components/submit-button";
 
 const TabBody = () => {
     const { setDialog } = React.useContext(AppContext);
+    const { fetchData, ...rest } = React.useContext(FiltersContext)
+    const data = rest.data as AnalyticsExpenseType
 
-    const { data, fetchData, loading } = useFetch<AnalyticsExpenseType>({
-        autoFetch: true,
-        url: "http://localhost:3000/api/users/rafaeltivane/warehouses/12345/analytics/expenses"
-    })
-
-    const searchParams = useSearchParams()
-    const startDate = searchParams.get("start-date", "");
+    const expensesRange = React.useMemo(() => data ? formatDates(data.list) : "", [ data ])
 
     const headers = React.useRef<TableHeadersType[]>([
         {
@@ -83,48 +76,21 @@ const TabBody = () => {
     return (
         <div className="flex flex-col items-stretch justify-between overflow-y-auto py-4 scrollable">
             <div className="pb-20">
-                <div className="px-3 md:flex">
-                    <div className={classNames(styles.card, `bg-primary-700 mb-4 text-white px-3 py-4 md:flex flex-col
-                        justify-around md:mb-0 md:pl-8`)}>
+                <div className="items-stretch px-3 md:flex">
+                    <Card>
                         <div>
-                            <Typography
-                                component="h2"
-                                className="text-lg">
-                                Today
-                            </Typography>
+                            <Card.Title>
+                                <span className="text-base">Date</span><br/>
+                                {expensesRange  }
+                            </Card.Title>
                         </div>
                         <div>
-                            <Typography
-                                component="h3"
-                                className="font-semibold mt-3 text-2xl">
+                            <Card.Description>
                                 { data.total } MT
-                            </Typography>
+                            </Card.Description>
                         </div>
-                    </div>
-                    <Collapse 
-                        classes={{ root: classNames(styles.filtersContainer, "border border-solid border-primary-200 grow md:ml-8")}} 
-                        title="Filters">
-                        <div>
-                            <div className="md:flex justify-between">
-                                <DateTimeInput 
-                                    className={classNames(styles.dateInput, "mb-3 w-full")}
-                                    id="start-date"
-                                    label="Date"
-                                />
-                                { startDate && (
-                                    <DateTimeInput 
-                                        className={classNames(styles.dateInput, "w-full")}
-                                        id="end-date"
-                                        label="Date"
-                                    />
-                                )}
-                            </div>
-                            <SubmitButton 
-                                fetchData={fetchData} 
-                                loading={loading}
-                            />
-                        </div>
-                    </Collapse>
+                    </Card>
+                    <Filters />
                 </div>
                 <div className={classNames("mt-4 px-3 md:mt-8")}>
                     <Table 
