@@ -4,14 +4,14 @@ import FormControlLabel from "@mui/material/FormControlLabel"
 import Radio from "@mui/material/Radio";
 
 
-type PropsType = {
+type PropsType<T> = {
     checked?: boolean;
     label?: string;
     onChange: ChangeEventFunc<HTMLInputElement>;
-    value?: string;
+    value?: string | T;
 }
 
-const RadioButton = ({ checked, label, onChange, value }: PropsType) => (
+const RadioButton = <T, >({ checked, label, onChange, value }: PropsType<T>) => (
     <FormControlLabel 
         control={
             <Radio 
