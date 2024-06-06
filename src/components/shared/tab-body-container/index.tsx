@@ -19,7 +19,7 @@ const Container = () => {
     );
 };
 
-const Provider = <T, >({ component, Component, initialList }: { component: ReactNode, Component: FC, initialList?: T[] }) => (
+const Provider = <T, >({ component, Component, initialList }: { component: ReactNode, Component?: FC, initialList?: T[] }) => (
     <TabsContextProvider 
         component={component} 
         Component={Component}
