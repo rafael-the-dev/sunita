@@ -7,7 +7,7 @@ export const dateTimeFormat = "DD/MM/YYYY HH:mm A"
 
 export const formatDate = (dateParam: DateType ) => moment(dateParam).format(dateFormat);
 
-export const formatDates = (list: SaleInfoType[]) => {
+export const formatDates = (list: { createdAt: Date | string }[]) => {
     if(list.length === 0) return formatDate(Date.now());
 
     if(list.length > 1) {
