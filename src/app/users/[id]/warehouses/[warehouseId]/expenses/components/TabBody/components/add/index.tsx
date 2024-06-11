@@ -1,42 +1,26 @@
-import { ChangeEvent, useCallback, useContext, useRef } from "react"
+import { ChangeEvent, useCallback, useContext, useEffect, useRef, useState } from "react"
 import classNames from "classnames";
 import DeleteButton from "@mui/material/Button"
 
 import styles from "./styles.module.css"
+import { FetchDataFuncType } from "@/hooks/useFetch/types";
+import { ExpenseInfoType } from "@/types/expense";
+
 import useFetch from "@/hooks/useFetch";
 import { AppContext } from "@/context/AppContext";
 import { ExpensesContext } from "@/context/ExpensesContext";
 
 import Button from "@/components/shared/button"
+import Categories from "./components/categories"
 import ListItem from "./components/expense-item";
 import TextField from "@/components/Textfield";
-import Combobox from "@/components/shared/combobox";
-import { FetchDataFuncType } from "@/hooks/useFetch/types";
-import { ExpenseInfoType } from "@/types/expense";
-import { ChangeEventFunc } from "@/types/events";
 
-const list = [
-    {
-        label: "Credelec",
-        value: "credelec"
-    },
-    {
-        label: "Food",
-        value: "food"
-    },
-    {
-        label: "Fuel",
-        value: "fuel"
-    }
-]
 
-const RegisterExpenses = ({ refreshData}: { refreshData: FetchDataFuncType }) => {
+const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) => {
     const { dialog, setDialog } = useContext(AppContext)
-    const { addCategory, addItem, getItems, getCategory, totalPrice, toString } = useContext(ExpensesContext);//
+    const { addItem, getItems, totalPrice, toString } = useContext(ExpensesContext);
 
     const requestMethod = useRef("")
-
-    const changeHandler: ChangeEventFunc<HTMLInputElement> = useCallback((e) => addCategory(e.target.value), [ addCategory ])
     
     const { loading, fetchData } = useFetch({ 
         autoFetch: false, 
@@ -88,13 +72,7 @@ const RegisterExpenses = ({ refreshData}: { refreshData: FetchDataFuncType }) =>
                             label="Total Price"
                             value={totalPrice}
                         />
-                        <Combobox 
-                            className={classNames(styles.input)}
-                            label="Category"
-                            list={list}
-                            onChange={changeHandler}
-                            value={ getCategory() }
-                        />
+                        <Categories />
                     </div>
                     <div>
                         {
