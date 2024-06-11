@@ -4,13 +4,17 @@ import { MongoDbConfigType } from "@/types/mongoDb";
 import { UserType } from "@/types/user";
 import { GblobalProductType } from "@/types/product";
 import { WarehouseType } from "@/types/warehouse";
+import { CategoryType } from "@/types/category";
+
+const initialCollections = {
+    EXPENSES_CATEGORIES: null,
+    PRODUCTS: null,
+    USERS: null,
+    WAREHOUSES: null,
+}
 
 let mongoDBConfig: MongoDbConfigType = { 
-    collections: {
-        PRODUCTS: null,
-        USERS: null,
-        WAREHOUSES: null,
-    },
+    collections: initialCollections,
     connection: null,
     isConnected: false ,
 };
@@ -20,12 +24,7 @@ mongoDBConfig.connection = mongoDBConnection;
 
 const closeConfig = () => {
     mongoDBConfig.isConnected = false;
-
-    mongoDBConfig.collections = {
-        PRODUCTS: null,
-        USERS: null,
-        WAREHOUSES: null
-    };
+    mongoDBConfig.collections = initialCollections;
 };
 
 const closeDbConnections = async () =>  await mongoDBConnection.close();
@@ -41,6 +40,7 @@ const createMongoDBConnection = async () => {
             clusterDB = mongoDBConnection.db("luis-langa-store");
             
             mongoDBConfig.collections = {
+                EXPENSES_CATEGORIES: clusterDB.collection<CategoryType>("expenses-categories"),
                 PRODUCTS: clusterDB.collection<GblobalProductType>("products"),
                 USERS: clusterDB.collection<UserType>("users"),
                 WAREHOUSES: clusterDB.collection<WarehouseType>("warehouses")
