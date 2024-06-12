@@ -2,11 +2,15 @@ import { useCallback, useContext, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation"
 
 import { AppContext } from "@/context/AppContext";
+import useSearchParams from "@/hooks/useSearchParams";
 
 import Dialog from "@/components/dialog"
 
 const Container = () => {
     const { dialog, isLoading, setDialog } = useContext(AppContext);
+    const isOpen = useRef(false)
+
+    const searchParams = useSearchParams()
 
     const pathname = usePathname()
     const pathnameRef = useRef(pathname)
@@ -23,7 +27,10 @@ const Container = () => {
     }, [ dialog, isLoading, setDialog ]);
 
     useEffect(() => {
-        if(dialog) onOpenRef.current?.();
+        if(dialog) {
+            isOpen.current = true;
+            onOpenRef.current?.();
+        } 
         else closeHandler();
     }, [ closeHandler, dialog ]);
 
@@ -35,6 +42,13 @@ const Container = () => {
 
         pathnameRef.current = pathname;
     }, [ closeHandler, dialog, pathname ]);
+
+    useEffect(() => {
+        if(!dialog && isOpen.current) {
+            searchParams.removeSearchParam("dialog");
+            isOpen.current = false;
+        }
+    }, [ dialog, searchParams ])
 
     return (
         <Dialog
