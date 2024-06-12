@@ -15,7 +15,7 @@ const useSearchParamsHook = () => {
             try {
                 return JSON.parse(value.replaceAll("--", " "));
             } catch(e) {
-                return value;
+                return value ?? defaultValue;
             }
         }
 
