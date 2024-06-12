@@ -1,3 +1,4 @@
+import { CategoryType } from "./category";
 
 
 export type ExpenseItemType = {
@@ -28,7 +29,7 @@ export type ExpenseType = {
 }
 
 export type ExpenseInfoType = {
-    category: string;
+    category: CategoryType;
     createdAt: string | Date;
     id: string;
     items: ExpenseItemType[],
