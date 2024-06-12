@@ -56,7 +56,10 @@ const TabBody = () => {
         {
             label: "Category",
             key: {
-                value: "category"
+                value: "category",
+                subKey: {
+                    value: "name"
+                }
             }
         },
         {
