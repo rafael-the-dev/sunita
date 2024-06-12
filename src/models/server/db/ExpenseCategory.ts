@@ -6,19 +6,30 @@ import getCategoryProxy from "../proxy/category"
 
 import Error404 from "@/errors/server/404Error"
 
-import Store from "./Warehouse"
-
 type UpdatePropsType = CategoryType & {
     storeId: string
 }
 
 class ExpenseCategory {
-    static async getAll({ status, storeId }: { status: CATEGORY_STATUS, storeId: string }, { mongoDbConfig, user }: ConfigType) {
-        const store = await mongoDbConfig.collections.WAREHOUSES.findOne({ id: storeId })
+    static async get({ id, storeId }: { id: string, status?: CATEGORY_STATUS, storeId: string }, { mongoDbConfig, user }: ConfigType) {
+        const category = await mongoDbConfig
+            .collections
+            .EXPENSES_CATEGORIES
+            .findOne({ id })
 
-        if(!status) return store["expenses-categories"]
+        if(!category) throw new Error404("Category not found")
 
-        return store["expenses-categories"].filter(category => category.status === status)
+        return category
+    }
+
+    static async getAll({ status, storeId }: { status?: CATEGORY_STATUS, storeId: string }, { mongoDbConfig, user }: ConfigType) {
+        const list = await mongoDbConfig
+            .collections
+            .EXPENSES_CATEGORIES
+            .find(status ? { status } : {})
+            .toArray();
+
+        return list
     }
 
     static async add({ name, storeId }: { name: string, storeId: string }, { mongoDbConfig, user }: ConfigType) {
@@ -28,43 +39,30 @@ class ExpenseCategory {
             status: CATEGORY_STATUS.ACTIVE
         } 
 
-        await Store.update<CategoryType[]>({
-            helper(store) {
-                const categories = structuredClone(store["expenses-categories"])
+        const categoryProxy = getCategoryProxy(category);
 
-                const categoryProxy = getCategoryProxy(category);
+        categoryProxy.name = name;
 
-                categoryProxy.name = name;
-
-                categories.push(category)
-
-                return categories
-            },
-            id: storeId,
-            key: "expenses-categories"
-        }, { mongoDbConfig, user })
+        await mongoDbConfig
+            .collections
+            .EXPENSES_CATEGORIES
+            .insertOne(category)
     }
 
     static async update({ id, name, status, storeId }: UpdatePropsType, { mongoDbConfig, user }: ConfigType) {
-        await Store.update<CategoryType[]>({
-            helper(store) {
-                const categories = structuredClone(store["expenses-categories"]);
+        const collection = mongoDbConfig.collections.EXPENSES_CATEGORIES
 
-                const category = categories.find(item => item.id === id);
+        const category = await collection.findOne({ id })
 
-                if(!category) throw new Error404("Category not found.");
+        if(!category) throw new Error404("Category not found.");
 
-                const categoryProxy = getCategoryProxy(category);
+        const categoryProxy = getCategoryProxy(category);
 
-                categoryProxy.name = name;
+        categoryProxy.name = name;
 
-                categoryProxy.status = status;
+        categoryProxy.status = status;
 
-                return categories;
-            },
-            id: storeId,
-            key: "expenses-categories"
-        }, { mongoDbConfig, user })
+        await collection.updateOne({ id }, { $set: { ...category } })
     }
 }
 
