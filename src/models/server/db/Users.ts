@@ -4,6 +4,7 @@ import Error404 from "@/errors/server/404Error";
 
 import { SettingsType, UsernameFilterType } from "@/types/route";
 import { UserType } from "@/types/user";
+import { getId } from "@/helpers/id";
 
 class Users {
 
@@ -31,6 +32,7 @@ class Users {
             .insertOne({ 
                 category,
                 firstName, 
+                id: getId(),
                 lastName, 
                 password: hashedPassword,
                 username 
