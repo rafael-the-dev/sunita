@@ -33,10 +33,10 @@ export const ExpensesContextProvider = ({ children }) => {
 
     const [ category, setCategory ] = React.useState(() => {
         if(dialog && dialog.payload) {
-            return (dialog.payload as ExpenseInfoType).category;
+            return (dialog.payload as ExpenseInfoType).category.id;
         }
 
-        return "credelec"
+        return "-1"
     });
 
     const [ itemsList, setItemsList ] = React.useState<ExpenseItemType[]>(() => {
