@@ -24,6 +24,9 @@ const SubmitButton = () => {
         const startDate = searchParams.get("start-date", "")
         if(startDate) queryParams += `start-date=${startDate}&`
 
+        const category = searchParams.get("category", "")
+        if(category) queryParams += `category=${category}&`
+
         const endDate = searchParams.get("end-date", "");
         if(startDate && endDate) queryParams += `end-date=${endDate}`
 

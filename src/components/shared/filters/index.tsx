@@ -5,6 +5,7 @@ import { PropsTypes } from "./types";
 
 import Collapse from "@/components/shared/collapse";
 import DateFilter from "./components/Date";
+import SearchField from "./components/SearchField";
 import SubmitButton from "./components/submit-button";
 
 const FiltersContainer = ({ children }: PropsTypes) => {
@@ -21,5 +22,6 @@ const FiltersContainer = ({ children }: PropsTypes) => {
 
 FiltersContainer.Date = DateFilter;
 FiltersContainer.SubmitButton = SubmitButton;
+FiltersContainer.SearchField = SearchField
 
 export default FiltersContainer;
