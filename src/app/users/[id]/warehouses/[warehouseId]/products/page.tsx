@@ -10,8 +10,11 @@ import { AppContext } from "@/context/AppContext";
 import { StockContextProvider } from "@/context/StockContext";
 import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
 
+import useSearchParams from "@/hooks/useSearchParams";
+
 import AddStock from "./components/add-stock";
 import Button from "@/components/shared/button"
+import Categories from "@/components/shared/categories copy"
 import DialogBody from "./components/register-product/components/body";
 import Main from "@/components/main";
 import RegisterProduct from "./components/register-product";
@@ -21,9 +24,19 @@ import { TableHeadersType } from "@/components/table/types";
 import useFechProducts from "@/hooks/useFetchProducts";
 import LinkContainer from "@/components/link";
 
+enum DIALOG_TYPES {
+    ADD_STOCK = "add-stock",
+    CATEGORIES = "category",
+    REGIST_PRODUCT = "regist-product"
+}
+
 const Container = () => {
+    const searchParams = useSearchParams()
+
     const { setDialog } = React.useContext(AppContext);
     const { category, price, searchKey, setUniqueSearchParams } = React.useContext(ProductFilterContext);
+
+    const reRendersCounter = React.useRef(0)
 
     const { data, fetchProducts } = useFechProducts()
 
@@ -103,7 +116,7 @@ const Container = () => {
         });
     }, [ setDialog ]);
 
-    const addStockClickHandler = React.useCallback(() => {
+    const openAddStockDialog = React.useCallback(() => {
         setDialog({
             header: {
                 title: "Add stock"
@@ -111,6 +124,33 @@ const Container = () => {
             body: <StockContextProvider productsList={productsList}><AddStock refreshProducts={fetchProducts} /></StockContextProvider>
         })
     }, [ fetchProducts, productsList, setDialog ])
+
+    const openCategoriesDialog = React.useCallback(() => {
+        setDialog({
+            header: {
+                title: "Categories"
+            },
+            body: <Categories url="/api/users/rafaeltivane/warehouses/12345/products/categories" />
+        })
+    }, [ setDialog ])
+
+    const openDialogHandler = React.useCallback((id: DIALOG_TYPES) => () => {
+        reRendersCounter.current = 0;
+        searchParams.setSearchParam("dialog", id)
+    }, [ searchParams ])
+
+    const dialogQueryString = searchParams.get("dialog", "")
+
+    React.useEffect(() => {
+        const dialogQueryString = searchParams.get("dialog", "")
+        
+        if(reRendersCounter.current === 2) return;
+
+        if(dialogQueryString === DIALOG_TYPES.ADD_STOCK) openAddStockDialog();
+        else if(dialogQueryString === DIALOG_TYPES.CATEGORIES) openCategoriesDialog();
+
+        reRendersCounter.current += 1;
+    }, [ openAddStockDialog, openCategoriesDialog, searchParams ])
 
     return (
         <Main className="flex flex-col items-stretch justify-between">
@@ -136,8 +176,14 @@ const Container = () => {
             <div className="flex flex-col items-stretch justify-end px-3 sm:flex-row">
                 <Button 
                     className="mb-3 sm:mb-0 sm:mr-3" 
+                    onClick={openDialogHandler(DIALOG_TYPES.CATEGORIES)}
+                    variant="outlined">
+                    Categories
+                </Button>
+                <Button 
+                    className="mb-3 sm:mb-0 sm:mr-3" 
                     disabled={!data}
-                    onClick={addStockClickHandler}
+                    onClick={openDialogHandler(DIALOG_TYPES.ADD_STOCK)}
                     variant="outlined">
                     Add stock
                 </Button>
