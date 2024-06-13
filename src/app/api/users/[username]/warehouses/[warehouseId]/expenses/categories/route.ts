@@ -5,7 +5,7 @@ import { URLParamsType } from "@/types/app-config-server"
 
 import { apiHandler } from "@/middlewares/route-handler";
 
-import ExpenseCategory from "@/models/server/db/ExpenseCategory";
+import ExpenseCategory from "@/models/server/db/Category";
 
 
 export const GET = async (req: NextRequest, { params: { username, warehouseId } }: URLParamsType) => {
@@ -14,7 +14,9 @@ export const GET = async (req: NextRequest, { params: { username, warehouseId } 
     return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const status = searchParams.get("status") as CATEGORY_STATUS;
 
-        const categories = await ExpenseCategory.getAll({ status, storeId: warehouseId }, { mongoDbConfig, user });
+        const collection = mongoDbConfig.collections.EXPENSES_CATEGORIES;
+
+        const categories = await ExpenseCategory.getAll({ status, storeId: warehouseId }, { collection });
 
         return NextResponse.json(categories);
     });
@@ -23,8 +25,10 @@ export const GET = async (req: NextRequest, { params: { username, warehouseId } 
 export const POST = async (req: NextRequest, { params: { username, warehouseId } }: URLParamsType) => {
     return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const { name } = await req.json() as ClientCategoryRequestType
+
+        const collection = mongoDbConfig.collections.EXPENSES_CATEGORIES;
         
-        await ExpenseCategory.add({ name, storeId: warehouseId }, { mongoDbConfig, user });
+        await ExpenseCategory.add({ name, storeId: warehouseId }, { collection });
 
         return NextResponse.json({ message: "Category was successfully created." }, { status: 201 });
     });
