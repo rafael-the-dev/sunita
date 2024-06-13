@@ -9,6 +9,7 @@ import { CategoryType } from "@/types/category";
 const initialCollections = {
     EXPENSES_CATEGORIES: null,
     PRODUCTS: null,
+    PRODUCTS_CATEGORIES: null,
     USERS: null,
     WAREHOUSES: null,
 }
@@ -42,6 +43,7 @@ const createMongoDBConnection = async () => {
             mongoDBConfig.collections = {
                 EXPENSES_CATEGORIES: clusterDB.collection<CategoryType>("expenses-categories"),
                 PRODUCTS: clusterDB.collection<GblobalProductType>("products"),
+                PRODUCTS_CATEGORIES: clusterDB.collection<CategoryType>("products-categories"),
                 USERS: clusterDB.collection<UserType>("users"),
                 WAREHOUSES: clusterDB.collection<WarehouseType>("warehouses")
             };
