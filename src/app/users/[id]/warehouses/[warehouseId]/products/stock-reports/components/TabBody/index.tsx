@@ -29,6 +29,21 @@ const TabBody = () => {
             }
         },
         {
+            getComponent({ item, key }) {
+                const report  = item as StockReportInfoType
+
+                return (
+                    <span>
+                        { report.user.firstName } { report.user.lastName }
+                    </span>
+                )
+            },
+            label: "Created by",
+            key: {
+                value: "user"
+            }
+        },
+        {
             label: "Reference",
             key: {
                 value: "reference"
