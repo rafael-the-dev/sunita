@@ -18,16 +18,19 @@ type AddPropsType = {
 }
 
 type GetAllProspType = {
+    filters?: Object,
     storeId: string;
 }
 
 class Stock {
-    static async getAll({ storeId }: GetAllProspType, { mongoDbConfig, user }: ConfigType): Promise<AnalyticStockReportInfoType> {
+    static async getAll({ filters, storeId }: GetAllProspType, { mongoDbConfig, user }: ConfigType): Promise<AnalyticStockReportInfoType> {
+       
         const list =  await mongoDbConfig.collections
             .WAREHOUSES
             .aggregate([
                 { $match: { id: storeId }},
                 { $unwind: "$stock-reports" },
+                { $match: { ...(filters ?? {} ) } },
                 { $unwind: "$stock-reports.items" },
                 {
                     $lookup: {
@@ -38,6 +41,15 @@ class Stock {
                     }
                 },
                 { $unwind: "$product_info" },
+                {
+                    $lookup: {
+                        from: "users",
+                        foreignField: "username",
+                        localField: "stock-reports.user",
+                        as: "user_info"
+                    },
+                },
+                { $unwind: "$user_info" },
                 {
                     $addFields: {
                         "stock-reports.items.product": {
@@ -68,18 +80,18 @@ class Stock {
                         modifiedAt: { $first: "$stock-reports.modifiedAt" },
                         reference: { $first: "$stock-reports.reference" },
                         total: { $first: "$stock-reports.total" },
-                        /*user: { 
+                        user: { 
                             $first: {
                                 firstName: "$user_info.firstName",
                                 lastName: "$user_info.lastName",
                                 username: "$user_info.username"
                             }
-                        }*/
+                        }
                     }
-                }
+                },
             ])
             .toArray() as StockReportInfoType[];
-
+            
         const total = list.reduce((prevValue, currentReport) => {
             return currency(prevValue).add(currentReport.total).value
         }, 0)
@@ -143,7 +155,8 @@ class Stock {
                                 items: stockDetails.items,
                                 modifiedAt: null,
                                 reference: stockDetails.reference,
-                                total: stockDetails.total
+                                total: stockDetails.total,
+                                user: user.username
                             }
 
                             reports.push(report)

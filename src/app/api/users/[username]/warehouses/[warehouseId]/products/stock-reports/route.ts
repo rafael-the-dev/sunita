@@ -1,11 +1,12 @@
 
 import { NextResponse, NextRequest } from "next/server";
 
-import Product from "@/models/server/db/Product";
+import { StockClientRequestBodyType } from "@/types/stock";
 
 import { apiHandler } from "@/middlewares/route-handler";
+import { resetDate } from "@/helpers/date";
+
 import Stock from "@/models/server/db/Stock";
-import { StockClientRequestBodyType } from "@/types/stock";
 
 type URLParamsType = {
     params: {
@@ -15,8 +16,26 @@ type URLParamsType = {
 }
 
 export const GET = async (req: NextRequest, { params: { productId, warehouseId } }: URLParamsType) => {
+    const searchParams = req.nextUrl.searchParams;
+
     return await apiHandler(req, async ({ mongoDbConfig, user }) => {
-        const result = await Stock.getAll({ storeId: warehouseId }, { mongoDbConfig, user });
+        const endDate = searchParams.get("end-date");
+        const products = searchParams.getAll("product");
+        const users = searchParams.getAll("user");
+        const startDate = searchParams.get("start-date");
+
+        const filters = {
+            ...( resetDate({ endDate, key: "stock-reports.createdAt", startDate }) ),
+            ...( products.length > 0 ? { "stock-reports.items": { $elemMatch: { "product.id": { $in: products } } } } : {} ),
+        };
+
+        const result = await Stock.getAll(
+            { 
+                filters,
+                storeId: warehouseId 
+            }, 
+            { mongoDbConfig, user }
+        );
         return NextResponse.json(result);
     });
 };
@@ -25,7 +44,10 @@ export const POST = async (req: NextRequest, { params: { productId, warehouseId 
     return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const stockDetails = await req.json() as StockClientRequestBodyType;
 
-        const product = await Stock.add({ storeId: warehouseId, stockDetails }, { mongoDbConfig, user });
-        return NextResponse.json("");
+        await Stock.add({ storeId: warehouseId, stockDetails }, { mongoDbConfig, user });
+
+        const message = "Stock was successfully updated";
+
+        return NextResponse.json({ message }, { status: 201 });
     });
 };

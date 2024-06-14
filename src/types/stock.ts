@@ -1,5 +1,5 @@
 import { ProductInfoType } from "./product";
-
+import { UserType } from "./user"
 export type StockClientRequestItemType = {
     product: {
         id: string;
@@ -20,6 +20,7 @@ export type StockClientRequestBodyType = {
 export type StockReportType = StockClientRequestBodyType & {
     id: string;
     modifiedAt: string | Date | null;
+    user: string;
 }
 
 export type StockReportInfoItemType = {
@@ -35,13 +36,9 @@ export type StockReportInfoItemType = {
     total: number;
 }
 
-export type StockReportInfoType = {
-    createdAt: string;
-    id: string;
+export type StockReportInfoType = StockReportType & {
     items: StockReportInfoItemType[];
-    modifiedAt: string | null;
-    reference: string;
-    total: number;
+    user: UserType
 }
 
 export type AnalyticStockReportInfoType = {
