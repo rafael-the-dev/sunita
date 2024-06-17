@@ -9,15 +9,23 @@ import { getId } from "@/helpers/id";
 class Users {
 
     static async get({ username }: UsernameFilterType, { mongoDbConfig }: SettingsType): Promise<UserType> {
-        const user = await mongoDbConfig.collections.USERS.findOne({ username });
+        const user = await mongoDbConfig
+            .collections
+            .USERS
+            .findOne({ username }) as UserType;
 
         if(!user) throw new Error404("User not found");
         
         return user;
     }
 
-    static async getAll({}, { mongoDbConfig }: SettingsType): Promise<UserType[]> {
-        const users = await mongoDbConfig.collections.USERS.find({}).toArray();
+    static async getAll({ filters }: { filters?: Object }, { mongoDbConfig }: SettingsType): Promise<UserType[]> {
+        const users = await mongoDbConfig
+            .collections
+            .USERS
+            .find(filters)
+            .toArray() as UserType[];
+
         return users;
     }
 
