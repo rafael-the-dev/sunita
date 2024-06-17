@@ -177,11 +177,11 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
             async onSuccess(res, data) {
                 await refreshProducts({ signal: null });
                 alertProps.current = alertSuccessProps;
+                reset();
             },
         })
 
         onOpenAlertRef.current?.();
-        reset();
     };
 
     return (
