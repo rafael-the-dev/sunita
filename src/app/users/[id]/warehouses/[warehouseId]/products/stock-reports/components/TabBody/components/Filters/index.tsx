@@ -9,7 +9,8 @@ import SearchField from "./components/SearchField"
 
 enum FILTERS {
     DATE,
-    PRODUCTS
+    PRODUCTS,
+    USER
 }
 
 const filtersList = [
@@ -20,6 +21,10 @@ const filtersList = [
     {
         label: "Products",
         value: FILTERS.PRODUCTS
+    },
+    {
+        label: "User",
+        value: FILTERS.USER
     }
 ]
 
@@ -28,11 +33,12 @@ const FiltersContainer = () => {
 
     const changeHandler = useCallback((id: FILTERS) => () => setFilter(id), [])
 
-    const searchFieldMemo = useMemo(() => <SearchField key={getId()} />, [])
+    const searchFieldMemo = useMemo(() => <SearchField key={1} />, [])
 
     const filtersMapper = useRef(new Map<FILTERS, ReactNode>([ 
-        [ FILTERS.DATE, <Filters.Date key={getId()} /> ],
-        [ FILTERS.PRODUCTS, searchFieldMemo ]
+        [ FILTERS.DATE, <Filters.Date key={0} /> ],
+        [ FILTERS.PRODUCTS, searchFieldMemo ],
+        [ FILTERS.USER, <Filters.User className="w-full sm:max-w-sm" key={2} /> ]
     ]))
 
     return (
