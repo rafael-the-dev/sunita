@@ -9,6 +9,8 @@ import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 import { WarehouseProductType } from "@/types/product";
 import Error404 from "@/errors/server/404Error";
 import { RequestCartItem } from "@/types/cart";
+import { MongoDbConfigType } from "@/types/mongoDb";
+import { SaleInfoType, SaleType } from "@/types/sale";
 
 /**
  * 
@@ -52,3 +54,26 @@ export const getProduct = (productsMap: Map<string, WarehouseProductType>, id: s
 
     return product;
 };
+
+export const updateSale = (saleProxy: SaleType, storeId: string, mongoDbConfig: MongoDbConfigType) => {
+    return mongoDbConfig
+        .collections
+        .WAREHOUSES
+        .updateOne(
+            { id: storeId, "sales.id": saleProxy.id },
+            { 
+                $set: {
+                    "sales.$[sale].changes": saleProxy.changes,
+                    "sales.$[sale].items": saleProxy.items,
+                    "sales.$[sale].profit": saleProxy.profit,
+                    "sales.$[sale].totalReceived": saleProxy.totalReceived,
+                    "sales.$[sale].total": saleProxy.total,
+                }
+            },
+            {
+                arrayFilters: [
+                    { "sale.id": saleProxy.id }
+                ]
+            }
+        )
+}
