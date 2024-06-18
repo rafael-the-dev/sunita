@@ -14,9 +14,9 @@ type URLParamsType = {
 };
 
 export const PUT = async (req: NextRequest, { params: { saleId, warehouseId }}: URLParamsType) => {
-    const cart = await req.json() as CartResquestType;
+    const cart = await req.json() as CartResquestType; 
 
-    return await apiHandler(async ({ mongoDbConfig, user }) => {
+    return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         await Sale.update({ cart: { ...(structuredClone(cart)), id: saleId }, storeId: warehouseId }, { mongoDbConfig, user });
         return NextResponse.json("");
     });
