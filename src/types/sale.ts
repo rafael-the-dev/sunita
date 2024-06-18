@@ -13,7 +13,7 @@ export type SaleItemType =  {
 
 export type SaleType = {
     changes: number;
-    createAt: Date | string;
+    createdAt: Date | string;
     id: string;
     profit: number;
     items: SaleItemType[];
@@ -30,18 +30,11 @@ export type SaleInfoItemType = {
     total: number;
 };
 
-export type SaleInfoType = {
-    changes: number;
-    createdAt: Date;
-    id: string;
+export type SaleInfoType = SaleType & {
     items: SaleInfoItemType[];
-    profit: number;
-    paymentMethods: PaymentMethodType[];
-    total: number;
-    totalReceived: number;
     user: { 
         firstName: string;
         lastName: string;
         username: string;
-     }
+    }
 };
