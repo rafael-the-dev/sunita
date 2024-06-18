@@ -9,16 +9,15 @@ export const getFilters = (key: string, searchParams: URLSearchParams) => {
     const products = searchParams.getAll("product");
     const users = searchParams.getAll("user")
     const startDate = searchParams.get("start-date")
-
+    
     return {
         ...( resetDate({ endDate, key, startDate }) ),
-       ...( products.length > 0 ? { "product_info.id": { $in: products } } : {}),
-        ...(users.length > 0 ? { "user_info.username": { $in: users } } : {}),
+       ...( products.length > 0 ? { "sales.items": { $elemMatch: { "product.id": { $in: products } } } } : {} ),
+        ...(users.length > 0 ? { "sales.user": { $in: users  }} : {}),
     }
 }
 
 export const getExpensesTotalPrice = (expenses: ExpenseInfoType[]) => {
-    
     const total = expenses.reduce((prevValue, currentExpense) => {
         return currency(prevValue).add(currentExpense.total).value
     }, 0);
