@@ -22,7 +22,7 @@ export const GET = async (req: NextRequest, { params: { username, warehouseId }}
     return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         const [ expenses, sales ] = await Promise.all([
             Expenses.getAll({ filters: getFilters("expenses.createdAt", searchParams), storeId: warehouseId }, { mongoDbConfig, user }),
-            Sales.getAll({ filters: getFilters("sales.createAt", searchParams), warehouseId }, { mongoDbConfig, user })
+            Sales.getAll({ filters: getFilters("sales.createdAt", searchParams), warehouseId }, { mongoDbConfig, user })
         ])
 
         const salesStats = getSalesStats(sales);
