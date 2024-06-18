@@ -19,10 +19,16 @@ const getSaleProxy = (target: SaleType, cart: CartResquestType) => {
         },
         set(obj: SaleType, prop: string, newValue) {
             switch(prop) {
+                case "changes": {
+                    return Reflect.set(obj, prop, newValue)
+                }
                 case "items": {
                     const items = newValue as SaleItemType[]
 
                     return Reflect.set(obj, prop, items)
+                }
+                case "profit": {
+                    return Reflect.set(obj, prop, newValue)
                 }
                 case "paymentMethods": {
                     const paymentMethods = newValue as PaymentMethodType[]
