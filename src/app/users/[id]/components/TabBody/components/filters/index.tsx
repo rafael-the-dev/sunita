@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup } from "@mui/material";
+import { FormControl, FormLabel, Paper, RadioGroup } from "@mui/material";
 import classNames from "classnames";
 
 import styles from "./styles.module.css"
@@ -13,22 +13,29 @@ import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 // import SubmitButton from "./components/submit-button";
 // import TableFilter from './components/table-filter';
 import Users from './components/user';
-import SubmitButon from "./components/submit-button";
+import RadioButton from "@/components/radio-button";
+import SubmitButton from "./components/submit-button";
+
+enum FILTERS_TYPE {
+    DATE = "date",
+    PRODUCT = "product",
+    USERS = "users"
+}
 
 const FiltersContainer = () => {
     const { onToggleCollapse } = React.useContext(AnalyticsFiltersContext)
 
-    const [ value, setValue ] = React.useState("DATE");
+    const [ value, setValue ] = React.useState(FILTERS_TYPE.DATE);
 
     const controls = React.useRef([
-        { label: 'Date', value: "DATE" },
-        { label: 'Product', value: "PRODUCT" },
+        { label: 'Date', value: FILTERS_TYPE.DATE },
+        { label: 'Product', value: FILTERS_TYPE.PRODUCT },
         // { label: 'Table', value: "TABLE" },
-        { label: 'User', value: "USERS" },
+        { label: 'User', value: FILTERS_TYPE.USERS },
         // { label: 'Barman', value: "BARMAN" }
     ]);
 
-    const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value), []);
+    const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value as FILTERS_TYPE), []);
 
     // const barmenFilterMemo = React.useMemo(() => <BarmanFilter />, []);
     const dateFilterMemo = React.useMemo(() => <DateFilter />, []);
@@ -39,10 +46,10 @@ const FiltersContainer = () => {
 
     const childrenList = React.useRef({
         // "BARMAN": barmenFilterMemo,
-        "DATE": dateFilterMemo,
-        "PRODUCT": productFilterMemo,
+        [FILTERS_TYPE.DATE]: dateFilterMemo,
+        [FILTERS_TYPE.PRODUCT]: productFilterMemo,
         // 'TABLE': tableFilterMemo,
-        'USERS': usersFilterMemo
+        [FILTERS_TYPE.USERS]: usersFilterMemo
     })
 
     const filtersMemo = React.useMemo(() => (
@@ -58,9 +65,10 @@ const FiltersContainer = () => {
                 >
                     {
                         controls.current.map(item => (
-                            <FormControlLabel 
+                            <RadioButton 
                                 { ...item } 
-                                control={<Radio checked={value === item.value} onChange={changeHandler} />} 
+                                checked={value === item.value} 
+                                onChange={changeHandler}
                                 key={item.value}
                             />
                         ))
@@ -80,7 +88,7 @@ const FiltersContainer = () => {
             <div className={classNames(styles.container, "rounded-md mt-3 xl:mt-10 mx-4 p-4 sm:px-4")}>
                 { filtersMemo }
                 <div className="">
-                    <SubmitButon />
+                    <SubmitButton />
                 </div>
             </div>
         </Collapse>
