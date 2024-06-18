@@ -14,7 +14,7 @@ import useSearchParams from "@/hooks/useSearchParams";
 
 import AddStock from "./components/add-stock";
 import Button from "@/components/shared/button"
-import Categories from "@/app/users/[id]/warehouses/[warehouseId]/expenses/components/TabBody/components/categories"
+import Categories from "@/components/shared/categories copy"
 import DialogBody from "./components/register-product/components/body";
 import Main from "@/components/main";
 import RegisterProduct from "./components/register-product";
