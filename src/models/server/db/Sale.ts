@@ -27,6 +27,7 @@ class Sale {
             .aggregate([
                 { $match: { id: warehouseId } },
                 { $unwind: "$sales" },
+                { $match: { ...(filters ?? {} ) } },
                 { $unwind: "$sales.items" },
                 {
                     $lookup: {
@@ -46,7 +47,6 @@ class Sale {
                     }
                 },
                 { $unwind: "$user_info" },
-                { $match: { ...(filters ?? {} ) } },
                 {
                     $addFields: {
                         "sales.items.product": {
