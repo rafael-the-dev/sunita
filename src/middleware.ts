@@ -13,6 +13,7 @@ export const middleware = async (req: NextRequest) => {
 export const config = {
     matcher: [
         "/api/users/:username*",
+        "/api/stores/:storeId*",
         "/api/auth/refresh"
 
     ]
