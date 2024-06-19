@@ -18,7 +18,7 @@ const Categories = ({ onChange, showAll, value }: PropsType) => {
 
     const { data } = useFetch<CategoryType[]>({
         autoFetch: true,
-        url: `/api/users/rafaeltivane/warehouses/12345/expenses/categories?status=${showAll ? "" : CATEGORY_STATUS.ACTIVE}`
+        url: `/api/stores/12345/expenses/categories?status=${showAll ? "" : CATEGORY_STATUS.ACTIVE}`
     })
 
     const getList = () => {

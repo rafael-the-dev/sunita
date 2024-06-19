@@ -10,7 +10,7 @@ import { UserType } from "@/types/user"
 const UserFilter = ({ className }: { className?: string }) => {
     const { data, loading } = useFetch<UserType[]>({
         autoFetch: true,
-        url: `/api/users/stores/12345`
+        url: `/api/stores/12345/users`
     })
 
     const searchParams = useSearchParams()
