@@ -24,7 +24,7 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
 
     const { fetchData, loading } = useFetch({
         autoFetch: false,
-        url: `/api/users/rafaeltivane/warehouses/12345/sales`
+        url: `/api/stores/12345/sales`
     });
 
     const hasChanges = getPaymentMethods().changes > 0;

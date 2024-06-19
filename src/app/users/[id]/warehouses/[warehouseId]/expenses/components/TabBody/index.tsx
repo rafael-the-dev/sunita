@@ -82,7 +82,7 @@ const TabBody = () => {
 
     const openCategoriesDialog = React.useCallback(() => {
         setDialog({
-            body: <Categories url="/api/users/rafaeltivane/warehouses/12345/expenses/categories" />,
+            body: <Categories url="/api/stores/12345/expenses/categories" />,
             header: {
                 title: "Categories"
             }

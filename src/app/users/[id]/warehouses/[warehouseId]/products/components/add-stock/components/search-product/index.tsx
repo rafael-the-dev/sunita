@@ -140,7 +140,7 @@ const SearchProduct = () => {
 
     const { data, loading } = useFech<ProductInfoType[]>({
         autoFetch: true,
-        url: `/api/users/rafaeltivane/warehouses/12345/products`
+        url: `/api/stores/12345/products`
     })
 
     useEffect(() => {

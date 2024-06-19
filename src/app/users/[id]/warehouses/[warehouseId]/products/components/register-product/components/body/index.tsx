@@ -61,7 +61,7 @@ const Body = () => {
         try {
             const body = JSON.stringify(product);
 
-            await fetch(`/api/users/${"rafaeltivane"}/warehouses/12345/products`, { method: "POST", body });
+            await fetch(`/api/stores/12345/products`, { method: "POST", body });
             return product;
         } catch(e) {
             console.error(e)

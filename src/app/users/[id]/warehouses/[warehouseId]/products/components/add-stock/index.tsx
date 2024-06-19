@@ -149,7 +149,7 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
 
     const { fetchData, loading } = useFech({
         autoFetch: false,
-        url: `/api/users/rafaeltivane/warehouses/12345/products/stock-reports`
+        url: `/api/stores/12345/products/stock-reports`
     });
 
     const keyPressHandler = useCallback((e: React.KeyboardEvent<HTMLFormElement>) => {

@@ -10,7 +10,7 @@ import TabBodyContainer from "@/components/shared/tab-body-container"
 const Container = () => (
     <TabBodyContainer 
         component={(
-            <FiltersContextProvider<AnalyticStockReportInfoType> url="/api/users/rafaeltivane/warehouses/12345/products/stock-reports">
+            <FiltersContextProvider<AnalyticStockReportInfoType> url="/api/stores/12345/products/stock-reports">
                 <TabBody />
             </FiltersContextProvider>
         )} 

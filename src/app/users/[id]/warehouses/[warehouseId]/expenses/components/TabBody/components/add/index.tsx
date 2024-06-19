@@ -24,7 +24,7 @@ const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) =
     
     const { loading, fetchData } = useFetch({ 
         autoFetch: false, 
-        url: `/api/users/rafaeltivane/warehouses/12345/expenses` 
+        url: `/api/stores/12345/expenses` 
     })
 
     const onSuccess = async () => {
@@ -41,7 +41,7 @@ const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) =
             options: {
                 method: "DELETE",
             },
-            path: `/api/users/rafaeltivane/warehouses/12345/expenses/${expense.id}`
+            path: `/api/stores/12345/expenses/${expense.id}`
         })
     }
 
@@ -56,7 +56,7 @@ const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) =
                 body: toString()
             },
             ...( expense ? { 
-                path: `/api/users/rafaeltivane/warehouses/12345/expenses/${expense.id}`
+                path: `/api/stores/12345/expenses/${expense.id}`
             } : {} )
         })
     };

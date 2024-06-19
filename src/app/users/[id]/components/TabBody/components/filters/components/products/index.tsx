@@ -22,7 +22,7 @@ const ProductSearchField = () => {
 
     const fetchProductsResult = useFech<ProductInfoType[]>({ 
         autoFetch: false, 
-        url: "/api/users/rafaeltivane/warehouses/12345/products" 
+        url: "/api/stores/12345/products" 
     });
     const { fetchData, loading } = fetchProductsResult;
 

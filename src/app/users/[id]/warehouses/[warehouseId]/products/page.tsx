@@ -130,7 +130,7 @@ const Container = () => {
             header: {
                 title: "Categories"
             },
-            body: <Categories url="/api/users/rafaeltivane/warehouses/12345/products/categories" />
+            body: <Categories url="/api/stores/12345/products/categories" />
         })
     }, [ setDialog ])
 

@@ -44,7 +44,7 @@ const SubmitButton = () => {
 
     const submitHandler = async () => {
         await fetchData({
-            ...( canISubmit ? { path: `/api/users/rafaeltivane/warehouses/12345/analytics?${getSearchParams()}` } : {})
+            ...( canISubmit ? { path: `/api/stores/12345/analytics?${getSearchParams()}` } : {})
         })
     };
 
