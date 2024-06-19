@@ -1,8 +1,7 @@
 import { v4 as uuidV4 } from "uuid";
 import currency from "currency.js";
 
-import { MongoDbConfigType } from "@/types/mongoDb";
-import { GblobalProductType, ProductType, ProductInfoType, WarehouseProductType } from "@/types/product";
+import { GblobalProductType, ProductType, WarehouseProductType } from "@/types/product";
 import { ConfigType } from "@/types/app-config-server";
 
 import { getProducts } from "@/helpers/products"
@@ -10,17 +9,17 @@ import { getProducts } from "@/helpers/products"
 import Error404 from "@/errors/server/404Error";
 
 class Product {
-    static async get({ productId, warehouseId }: { productId: string, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
-        const products = await getProducts({ filter: { "products.id": productId, id: warehouseId,  } }, { mongoDbConfig, user })
+    static async get({ productId, storeId }: { productId: string, storeId: string }, { mongoDbConfig, user }: ConfigType) {
+        const products = await getProducts({ filter: { "products.id": productId, id: storeId,  } }, { mongoDbConfig, user })
 
         if(products.length === 0) throw new Error404("Product not found")
 
         return products
     }
 
-    static async getAll({ filters, warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
+    static async getAll({ filters, storeId }: { filters?: Object, storeId: string }, { mongoDbConfig, user }: ConfigType) {
         try {
-            const products = await getProducts({ filter: { ...filters, id: warehouseId } }, { mongoDbConfig, user })
+            const products = await getProducts({ filter: { ...filters, id: storeId } }, { mongoDbConfig, user })
             return products;
         } catch (error) {
               console.error('Error retrieving products:', error);
@@ -28,7 +27,7 @@ class Product {
         }
     }
     
-    static async delete({ id, warehouseId }: { id: string, warehouseId: string }, { mongoDbConfig }: ConfigType) {
+    static async delete({ id, storeId }: { id: string, storeId: string }, { mongoDbConfig }: ConfigType) {
         return await Promise.all(
             [
                 mongoDbConfig
@@ -39,7 +38,7 @@ class Product {
                     .collections
                     .WAREHOUSES
                     .updateOne(
-                        { id: warehouseId },
+                        { id: storeId },
                         {
                             $pull: {
                                 "products": {
@@ -52,7 +51,8 @@ class Product {
         )
     }
 
-    static async register({ barcode, category, name, purchasePrice, sellPrice }: ProductType, { mongoDbConfig, user }: ConfigType) {
+    static async register({ product, storeId }: { product: ProductType, storeId: string }, { mongoDbConfig, user }: ConfigType) {
+        const { barcode, category, name, purchasePrice, sellPrice } = product
         const productId = uuidV4();
 
         try {
@@ -61,7 +61,7 @@ class Product {
                 category,
                 id: productId,
                 name,
-                warehouses: [ "12345" ]
+                warehouses: [ storeId ]
             };
     
             const warehouseProduct: WarehouseProductType = {
@@ -83,7 +83,7 @@ class Product {
                 .WAREHOUSES
                 .updateOne(
                     {
-                        id: "12345"
+                        id: storeId
                     },
                     {
                         $push: {
@@ -93,7 +93,7 @@ class Product {
                 )
         } catch(e) {
             //delete this product if occured an error
-            await this.delete({ id: productId, warehouseId: "12345" }, { mongoDbConfig, user })
+            await this.delete({ id: productId, storeId }, { mongoDbConfig, user })
 
             throw e;
         }

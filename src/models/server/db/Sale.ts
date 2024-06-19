@@ -3,29 +3,27 @@ import currency from "currency.js";
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
 import { WarehouseProductType } from "@/types/product";
-import { SaleType, SaleInfoType, SaleInfoItemType, SaleItemType } from "@/types/sale";
+import { SaleType, SaleInfoType, SaleItemType } from "@/types/sale";
 
 import { toISOString } from "@/helpers/date";
 import { getId } from "@/helpers/id";
-import { isValidCartTotalPrice, isValidReceivedAmount } from "@/validation/sale";
 import { isInvalidNumber } from "@/helpers/validation";
-
-import Error404 from "@/errors/server/404Error";
-import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
-import { getProduct, isValidCartItemTotalPrice, isValidPaymentMethods, updateSale } from "@/helpers/sales";
+import { getProduct, isValidCartItemTotalPrice, updateSale } from "@/helpers/sales";
 import { sort } from "@/helpers/sort";
 import { getProducts, updateProduct } from "@/helpers/products";
 import getProductProxy from "../proxy/product";
 import getSaleProxy from "../proxy/sale";
 
+import Error404 from "@/errors/server/404Error";
+import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
 class Sale {
-    static async getAll({ filters,  warehouseId }: { filters?: Object, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
+    static async getAll({ filters,  storeId }: { filters?: Object, storeId: string }, { mongoDbConfig, user }: ConfigType) {
         const list = await mongoDbConfig
             .collections
             .WAREHOUSES
             .aggregate([
-                { $match: { id: warehouseId } },
+                { $match: { id: storeId } },
                 { $unwind: "$sales" },
                 { $match: { ...(filters ?? {} ) } },
                 { $unwind: "$sales.items" },
@@ -94,14 +92,14 @@ class Sale {
         return list;
     }
 
-    static async register({ cart, warehouseId }: { cart: CartResquestType, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
+    static async register({ cart, storeId }: { cart: CartResquestType, storeId: string }, { mongoDbConfig, user }: ConfigType) {
         const productsIds = cart.items.map(item => item.product.id)
         const saleId = getId()
 
         const products = await getProducts(
             {
                 filter: {
-                    id: warehouseId,
+                    id: storeId,
                     "products.id": { $in: productsIds }
                 }
             },
@@ -181,7 +179,7 @@ class Sale {
                 .collections
                 .WAREHOUSES
                 .updateOne(
-                    { id: warehouseId }, 
+                    { id: storeId }, 
                     { 
                         $push: { 
                             sales: sale
@@ -198,7 +196,7 @@ class Sale {
                     
                     productProxy.stock.quantity = currency(productInfo.stock.quantity).subtract(mappedCartItem.quantity).value;
 
-                    return updateProduct(productProxy, warehouseId, mongoDbConfig)
+                    return updateProduct(productProxy, storeId, mongoDbConfig)
                 })
             )
         } catch(e) {
@@ -207,7 +205,7 @@ class Sale {
                     .collections
                     .WAREHOUSES
                     .updateOne(
-                        { id: warehouseId }, 
+                        { id: storeId }, 
                         { 
                             $pull: { 
                                 sales: {
@@ -217,7 +215,7 @@ class Sale {
                         }
                     ),
                 ...structuredClone(products).map(product => {
-                    return updateProduct(getProductProxy(product), warehouseId, mongoDbConfig)
+                    return updateProduct(getProductProxy(product), storeId, mongoDbConfig)
                 })
             ])
 
@@ -231,7 +229,7 @@ class Sale {
                 filters: {
                     "sales.id": cart.id
                 },
-                warehouseId: storeId
+                storeId
             },
             {
                 mongoDbConfig,
