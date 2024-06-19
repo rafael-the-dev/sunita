@@ -8,7 +8,6 @@ import { ConfigType } from "@/types/app-config-server";
 import { getProducts } from "@/helpers/products"
 
 import Error404 from "@/errors/server/404Error";
-import WarehouseModel from "./Warehouse";
 
 class Product {
     static async get({ productId, warehouseId }: { productId: string, warehouseId: string }, { mongoDbConfig, user }: ConfigType) {
@@ -30,9 +29,27 @@ class Product {
     }
     
     static async delete({ id, warehouseId }: { id: string, warehouseId: string }, { mongoDbConfig }: ConfigType) {
-        return await mongoDbConfig.collections
-            .PRODUCTS
-            .deleteOne({ id });
+        return await Promise.all(
+            [
+                mongoDbConfig
+                    .collections
+                    .PRODUCTS
+                    .deleteOne({ id }),
+                mongoDbConfig
+                    .collections
+                    .WAREHOUSES
+                    .updateOne(
+                        { id: warehouseId },
+                        {
+                            $pull: {
+                                "products": {
+                                    id
+                                } 
+                            }
+                        }
+                    )
+            ]
+        )
     }
 
     static async register({ barcode, category, name, purchasePrice, sellPrice }: ProductType, { mongoDbConfig, user }: ConfigType) {
@@ -57,21 +74,26 @@ class Product {
                 sellPrice
             };
     
-            const productPromise = mongoDbConfig.collections
+            await mongoDbConfig.collections
                 .PRODUCTS
                 .insertOne(product);
-            
-    
-            return await Promise.all([
-                productPromise,
-                WarehouseModel.addProduct({ product: warehouseProduct, warehouseId: "12345" }, { mongoDbConfig, user })
-            ])
+
+            await mongoDbConfig
+                .collections
+                .WAREHOUSES
+                .updateOne(
+                    {
+                        id: "12345"
+                    },
+                    {
+                        $push: {
+                            products: warehouseProduct
+                        }
+                    }
+                )
         } catch(e) {
             //delete this product if occured an error
-            await Promise.all([
-                this.delete({ id: productId, warehouseId: "12345" }, { mongoDbConfig, user }),
-                WarehouseModel.deleteProduct({ productId, warehouseId: "12345" }, { mongoDbConfig, user })
-            ]);
+            await this.delete({ id: productId, warehouseId: "12345" }, { mongoDbConfig, user })
 
             throw e;
         }
