@@ -8,7 +8,11 @@ export type ConfigType = {
 
 export type URLParamsType = {
     params: {
-        username: string;
-        warehouseId: string;
+        categoryId: string,
+        expenseId: string,
+        productId?: string;
+        username?: string;
+        storeId?: string;
+        saleId?: string;
     }
 }
