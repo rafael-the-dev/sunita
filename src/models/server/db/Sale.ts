@@ -87,6 +87,21 @@ class Sale {
                 }
             ])
             .toArray() as SaleInfoType[];
+
+        /*await Promise.all(
+            list.map(sale => {
+                const saleProxy = structuredClone(sale)
+
+                saleProxy.createdAt = sale.createdAt
+
+                //@ts-ignore
+                if(saleProxy.createAt) { //@ts-ignore
+                    saleProxy.createdAt = sale.createAt
+                }
+
+                return updateSale(saleProxy, storeId, mongoDbConfig);
+            })
+        )*/
         
         sort(list);
         return list;
