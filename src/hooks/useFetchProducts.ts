@@ -13,7 +13,7 @@ const useFechProducts = () => {
     const { credentials } = useContext(LoginContext)
 
     const { data, error, fetchData, loading } = useFetch<ProductInfoType[]>({
-        url: `/api/stores/12345/products`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products`
     })
 
     return { data, error, fetchProducts: fetchData, loading };

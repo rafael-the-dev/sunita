@@ -21,7 +21,7 @@ type FormstateType = {
 
 const Body = () => {
     const { dialog, isLoading } = useContext(AppContext);
-    const { user } = useContext(LoginContext)
+    const { credentials, user } = useContext(LoginContext)
 
     const isFirstRender = useRef(true);
     const formRef = useRef<HTMLFormElement | null>(null);
@@ -61,7 +61,7 @@ const Body = () => {
         try {
             const body = JSON.stringify(product);
 
-            await fetch(`/api/stores/12345/products`, { method: "POST", body });
+            await fetch(`/api/stores/${credentials?.user?.stores[0]?.storeId}/products`, { method: "POST", body });
             return product;
         } catch(e) {
             console.error(e)

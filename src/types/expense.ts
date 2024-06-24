@@ -1,15 +1,11 @@
+import { STATUS as ExpenseStatus} from "."
 import { CategoryType } from "./category";
-
+export { STATUS as ExpenseStatus } from "."
 
 export type ExpenseItemType = {
     description: string;
     id: string;
     price: number;
-}
-
-export enum ExpenseStatus {
-    "SUCCESSFULL",
-    "UNSUCCESSFULL"
 }
 
 export type ExpenseClientType = {

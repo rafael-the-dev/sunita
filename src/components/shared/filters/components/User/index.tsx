@@ -1,5 +1,7 @@
 
-import { ChangeEvent } from "react"
+import { ChangeEvent, useContext } from "react"
+
+import { LoginContext } from "@/context/LoginContext"
 
 import useSearchParams from "@/hooks/useSearchParams"
 import useFetch from "@/hooks/useFetch"
@@ -8,9 +10,11 @@ import Combobox from "@/components/shared/combobox"
 import { UserType } from "@/types/user"
 
 const UserFilter = ({ className }: { className?: string }) => {
+    const { credentials } = useContext(LoginContext)
+
     const { data, loading } = useFetch<UserType[]>({
         autoFetch: true,
-        url: `/api/stores/12345/users`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/users`
     })
 
     const searchParams = useSearchParams()

@@ -1,5 +1,7 @@
 import { useContext } from "react"//:;
 
+import { LoginContext } from "@/context/LoginContext";
+
 import useFech from "@/hooks/useFetch";
 import useSearchParamsHook from "@/hooks/useSearchParams";
 
@@ -9,6 +11,7 @@ import { AnalyticsContext } from "@/context/AnalyticsContext";
 const mapValues = (key: string, list: string[]) => list.map(item => `${key}=${item}&`);
 
 const SubmitButton = () => {
+    const { credentials } = useContext(LoginContext)
     const { fetchData, loading } = useContext(AnalyticsContext)
     const searchParams = useSearchParamsHook();
 
@@ -44,7 +47,7 @@ const SubmitButton = () => {
 
     const submitHandler = async () => {
         await fetchData({
-            ...( canISubmit ? { path: `/api/stores/12345/analytics?${getSearchParams()}` } : {})
+            ...( canISubmit ? { path: `/api/${credentials.user.stores[0].storeId}/12345/analytics?${getSearchParams()}` } : {})
         })
     };
 

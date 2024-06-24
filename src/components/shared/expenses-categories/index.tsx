@@ -1,8 +1,10 @@
-import { ChangeEvent } from "react"
+import { ChangeEvent, useContext } from "react"
 import classNames from "classnames";
 
 import styles from "./styles.module.css"
 import { CategoryType, CATEGORY_STATUS } from "@/types/category";
+
+import { LoginContext } from "@/context/LoginContext";
 
 import useFetch from "@/hooks/useFetch";
 
@@ -15,10 +17,11 @@ type PropsType = {
 }
 
 const Categories = ({ onChange, showAll, value }: PropsType) => {
+    const { credentials } = useContext(LoginContext)
 
     const { data } = useFetch<CategoryType[]>({
         autoFetch: true,
-        url: `/api/stores/12345/expenses/categories?status=${showAll ? "" : CATEGORY_STATUS.ACTIVE}`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/expenses/categories?status=${showAll ? "" : CATEGORY_STATUS.ACTIVE}`
     })
 
     const getList = () => {

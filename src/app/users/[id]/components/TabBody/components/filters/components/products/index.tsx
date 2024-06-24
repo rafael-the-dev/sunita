@@ -7,6 +7,7 @@ import { TableHeadersType } from "@/components/table/types";
 
 import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 import { ProductInfoType } from "@/types/product";
+import { LoginContext } from "@/context/LoginContext";
 
 import useFech from "@/hooks/useFetch";
 import useSearchParams from "@/hooks/useSearchParams";
@@ -18,11 +19,12 @@ import Input from "@/components/Textfield";
 import Table from "@/components/shared/table";
 
 const ProductSearchField = () => {
+    const { credentials } = React.useContext(LoginContext)
     const { getCategories, getData, setData } = React.useContext(AnalyticsFiltersContext);
 
     const fetchProductsResult = useFech<ProductInfoType[]>({ 
         autoFetch: false, 
-        url: "/api/stores/12345/products" 
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products`
     });
     const { fetchData, loading } = fetchProductsResult;
 

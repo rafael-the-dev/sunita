@@ -7,10 +7,13 @@ import AuthError from "@/errors/server/AuthenticationError";
 import Error404 from "@/errors/server/404Error";
 
 import { CredentialsType, LoginCredentialsType } from "@/types/login";
-import { DecodedUserType } from "@/types/user";
+import { DecodedUserType, USER_CATEGORY } from "@/types/user";
 import { SettingsType } from "@/types/route";
 
 import Users  from "./Users";
+import { STATUS } from "@/types";
+import { toISOString } from "@/helpers/date";
+import { WarehouseType } from "@/types/warehouse";
 
 class Auth {
 
@@ -22,27 +25,59 @@ class Auth {
     static async login({ password, username }: LoginCredentialsType, { mongoDbConfig }: SettingsType): Promise<CredentialsType> {
         try {
             const user = await Users.get({ username }, { mongoDbConfig });
-        
+
             const match = await bcrypt.compare(password, user.password);
 
-            if(match) {
-                //Get new token
-                const token = decode(user);
+            if(!match) throw new AuthError("Username or password invalid.");
 
-                // vefify new token to get its expiration time
-                const tokenResult = verifyToken<DecodedUserType>(token);
-                const { _id, exp, iat, password, ...userDetails } = tokenResult;
+            const stores = await mongoDbConfig
+                .collections
+                .WAREHOUSES
+                .aggregate(
+                    [
+                        {
+                            $match: {
+                                "users.username": username 
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: "$_id",
+                                users: "$users",
+                            }
+                        }
+                    ]
+                )
+                .toArray() as WarehouseType[]
+                
+            if(stores.length === 0) throw new AuthError("Username or password invalid");
 
-                return { 
-                    access: {
-                        expiresIn: exp,
-                        token 
-                    },
-                    user: userDetails
-                };
-            }
+            user.stores = stores.map((store: WarehouseType) => {
+                const { category, status } = store.users.find(user => user.username === username)
 
-            throw new AuthError("Username or password invalid.");   
+                return {
+                    category,
+                    status,
+                    storeId: store.id ?? "12345"
+                }
+            })
+            
+            //Get new token
+            const token = decode(user);
+
+            // vefify new token to get its expiration time
+            const tokenResult = verifyToken<DecodedUserType>(token);
+            const { _id, exp, iat, ...userDetails } = tokenResult;
+            delete userDetails.password
+
+            return { 
+                access: {
+                    expiresIn: exp,
+                    token 
+                },
+                user: userDetails
+            };
+
         } catch(e) {
             if(e instanceof Error404) throw new AuthError("Username or password invalid.");   
 

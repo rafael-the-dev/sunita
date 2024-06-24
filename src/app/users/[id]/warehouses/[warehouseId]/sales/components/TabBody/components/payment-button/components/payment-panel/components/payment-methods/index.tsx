@@ -2,6 +2,7 @@ import * as React from "react"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
+import { LoginContext } from "@/context/LoginContext"
 import { SaleContext } from "@/context/SalesContext/context/SaleContext"
 
 import Alert from "@/components/alert"
@@ -18,13 +19,14 @@ type ProsType = {
 }
 
 const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
+    const { credentials } = React.useContext(LoginContext)
     const { isLoading } = React.useContext(AppContext)
     const { addPaymentMethod, getCart, getPaymentMethods, resetCart } = React.useContext(SaleContext)
     const { fetchProducts } = React.useContext(SalesContext);
 
     const { fetchData, loading } = useFetch({
         autoFetch: false,
-        url: `/api/stores/12345/sales`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/sales`
     });
 
     const hasChanges = getPaymentMethods().changes > 0;

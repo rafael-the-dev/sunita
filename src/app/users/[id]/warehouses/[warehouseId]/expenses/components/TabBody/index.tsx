@@ -8,6 +8,7 @@ import { TableHeadersType } from "@/components/table/types";
 import { AppContext } from "@/context/AppContext";
 import { ExpensesContextProvider } from "@/context/ExpensesContext";
 import { FiltersContext } from "@/context/FiltersContext"
+import { LoginContext } from "@/context/LoginContext";
 
 import useFetch from "@/hooks/useFetch";
 import { formatDates } from "@/helpers/date";
@@ -27,6 +28,7 @@ enum DIALOG_TYPES {
 }
 
 const TabBody = () => {
+    const { credentials } = React.useContext(LoginContext)
     const { setDialog } = React.useContext(AppContext);
     const { fetchData, ...rest } = React.useContext(FiltersContext);
     const data = rest.data as AnalyticsExpenseType;
@@ -82,12 +84,12 @@ const TabBody = () => {
 
     const openCategoriesDialog = React.useCallback(() => {
         setDialog({
-            body: <Categories url="/api/stores/12345/expenses/categories" />,
+            body: <Categories url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/expenses/categories`} />,
             header: {
                 title: "Categories"
             }
         })
-    }, [ setDialog ]);
+    }, [ credentials, setDialog ]);
 
     const tableRowClickHandler = React.useCallback((expense: ExpenseInfoType) => () => {
         openRegisterExpenseDialog("Expense details", expense)

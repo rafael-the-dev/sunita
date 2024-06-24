@@ -33,7 +33,7 @@ const SelectedSaleContaienr = () => {
 
     const { loading, fetchData } = useFetch({
         autoFetch: false,
-        url: `/api/stores/12345/sales/${getSaleDetails().id}`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/sales/${getSaleDetails().id}`
     })
 
     const tabsList = React.useRef([

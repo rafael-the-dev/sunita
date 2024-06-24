@@ -1,5 +1,7 @@
 import { useContext } from "react"//:;
 
+import { LoginContext } from "@/context/LoginContext";
+
 import useSearchParamsHook from "@/hooks/useSearchParams";
 
 import Button from "@/components/shared/button";
@@ -8,6 +10,7 @@ import { FetchDataFuncType } from "@/hooks/useFetch/types";
 const mapValues = (key: string, list: string[]) => list.map(item => `${key}=${item}&`);
 
 const SubmitButton = ({ fetchData, loading }: { fetchData: FetchDataFuncType, loading: boolean }) => {
+    const { credentials } = useContext(LoginContext)
     const searchParams = useSearchParamsHook();
 
     const getSearchParams = () => {
@@ -42,7 +45,7 @@ const SubmitButton = ({ fetchData, loading }: { fetchData: FetchDataFuncType, lo
 
     const submitHandler = async () => {
         await fetchData({
-            ...( canISubmit ? { path: `/api/stores/12345/analytics/expenses?${getSearchParams()}` } : {})
+            ...( canISubmit ? { path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/analytics/expenses?${getSearchParams()}` } : {})
         })
     };
 

@@ -19,7 +19,7 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
     const { credentials } = React.useContext(LoginContext)
 
     const { data, fetchData, loading } = useFetch<AnalyticsType>({ 
-        url: `/api/stores/12345/analytics`
+        url: `/api/stores/${credentials?.user.stores[0].storeId}/analytics`
     });
 
     const getAnalytics = React.useCallback(() => data, [ data ]);

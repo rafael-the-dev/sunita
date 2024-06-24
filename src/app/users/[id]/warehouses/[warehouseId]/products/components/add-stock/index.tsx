@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css";
 
+import { LoginContext } from "@/context/LoginContext";
+
 import { CartItem } from "@/types/cart";
 import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
@@ -31,6 +33,7 @@ const alertSuccessProps = {
 
 const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal: AbortSignal }) => Promise<void> }) => {
     const { dialog, setDialog } = useContext(AppContext)
+    const { credentials } = useContext(LoginContext)
 
     const changeHandler = useCallback((product: ProductInfoType, func: SetterFuncType) => (e: ChangeEvent<HTMLInputElement>) => {
         func(product, e.target.value, "CHANGE");
@@ -149,7 +152,7 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
 
     const { fetchData, loading } = useFech({
         autoFetch: false,
-        url: `/api/stores/12345/products/stock-reports`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/stock-reports`
     });
 
     const keyPressHandler = useCallback((e: React.KeyboardEvent<HTMLFormElement>) => {

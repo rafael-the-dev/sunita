@@ -9,6 +9,7 @@ import useFech from "@/hooks/useFetch";
 import { ProductInfoType } from "@/types/product";
 import { TableHeadersType } from "@/components/table/types";
 
+import { LoginContext } from "@/context/LoginContext";
 import { StockContext } from "@/context/StockContext";
 import useSearchParams from "@/hooks/useSearchParams";
 import { CartItem } from "@/types/cart";
@@ -21,6 +22,7 @@ import Table from "@/components/shared/table";
 import Textfield from "@/components/Textfield";
 
 const SearchProduct = () => {
+    const { credentials } = useContext(LoginContext)
     const { addItem, productsList } = useContext(StockContext)
 
     const [ cartItem, setCartItem ] = useState<CartItem<ProductInfoType> | null>(null)
@@ -140,7 +142,7 @@ const SearchProduct = () => {
 
     const { data, loading } = useFech<ProductInfoType[]>({
         autoFetch: true,
-        url: `/api/stores/12345/products`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products`
     })
 
     useEffect(() => {

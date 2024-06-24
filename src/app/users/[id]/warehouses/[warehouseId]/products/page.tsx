@@ -7,6 +7,7 @@ import styles from "./styles.module.css";
 
 import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
+import { LoginContext } from "@/context/LoginContext";
 import { StockContextProvider } from "@/context/StockContext";
 import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
 
@@ -31,6 +32,7 @@ enum DIALOG_TYPES {
 }
 
 const Container = () => {
+    const { credentials } = React.useContext(LoginContext)
     const searchParams = useSearchParams()
 
     const { setDialog } = React.useContext(AppContext);
@@ -130,9 +132,9 @@ const Container = () => {
             header: {
                 title: "Categories"
             },
-            body: <Categories url="/api/stores/12345/products/categories" />
+            body: <Categories url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`} />
         })
-    }, [ setDialog ])
+    }, [ credentials, setDialog ])
 
     const openDialogHandler = React.useCallback((id: DIALOG_TYPES) => () => {
         reRendersCounter.current = 0;

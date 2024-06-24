@@ -14,9 +14,11 @@ import Button from "@/components/shared/button"
 import Categories from "./components/categories"
 import ListItem from "./components/expense-item";
 import TextField from "@/components/Textfield";
+import { LoginContext } from "@/context/LoginContext";
 
 
 const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) => {
+    const { credentials } = useContext(LoginContext)
     const { dialog, setDialog } = useContext(AppContext)
     const { addItem, getItems, totalPrice, toString } = useContext(ExpensesContext);
 
@@ -24,7 +26,7 @@ const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) =
     
     const { loading, fetchData } = useFetch({ 
         autoFetch: false, 
-        url: `/api/stores/12345/expenses` 
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/expenses` 
     })
 
     const onSuccess = async () => {
@@ -41,7 +43,7 @@ const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) =
             options: {
                 method: "DELETE",
             },
-            path: `/api/stores/12345/expenses/${expense.id}`
+            path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/expenses/${expense.id}`
         })
     }
 
@@ -56,7 +58,7 @@ const RegisterExpenses = ({ refreshData }: { refreshData: FetchDataFuncType }) =
                 body: toString()
             },
             ...( expense ? { 
-                path: `/api/stores/12345/expenses/${expense.id}`
+                path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/expenses/${expense.id}`
             } : {} )
         })
     };
