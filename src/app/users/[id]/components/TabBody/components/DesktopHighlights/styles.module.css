@@ -1,0 +1,16 @@
+
+@media screen and (width >= 1024px) {
+    .card {
+        left: 0 !important;
+        width: 23.5% !important;
+    }
+
+    .filterButtonContainer {
+        width: 23.5% !important;
+    }
+
+    .filtersButton {
+        font-size: 1.2rem;
+    }
+
+}

@@ -1,0 +1,38 @@
+
+
+
+.primaryBgContainer {
+    height: 90px;
+}
+
+.sliderContainer {
+    background-color: rgb(243, 244, 246);
+    height: 120px;
+    left: 1rem;
+    top: 40%;
+    width: calc(100% - 2rem);
+}
+
+.slider {
+    transition: transform 1s ease;
+}
+
+.buttonsContainer {
+    top: 90%;
+}
+
+@media screen and (width >= 1024px) {
+    .slider {
+        transform: translateX(0) !important;
+        width: 100% !important;
+    }
+    
+    .filterButtonContainer {
+        width: 23.5% !important;
+    }
+
+    .filtersButton {
+        font-size: 1.2rem;
+    }
+
+}

@@ -15,7 +15,7 @@ const Container = () => {
     const toggleHandler = useCallback(() => onToggleCollapse.current?.(), [ onToggleCollapse ])
 
     return (
-        <div className="mx-4 mb-4 mt-6 md:mt-20">
+        <div className="mx-4 mb-4 mt-24 md:mt-20">
             <Hidden xlUp>
                 <Button
                     className={classNames(` 

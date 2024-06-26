@@ -5,7 +5,7 @@ import { AnalyticsFiltersContextProvider } from "@/context/AnalyticsFilters";
 
 import DataShow from "./components/data-show";
 import FiltersButton from "./components/filters-button"
-import Highlights from "./components/highlights";
+import Highlights from "./components/DesktopHighlights";
 import FiltersContainer from "./components/filters";
 import useSearchParams from "@/hooks/useSearchParams";
 
