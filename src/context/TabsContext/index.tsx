@@ -29,7 +29,7 @@ export const TabsContextProvider = <T, >({ children, component, Component, initi
             name: `Tab ${index}`
         }
     }, [ component ]);
-    //:;
+    
     const [ tabsList, setTabsList ] = React.useState<TabType[]>(() => {
         if(Array.isArray(initialList) && initialList.length > 0) {
             return initialList.map((item, index) => {
@@ -66,8 +66,13 @@ export const TabsContextProvider = <T, >({ children, component, Component, initi
     }, [ tabsList ])
 
     const removeTab = React.useCallback((id: string) => {
+        
         setTabsList(tabs => {
             if(tabs.length === 1) return tabs
+
+            const tabIndex = tabs.findIndex(tab => tab.id === id)
+
+            setActiveTab(tabs[tabIndex === 0 ? 1 : tabIndex - 1])
 
             return tabs.filter(tab => tab.id !== id)
         })
