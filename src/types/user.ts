@@ -1,29 +1,66 @@
 import { STATUS } from ".";
 
-export const enum USER_CATEGORY {
+export enum USER_CATEGORY {
     ADMIN = "admin",
     EMPLOYEE = "employee",
     MANAGER = "manager"
 }
 
-type Store = {
+export enum DOCUMENT_TYPE {
+    BI = "bi",
+    DRIVING_LICENCE = "driving-licence",
+    PASSPORT = "passport"
+}
+
+type BaseStore = {
     category: USER_CATEGORY;
-    storeId: string;
     status: STATUS;
 }
 
-export type UserType = {
-    _id?: string,
-    category: string,
+type Store = BaseStore & {
+    storeId: string;
+}
+
+export type StoreUserType = BaseStore & {
+    createdAt: Date | string;
+    logs: [];
+    username: string;
+}
+
+export type BaseUserType = {
+    category: USER_CATEGORY,
     firstName: string, 
     id: string,
     lastName: string,
-    username: string,
-    password?: string,
-    stores?: Store[]
+    username: string
+}
+
+export type UserType = BaseUserType & {
+    _id?: string,
+    stores: Store[]
 }
 
 export type DecodedUserType = UserType &  {
     exp: number,
     iat: number
+}
+
+export type Document = {
+    expireDate: string;
+    issueDate: string;
+    type: DOCUMENT_TYPE;
+    number: string;
+}
+
+export type User = BaseUserType & {
+    address: {
+        block: string
+        country: string,
+        city: string,
+        house: number,
+        province: string
+    },
+    document: Document;
+    password: string;
+    stores: string[]
 }
