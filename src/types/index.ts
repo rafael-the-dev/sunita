@@ -1,6 +1,6 @@
 
 export const enum STATUS {
-    ACTIVE = "ative",
+    ACTIVE = "active",
     INACTIVE = "inactive",
     SUCCESSFUL = "successful",
     UNSUCCESSFUL = "unsuccessful"
