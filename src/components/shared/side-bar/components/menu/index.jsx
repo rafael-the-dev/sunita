@@ -5,24 +5,32 @@ import { LoginContext } from "@/context/LoginContext"
 import ListItem from "./components/list-item";
 
 const Menu = () => {
-    const { user } = useContext(LoginContext);
+    const { credentials, user } = useContext(LoginContext);
 
     const list = [
         {
             label: "Home",
-            path: `/users/${user.username}`
+            path: `/users/${ credentials?.user?.username }`
         },
         {
             label: "Sales",
-            path: `/users/${user.username}/warehouses/${12345}/sales`
+            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/sales`
         },
         {
             label: "Products",
-            path: `/users/${user.username}/warehouses/${12345}/products`
+            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/products`
         },
         {
             label: "Expenses",
-            path: `/users/${user.username}/warehouses/${12345}/expenses`
+            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/expenses`
+        },
+        {
+            label: "Users",
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/users`
+        },
+        {
+            label: "Finances",
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/finances`
         },
     ];
 
