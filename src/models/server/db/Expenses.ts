@@ -85,7 +85,7 @@ class Expense {
                                 lastName: "$user_info.lastName",
                                 username: "$user_info.username"
                             }
-                         }
+                        }
                     }
                 }
             ]).toArray() as ExpenseInfoType[];
@@ -147,7 +147,7 @@ class Expense {
                 createdAt: new Date(Date.now()).toISOString(),
                 id: getId(),
                 items: [],
-                status: ExpenseStatus.SUCCESSFULL,
+                status: ExpenseStatus.SUCCESSFUL,
                 total: 0,
                 user: "rafaeltivane"
             };
