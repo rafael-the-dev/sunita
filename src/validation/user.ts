@@ -2,6 +2,12 @@ import moment from "moment";
 
 import { DOCUMENT_TYPE } from "@/types/user";
 
+export const isValidHouseNumber = (number: string) => {
+    const pattern = /^[1-9]{1}[0-9]*$/;
+
+    return pattern.test(number);
+};
+
 export const isValidDocumentNumber = (number: string) => {
     const pattern = /^[A-Za-z0-9]{5,}(-?[A-Za-z0-9]+)*$/;
 
