@@ -7,7 +7,8 @@ import Textfield from "@/components/Textfield"
 
 const Address = () => {
     const {
-        changeName,
+        changeAddress,
+        changeHouseNumber,
         input
     } = useContext(UserFormContext)
 
@@ -15,56 +16,49 @@ const Address = () => {
         <div className="flex flex-col gap-y-4">
             <Row>
                 <Textfield 
-                    { ...input.firstName }
+                    { ...input.address.country }
                     className="mb-0 w-full sm:w-1/2"
-                    label="First name"
-                    onChange={changeName("firstName")}
+                    label="Counry"
+                    onChange={changeAddress("country")}
                     placeholder="Insert first name"
                     required
                 />
                 <Textfield 
-                    { ...input.firstName }
+                    { ...input.address.province }
                     className="mb-0 w-full sm:w-1/2"
-                    label="First name"
-                    onChange={changeName("firstName")}
-                    placeholder="Insert first name"
-                    required
-                />
-            </Row>
-            <Row>
-                <Textfield 
-                    { ...input.firstName }
-                    className="mb-0 w-full sm:w-1/2"
-                    label="First name"
-                    onChange={changeName("firstName")}
-                    placeholder="Insert first name"
-                    required
-                />
-                <Textfield 
-                    { ...input.firstName }
-                    className="mb-0 w-full sm:w-1/2"
-                    label="First name"
-                    onChange={changeName("firstName")}
+                    label="Province"
+                    onChange={changeAddress("province")}
                     placeholder="Insert first name"
                     required
                 />
             </Row>
             <Row>
                 <Textfield 
-                    { ...input.firstName }
+                    { ...input.address.city }
                     className="mb-0 w-full sm:w-1/2"
-                    label="First name"
-                    onChange={changeName("firstName")}
-                    placeholder="Insert first name"
+                    label="City"
+                    onChange={changeAddress("city")}
+                    placeholder="Insert city name"
                     required
                 />
                 <Textfield 
-                    { ...input.firstName }
+                    { ...input.address.block }
                     className="mb-0 w-full sm:w-1/2"
-                    label="First name"
-                    onChange={changeName("firstName")}
-                    placeholder="Insert first name"
+                    label="block"
+                    onChange={changeAddress("block")}
+                    placeholder="Insert block name"
                     required
+                />
+            </Row>
+            <Row>
+                <Textfield 
+                    { ...input.address.house }
+                    className="mb-0 w-full sm:w-1/2"
+                    label="House number"
+                    onChange={changeHouseNumber}
+                    placeholder="Insert house number"
+                    required
+                    type="number"
                 />
             </Row>
         </div>

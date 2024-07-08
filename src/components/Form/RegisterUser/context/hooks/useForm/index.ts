@@ -7,10 +7,13 @@ import { dateFormat, dateTimeFormat } from "@/helpers/date"
 
 import { 
     isValidDocumentIssueDate, isValidDocumentExpireDate, isValidDocumentNumber, 
-    isValidName, isValidUsername 
+    isValidName, isValidUsername, 
+    isValidHouseNumber,
+    isValidAddress
 } from "@/validation/user"
 
-type ChangeNameNameKeyType = "firstName" | "lastName"
+type ChangeNameKeyType = "firstName" | "lastName"
+type ChangeAddressKeyType = "country" | "province" | "city" | "block"
 
 const initialInput = {
     error: false,
@@ -19,6 +22,13 @@ const initialInput = {
 }  
 
 const initial = {
+    address: {
+        block: initialInput,
+        country: initialInput,
+        province: initialInput,
+        city: initialInput, 
+        house: initialInput 
+    },
     document: {
         expireDate: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).toISOString() }),
         issueDate: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).toISOString() }),
@@ -50,6 +60,44 @@ const useForm = () => {
                 })
             )
     }, [ input ])
+
+    const changeAddress = useCallback((key: ChangeAddressKeyType) => (e: ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+
+        const hasError = !isValidAddress(value);
+
+        setInput(input => ({
+            ...input,
+            address: {
+                ...input.address,
+                [key]: {
+                    error: hasError,
+                    helperText: hasError ? "It must contain four letters at least" : "",
+                    value
+                }
+            }
+        }));
+    }, [])
+
+    const changeHouseNumber = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const { value } = e.target
+            const hasError = !isValidHouseNumber(value)
+
+            setInput(input => ({
+                ...input,
+                address: {
+                    ...input.address,
+                    house: {
+                        error: hasError,
+                        helperText: hasError ? "Invalid house number" : "",
+                        value
+                    }
+                }
+            }))
+        }, 
+        []
+    )
 
     const changeDocumentExpireDate = useCallback((newDate: string) => {
         setInput(input => {
@@ -119,7 +167,7 @@ const useForm = () => {
         }));
     }, [])
 
-    const changeName = useCallback((key: ChangeNameNameKeyType) => (e: ChangeEvent<HTMLInputElement>) => {
+    const changeName = useCallback((key: ChangeNameKeyType) => (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
 
         const hasError = !isValidName(value);
@@ -191,6 +239,7 @@ const useForm = () => {
         hasErrors,
         input,
 
+        changeAddress, changeHouseNumber,
         changeDocumentExpireDate, changeDocumentIssueDate, changeDocumentNumber, changeDocumentType, 
         changeName, changePostition, changeUsername,
         resetForm,
