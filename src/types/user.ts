@@ -45,6 +45,14 @@ export type DecodedUserType = UserType &  {
     iat: number
 }
 
+export type AddressType = {
+    block: string
+    country: string,
+    city: string,
+    house: number,
+    province: string
+}
+
 export type Document = {
     expireDate: string;
     issueDate: string;
@@ -53,13 +61,7 @@ export type Document = {
 }
 
 export type User = BaseUserType & {
-    address: {
-        block: string
-        country: string,
-        city: string,
-        house: number,
-        province: string
-    },
+    address: AddressType,
     document: Document;
     password: string;
     stores: string[]
