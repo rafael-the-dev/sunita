@@ -1,7 +1,7 @@
 import { MongoClient, Collection, Db } from "mongodb";
 
 import { CategoryType } from "@/types/category"
-import { UserType } from "./user";
+import { User } from "./user";
 import { ProductType, GblobalProductType } from "./product";
 import { WarehouseType } from "./warehouse";
 
@@ -9,7 +9,7 @@ export type CollectionType = {
     EXPENSES_CATEGORIES: Collection<CategoryType>,
     PRODUCTS: Collection<GblobalProductType>;
     PRODUCTS_CATEGORIES: Collection<CategoryType>,
-    USERS: Collection<UserType>;
+    USERS: Collection<User>;
     WAREHOUSES: Collection<WarehouseType>;
 }
 
