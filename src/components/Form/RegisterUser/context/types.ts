@@ -16,7 +16,7 @@ type ChangeNameKeyType = "firstName" | "lastName"
 type ChangeAddressKeyType = "country" | "province" | "city" | "block"
 
 export type ContextType = {
-    hasErrors: boolean;
+    hasErrors: () => boolean;
     input: {
         address: {
             block: InputType,

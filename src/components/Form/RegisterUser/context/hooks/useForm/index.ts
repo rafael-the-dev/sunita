@@ -44,18 +44,26 @@ const initial = {
 const useForm = () => {
     const [ input, setInput ] = useState(initial);
     
-    const hasErrors = useMemo(() => {
+    const hasErrors = useCallback(() => {
         return Boolean(
             Object
                 .values(input)
                 .find(inputProps => {
                     //@ts-ignore
-                    if(Object.keys(inputProps).includes("error")) return inputProps.error;
+                    if(Object.keys(inputProps).includes("error")) return inputProps.error || !Boolean(inputProps.value.trim());
 
                     return Boolean(
                         Object
                             .values(inputProps)
-                            .find(value => value.error)
+                            .find(field => {
+                                let hasValue = true
+
+                                if(typeof field.value === "string") {
+                                    hasValue = Boolean(field.value.trim())
+                                }
+
+                                return field.error || !hasValue
+                            })
                     )
                 })
             )
@@ -211,11 +219,11 @@ const useForm = () => {
     const toString = () => {
         const user: User = {
             address: {
-                block: "",
-                city: "",
-                country: "",
-                house: 0,
-                province: "",
+                block: input.address.block.value,
+                city: input.address.city.value,
+                country: input.address.country.value,
+                house: parseInt(input.address.house.value),
+                province: input.address.province.value,
             },
             category: input.position.value,
             document: {
@@ -229,7 +237,7 @@ const useForm = () => {
             lastName: input.lastName.value,
             password: "",
             stores: null,
-            username: input.lastName.value
+            username: input.username.value
         }
 
         return JSON.stringify(user)
