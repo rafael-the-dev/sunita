@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useContext, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
@@ -35,7 +35,7 @@ const UsersPage = () => {
     const headers = useRef<TableHeadersType[]>([
         {
             label: "Name",
-            getComponent({ item, key }) {
+            getComponent({ item }) {
                 const user = item as UserType
 
                 return (
