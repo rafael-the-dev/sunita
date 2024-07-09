@@ -8,5 +8,6 @@ export type PropsType = {
 
 export type ContextType = {
     getUsers: () => UserType[],
-    loading: boolean
+    loading: boolean,
+    refetchUsers: () => Promise<void>
 }

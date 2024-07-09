@@ -17,8 +17,7 @@ const isIncluded = (value:string, searchValue: string) => {
 export const UsersContextProvider = ({ children }: PropsType) => {
     const { credentials } = useContext(LoginContext)
 
-
-    const { data, loading } = useFetch<UserType[]>({
+    const { data, fetchData, loading } = useFetch<UserType[]>({
         url: `/api/stores/${ credentials?.user?.stores[0]?.storeId }/users`
     })
 
@@ -26,7 +25,6 @@ export const UsersContextProvider = ({ children }: PropsType) => {
 
     const position = searchParams.get("position", "")
     const searchParam = searchParams.get("search", "");
-
 
     const getUsers = useCallback(() => {
         if(!data) return [];
@@ -44,11 +42,22 @@ export const UsersContextProvider = ({ children }: PropsType) => {
         return data;
     }, [ data, position, searchParam ]);
 
+    const refetchUsers = useCallback(
+        async () => {
+            await fetchData({
+                path: `/api/stores/${ credentials?.user?.stores[0]?.storeId }/users`,
+            })
+        },
+        [ credentials, fetchData ]
+    )
+
     return (
         <UsersContext.Provider
             value={{
                 getUsers,
-                loading
+                loading,
+
+                refetchUsers
             }}
             >
             { children }
