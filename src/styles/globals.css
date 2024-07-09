@@ -4,8 +4,16 @@ table td, table th {
     text-wrap: nowrap;
 }
 
+.scrollable, .scrollable--secondary {
+    overflow-y: auto;
+}
+
 .scrollable {
     height: calc(100vh - 141px);
+}
+
+.scrollable--secondary {
+    height: calc(100vh - 57px);
 }
 
 .hover-primary-button:hover {
