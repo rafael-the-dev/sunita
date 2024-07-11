@@ -96,6 +96,7 @@ const Container = () => {
                         isSelected = true;
                     }
                 }
+
                 // return product if product's price greater than or equals to price.min and if product is less than or equals to price.max
                 if((product.sellPrice >= price.min) && (product.sellPrice <= price.max)) isSelected = true;
 
@@ -136,6 +137,16 @@ const Container = () => {
         })
     }, [ credentials, setDialog ])
 
+    const openRegisterProductDialog = React.useCallback(
+        () => {
+            setDialog({
+                header: { title: "Register product" },
+                body: <RegisterProduct />
+            })
+        },
+        [ setDialog ]
+    )
+
     const openDialogHandler = React.useCallback((id: DIALOG_TYPES) => () => {
         reRendersCounter.current = 0;
         searchParams.setSearchParam("dialog", id)
@@ -144,15 +155,10 @@ const Container = () => {
     const dialogQueryString = searchParams.get("dialog", "")
 
     React.useEffect(() => {
-        const dialogQueryString = searchParams.get("dialog", "")
-        
-        if(reRendersCounter.current === 2) return;
-
         if(dialogQueryString === DIALOG_TYPES.ADD_STOCK) openAddStockDialog();
         else if(dialogQueryString === DIALOG_TYPES.CATEGORIES) openCategoriesDialog();
-
-        reRendersCounter.current += 1;
-    }, [ openAddStockDialog, openCategoriesDialog, searchParams ])
+        else if(dialogQueryString === DIALOG_TYPES.REGIST_PRODUCT) openRegisterProductDialog()
+    }, [ dialogQueryString, openAddStockDialog, openCategoriesDialog, openRegisterProductDialog ])
 
     return (
         <Main className="flex flex-col items-stretch justify-between">
@@ -196,7 +202,11 @@ const Container = () => {
                         View stock report
                     </Button>
                 </LinkContainer>
-                <RegisterProduct />
+                <Button 
+                    className=""
+                    onClick={openDialogHandler(DIALOG_TYPES.REGIST_PRODUCT)}>
+                    Register
+                </Button>
             </div>
         </Main>
     );
