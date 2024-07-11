@@ -1,29 +1,18 @@
 import * as React from "react";
 
+import { CategoryType } from "@/types/category";
+
 import { ProductFilterContext } from "@/context/ProductFilterContext";
 
 import Collapse from "../collapse";
 import Checkbox from "@/components/checkbox";
 
-const Categories = () => {
-    const { category, isChecked, setManySearchParams } = React.useContext(ProductFilterContext);
+type PropsType = {
+    list: CategoryType[]
+}
 
-    const list = [
-        {
-            label: "T-shirt",
-            value: "T-SHIRT"
-        },
-        {
-            label: "Hoodie",
-            value: "HOODIE"
-        },{
-            label: "Trouser",
-            value: "TROUSER"
-        },{
-            label: "Sneacker",
-            value: "SNEACKER"
-        },
-    ];
+const Categories = ({ list }: PropsType) => {
+    const { category, isChecked, setManySearchParams } = React.useContext(ProductFilterContext);
 
     const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         setManySearchParams("category", e.target.value)
@@ -33,13 +22,13 @@ const Categories = () => {
         <Collapse title="Categories">
             <ul>
                 {
-                    list.map(({ label, value }) => (
-                        <li key={value}>
+                    list.map(item => (
+                        <li key={item.id}>
                             <Checkbox 
-                                checked={isChecked(category, value)}
-                                label={label}
+                                checked={isChecked(category, item.name)}
+                                label={item.name}
                                 onChange={changeHandler}
-                                value={value}
+                                value={item.name}
                             />
                         </li>
                     ))
