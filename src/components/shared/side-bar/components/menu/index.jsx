@@ -21,6 +21,10 @@ const Menu = () => {
             path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/products`
         },
         {
+            label: "Rooms",
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/rooms`
+        },
+        {
             label: "Expenses",
             path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/expenses`
         },
