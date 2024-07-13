@@ -1,5 +1,5 @@
 
-export const enum STATUS {
+export enum STATUS {
     ACTIVE = "active",
     INACTIVE = "inactive",
     SUCCESSFUL = "successful",
