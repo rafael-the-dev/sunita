@@ -1,6 +1,7 @@
 
 import { Document } from "./user"
 import { ProductPayment as PaymentMethod } from "./payment-method"
+import { STATUS } from ".";
 
 export enum ROOM_TYPE {
     DOUBLE = "double",
@@ -11,7 +12,9 @@ export enum ROOM_TYPE {
 export type RoomType = {
     dailyPrice: number,
     hourlyPrice: number,
+    id: string,
     quantity: number,
+    status: STATUS;
     type: ROOM_TYPE
 }
 
