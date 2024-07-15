@@ -29,14 +29,14 @@ export const GET = (req: NextRequest, { params: { storeId } }: URLParamsType) =>
     )
 }
 
-export const PUT = (req: NextRequest) => {
+export const PUT = (req: NextRequest, { params: { roomId } }: URLParamsType) => {
     return apiHandler(
         req,
         async ({ mongoDbConfig, user }) => {
             const room = await req.json() as RoomType;
 
             await Rooms.upddate(
-                room, 
+                { ...room, id: roomId }, 
                 { 
                     mongoDbConfig, 
                     user 
