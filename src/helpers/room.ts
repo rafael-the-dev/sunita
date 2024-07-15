@@ -2,16 +2,21 @@ import { ConfigType } from "@/types/app-config-server"
 import { MongoDbConfigType } from "@/types/mongoDb"
 import { RoomType } from "@/types/room"
 
-export const getRooms =  async ({ filter }: { filter: Object }, { mongoDbConfig }: ConfigType) => {
+export const getRooms =  async ({ filter, storeId }: { filter: Object, storeId: string }, { mongoDbConfig }: ConfigType) => {
     const result = await mongoDbConfig
         .collections
         .WAREHOUSES
         .aggregate(
             [
+                {  
+                    $match: {
+                        id: storeId
+                    }
+                },
+                { $unwind: "$rooms" },
                 {
                     $match: { ...( filter ?? {} ) }
                 },
-                { $unwind: "$rooms" },
                 {
                     $group: {
                         _id: "$rooms.id",
