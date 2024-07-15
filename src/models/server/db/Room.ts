@@ -8,29 +8,23 @@ import { getRooms, updateRoom } from "@/helpers/room";
 
 class Room {
     static async get({ filter }: { filter: Object }, { mongoDbConfig, user }: ConfigType) {
-        try {
-            const result = await getRooms({ filter }, { mongoDbConfig, user })
+        const storeId = user.stores[0].storeId;
 
-            if(result.length) throw new Error404("Room not found")
-            
-            const room = result[0] as RoomType
+        const result = await getRooms({ filter, storeId }, { mongoDbConfig, user })
 
-            return room
-        } catch(e) {
-            console.error(e)
-            return {} as RoomType
-        }
+        if(result.length === 0) throw new Error404("Room not found")
+        
+        const room = result[0] as RoomType
+
+        return room
     }
 
     static async getAll({ filter }: { filter: Object }, { mongoDbConfig, user }: ConfigType) {
-        try {
-            const rooms = await getRooms({ filter }, { mongoDbConfig, user })
+        const storeId = user.stores[0].storeId;
 
-            return rooms
-        } catch(e) {
-            console.error(e)
-            return []
-        }
+        const rooms = await getRooms({ filter, storeId }, { mongoDbConfig, user })
+
+        return rooms
     }
 
     static async register({ dailyPrice, hourlyPrice, quantity, type }: RoomType, { mongoDbConfig, user }: ConfigType) {
@@ -90,7 +84,6 @@ class Room {
         const room = await this.get(
             { 
                 filter: {
-                    id: storeId,
                     "rooms.id": id
                 }
             },
@@ -101,7 +94,7 @@ class Room {
         );
 
         const roomClone = structuredClone(room);
-
+        
         try {
             const roomProxy = getRoomProxy(roomClone);
 
@@ -109,7 +102,7 @@ class Room {
             roomProxy.hourlyPrice = hourlyPrice;
             roomProxy.quantity = quantity;
             roomProxy.type = type;
-
+            
             await updateRoom(roomProxy, storeId, mongoDbConfig);
         } catch(e) {
             await updateRoom(room, storeId, mongoDbConfig);
