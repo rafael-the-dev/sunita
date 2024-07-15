@@ -83,19 +83,29 @@ const Rooms = () => {
         [ searchParams ]
     )
 
-    const openRegisterRoomDialog = useCallback(
-        () => {
+    const roomDialogHelper = useCallback(
+        (title: string, room: RoomType) => {
             setDialog(
                 {
                     header: {
-                        //onClose: () => searchParams.removeSearchParam("dialog"),
-                        title: "Add new room"
+                        title
                     },
-                    body: <RoomsForm fetchRooms={fetchData} />
+                    body: <RoomsForm fetchRooms={fetchData} />,
+                    payload: room
                 }
             )
         },
         [ fetchData, setDialog ]
+    )
+
+    const openRegisterRoomDialog = useCallback(
+        () => roomDialogHelper("Add new room", null),
+        [ roomDialogHelper ]
+    )
+
+    const openUpdateRoomDialog = useCallback(
+        (room: RoomType) => () => roomDialogHelper("Update room", room),
+        [ roomDialogHelper ]
     )
 
     const dialogQueryParam = searchParams.get("dialog", "") as DIALOG_TYPE;
@@ -113,6 +123,7 @@ const Rooms = () => {
                 <Table 
                     data={getRoomsList()}
                     headers={tableHeaders}
+                    onClickRow={openUpdateRoomDialog}
                 />
             </div>
             <div className="flex flex-col gap-y-3 items-stretch sm:flex-row sm:gap-x-3 sm:gap-y-0 sm:justify-end">

@@ -7,6 +7,7 @@ import styles from "./styles.module.css"
 import { ROOM_TYPE, RoomType } from "@/types/room"
 
 import { LoginContext } from "@/context/LoginContext"
+import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 import useFetch from "@/hooks/useFetch"
 import useForm from "./hooks/useForm"
@@ -24,11 +25,14 @@ type PropsType = {
 
 const RoomsForm = ({ fetchRooms }: PropsType) => {
     const { credentials } = useContext(LoginContext);
+    const { getDialog } = useContext(FixedTabsContext);
+
+    const room = getDialog().current.payload as RoomType;
 
     const { fetchData, loading  } = useFetch(
         {
             autoFetch: false,
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms`
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms${ room ? `/${room.id}` : ""}`
         }
     );
 
@@ -95,7 +99,7 @@ const RoomsForm = ({ fetchRooms }: PropsType) => {
             {
                 options: {
                     body: JSON.stringify(room),
-                    method: "POST"
+                    method: room ? "PUT" : "POST"
                 },
                 onError(error) {
                     alertProps.current = {
@@ -167,11 +171,22 @@ const RoomsForm = ({ fetchRooms }: PropsType) => {
                 </div>
             </div>
             <div className="flex flex-col items-stretch justify-end sm:flex-row ">
-                <Button
-                    className="py-2"
-                    type="submit">
-                    { loading ? "Loading..." : "Submit" }
-                </Button>
+                { 
+                    room ? (
+                        <Button
+                            className="py-2"
+                            type="submit">
+                            { loading ? "Loading..." : "Update" }
+                        </Button>
+                    ) : 
+                    (
+                        <Button
+                            className="py-2"
+                            type="submit">
+                            { loading ? "Loading..." : "Submit" }
+                        </Button>
+                    )
+                }
             </div>
         </form>
     )

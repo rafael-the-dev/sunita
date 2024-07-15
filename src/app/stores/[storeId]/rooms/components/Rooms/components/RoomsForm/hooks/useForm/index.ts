@@ -1,7 +1,9 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useCallback, useContext, useState } from "react"
 import currency from "currency.js"
 
-import { ROOM_TYPE } from "@/types/room"
+import { ROOM_TYPE, RoomType } from "@/types/room"
+
+import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 import { isInvalidNumber } from "@/helpers/validation"
 
@@ -19,7 +21,24 @@ const initial = {
 }
 
 const useForm = () => {
-    const [ input, setInput ] = useState(initial);
+    const { getDialog } = useContext(FixedTabsContext)
+
+    const room = getDialog().current.payload as RoomType
+
+    const [ input, setInput ] = useState(
+        () => {
+            if(room) {
+                return {
+                    dailyPrice: structuredClone({ ...initialInput, value: room.dailyPrice.toString() }), 
+                    hourlyPrice: structuredClone({ ...initialInput, value: room.hourlyPrice.toString() }),
+                    quantity: structuredClone({ ...initialInput, value: room.quantity.toString() }),
+                    type: structuredClone({ ...initialInput, value: room.type })
+                }
+            }
+
+            return initial
+        }
+    );
 
     const changeQuantity = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
