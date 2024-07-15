@@ -12,6 +12,7 @@ export type URLParamsType = {
         expenseId: string,
         productId?: string;
         username?: string;
+        roomId?: string;
         storeId?: string;
         saleId?: string;
     }
