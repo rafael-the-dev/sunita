@@ -6,7 +6,10 @@ import classNames from "classnames"
 import { TabType } from "@/context/FixedTabsContext/types"
 
 import { FixedTabsContext } from "@/context/FixedTabsContext"
+import { RoomsContextProvider } from "./context"
+
 import { Container, Provider } from "@/components/shared/FixedTabsContainer"
+import Booking from "./components/Booking"
 import Rooms from "./components/Rooms"
 
 enum TABS_TYPE {
@@ -37,7 +40,7 @@ const RoomsPage = () => {
         <div className={classNames("scrollable overflow-x-auto pt-6 px-2 md:px-4")}>
             {
                 {
-                    [TABS_TYPE.BOOKING]: <div></div>,
+                    [TABS_TYPE.BOOKING]: <Booking />,
                     [TABS_TYPE.ROOMS]: <Rooms />,
                     [TABS_TYPE.MORE]: <div></div>
                 }[getActiveTab().id]
@@ -47,9 +50,11 @@ const RoomsPage = () => {
 }
 
 const ProviderContainer = () => (
-    <Provider tabs={tabs}>
-        <RoomsPage />
-    </Provider>
+    <RoomsContextProvider>
+        <Provider tabs={tabs}>
+            <RoomsPage />
+        </Provider>
+    </RoomsContextProvider>
 );
 
 export default ProviderContainer;
