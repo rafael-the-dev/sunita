@@ -20,10 +20,10 @@ export type RoomType = {
 
 export type GuestType = {
     document: Document,
-    email: string;
+    email?: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phone?: string;
 }
 
 export enum BOOKING_TYPE {
