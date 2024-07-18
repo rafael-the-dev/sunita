@@ -2,7 +2,7 @@ import { CategoryType as ExpenseCategory } from "./category"
 import { ContactType } from "./contact";
 import { ExpenseType } from "./expense";
 import { WarehouseProductType } from "./product"
-import { RoomType, SimpleBookingType } from "./room"
+import { RoomType, BookingDBType } from "./room"
 import { SaleType } from "./sale";
 import { StockReportType } from "./stock";
 import { StoreUserType } from "./user";
@@ -27,7 +27,7 @@ export type WarehouseType = {
     id: string;
     products: WarehouseProductType[];
     rooms: RoomType[];
-    "rooms-booking": SimpleBookingType[],
+    "rooms-booking": BookingDBType[],
     sales: SaleType[];
     "stock-reports": StockReportType[];
     users: StoreUserType[]
