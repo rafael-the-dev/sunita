@@ -5,12 +5,14 @@ export type PaymentMethodType = {
     amount: number;
 }
 
-export type ProductPayment = {
+export type PaymentType = {
     changes: number;
     paymentMethods: PaymentMethodType[];
     remainingAmount: number;
     totalReceived: number;
 }
+
+export type ProductPayment = PaymentType;
 
 export type PaymentMethodListItemType = {
     label: string;
