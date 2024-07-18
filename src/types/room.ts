@@ -38,15 +38,20 @@ export type BaseBookingType = {
     id: String,
     paymentMethods: PaymentMethod,
     room: RoomType,
-    store: string,
     type: BOOKING_TYPE,
     totalPrice: number
 }
 
+export type BookingDBType = BaseBookingType & {
+    guest: string
+}
+
 export type SimpleBookingType = BaseBookingType & {
-    guest: string | GuestType
+    guest: GuestType,
+    store: string,
 }
 
 export type BookingRoomType = BaseBookingType & {
     guest: GuestType,
+    store: string,
 }
