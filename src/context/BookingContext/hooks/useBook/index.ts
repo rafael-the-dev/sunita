@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from "react"
+import { useCallback, useContext, useMemo, useState } from "react"
 import moment from "moment"
 
 import { BOOKING_TYPE } from "@/types/room"
@@ -27,6 +27,13 @@ const useBooking = () => {
     const { getRooms } = useContext(RoomsContext)
 
     const [ booking, setBooking ] = useState(initial)
+
+    const hasErrors = useMemo(
+        () => {
+           return !Boolean(booking.room) || booking.totalPrice <= 0 || booking.checkIn.error || booking.checkOut.error
+        },
+        [ booking ]
+    )
 
     const changeRoom = useCallback(
         (id: string) => {
@@ -105,6 +112,7 @@ const useBooking = () => {
 
     return {
         booking,
+        hasErrors,
 
         changeRoom,
         changeType,

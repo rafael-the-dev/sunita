@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useCallback, useMemo, useState } from "react"
 
 import { BaseBookingType, BookingRoomType, SimpleBookingType } from "@/types/room"
 
@@ -24,6 +24,28 @@ const useGuest = () => {
 
     const { document, ...documentRest } = useDocument()
 
+    const hasErrors = useMemo(
+        () => {
+            return Boolean([
+                name.first,
+                name.last,
+                document.expireDate,
+                document.issueDate,
+                document.number,
+                document.type
+            ].find(
+                input => {
+                    let hasValueError = false;
+
+                    if(typeof input.value === "string") hasValueError = !Boolean(input.value.trim());
+                    
+                    return input.error || hasValueError;
+                }
+            ))
+        },
+        [ document, name ]
+    )
+
     const changeName = useCallback((key: ChangeNameKeyType) => (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
 
@@ -41,6 +63,7 @@ const useGuest = () => {
 
     return {
         ...documentRest,
+        hasErrors,
         guest: {
             document,
             firstName: name.first,

@@ -36,6 +36,7 @@ export type ContextType = PaymentFunctionsType & {
             number: InputType 
         }
     },
+    hasErrors: boolean,
     changeName: (key: ChangeNameKeyType) => (e: ChangeEvent<HTMLInputElement>) => void;
 
     //document

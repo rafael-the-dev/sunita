@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { ChangePaymentMethodValueType } from "@/hooks/usePayment/types";
 
@@ -29,6 +29,11 @@ const useBookingPayment = (totalPrice: number) => {
         changePaymentMethodId
     } = usePayment({ setPayment })
 
+    const hasErrors = useMemo(
+        () => payment.totalReceived < totalPrice || totalPrice <= 0,
+        [ payment, totalPrice ]
+    )
+
     const getPayment = useCallback(() => structuredClone(payment), [ payment ])
 
     const changePaymentMethodValue = useCallback(
@@ -57,6 +62,8 @@ const useBookingPayment = (totalPrice: number) => {
     )
 
     return {
+        hasErrors, 
+
         addPaymentMethod: add,
         changePaymentMethodId, changePaymentMethodValue,
         getPayment,
