@@ -36,7 +36,7 @@ export type BaseBookingType = {
     checkOut: string | Date;
     date: string | Date;
     id: String,
-    paymentMethods: PaymentMethod,
+    payment: PaymentMethod,
     room: RoomType,
     type: BOOKING_TYPE,
     totalPrice: number
