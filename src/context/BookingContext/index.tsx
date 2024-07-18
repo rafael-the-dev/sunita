@@ -1,4 +1,4 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 import moment from "moment";
 
 import { ContextType, PropsType } from "./types";
@@ -25,6 +25,19 @@ export const BookingContextProvider = ({ children }: PropsType) => {
             return hasBookingErrors || hasPaymentErrors || hasGuestErrors
         },
         [ hasBookingErrors, hasGuestErrors, hasPaymentErrors ]
+    )
+
+    const resetBooking = bookingRest.resetBooking;
+    const resetGuest = guestRest.reset;
+    const resetPayment = payment.reset;
+
+    const reset = useCallback(
+        () => {
+            resetBooking()
+            resetGuest()
+            resetPayment()
+        }, 
+        [ resetBooking, resetGuest, resetPayment ]
     )
 
     const toString = () => {
@@ -60,6 +73,7 @@ export const BookingContextProvider = ({ children }: PropsType) => {
                 guest, ...guestRest,
                 hasErrors,
                 ...payment,
+                reset,
                 toString
             }}>
             { children }

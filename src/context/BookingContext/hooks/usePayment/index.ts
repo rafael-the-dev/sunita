@@ -48,6 +48,11 @@ const useBookingPayment = (totalPrice: number) => {
         [ abstractRemovePaymentMethod, totalPrice ]
     );
 
+    const reset = useCallback(
+        () => setPayment(initialState),
+        []
+    );
+
     useEffect(
         () => {
             setPayment(payment => {
@@ -67,7 +72,8 @@ const useBookingPayment = (totalPrice: number) => {
         addPaymentMethod: add,
         changePaymentMethodId, changePaymentMethodValue,
         getPayment,
-        removePaymentMethod
+        removePaymentMethod,
+        reset
     }
 }
 

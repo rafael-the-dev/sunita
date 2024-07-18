@@ -59,7 +59,17 @@ const useGuest = () => {
                 value
             }
         }));
-    }, [])
+    }, []);
+
+    const resetDocument = documentRest.resetDocument;
+
+    const reset = useCallback(
+        () => {
+            setName(initial);
+            resetDocument();
+        },
+        [ resetDocument ]
+    );
 
     return {
         ...documentRest,
@@ -69,7 +79,8 @@ const useGuest = () => {
             firstName: name.first,
             lastName: name.last
         },
-        changeName
+        changeName,
+        reset
     }
 }
 

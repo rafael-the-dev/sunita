@@ -51,5 +51,6 @@ export type ContextType = PaymentFunctionsType & {
 
     getPayment: () => PaymentType;
 
+    reset: () => void;
     toString: () => string
 }
