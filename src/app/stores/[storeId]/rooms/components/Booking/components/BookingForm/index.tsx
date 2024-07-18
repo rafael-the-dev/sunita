@@ -17,7 +17,7 @@ import Stepper from "@/components/stepper"
 
 const BookingForm = () => {
     const { credentials } = useContext(LoginContext)
-    const { toString } = useContext(BookingContext)
+    const { hasErrors, toString } = useContext(BookingContext)
 
     const { fetchData, loading } = useFetch(
         {
@@ -50,7 +50,7 @@ const BookingForm = () => {
     const submmitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if(loading) return;
+        if(loading || hasErrors) return;
 
         onClose.current?.()
 
@@ -93,6 +93,7 @@ const BookingForm = () => {
                     () => (
                         <Button
                             className="py-2"
+                            disabled={hasErrors}
                             type="submit">
                             { loading ? "Loading..." : "Submit" }
                         </Button>
