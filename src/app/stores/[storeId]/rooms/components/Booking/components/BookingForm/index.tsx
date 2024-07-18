@@ -17,7 +17,7 @@ import Stepper from "@/components/stepper"
 
 const BookingForm = () => {
     const { credentials } = useContext(LoginContext)
-    const { hasErrors, toString } = useContext(BookingContext)
+    const { hasErrors, reset, toString } = useContext(BookingContext)
 
     const { fetchData, loading } = useFetch(
         {
@@ -34,6 +34,7 @@ const BookingForm = () => {
 
     const onClose = useRef<() => void>(null)
     const onOpen = useRef<() => void>(null)
+    const resetStepperRef = useRef<() => void>(null)
 
     const alert = useMemo(
         () => (
@@ -72,7 +73,11 @@ const BookingForm = () => {
                         description: "You have successfully booked",
                         severity: "success",
                         title: "Success"
-                    }
+                    };
+
+                    resetStepperRef.current?.()
+
+                    reset();
                 },
             }
         )
@@ -88,6 +93,7 @@ const BookingForm = () => {
             <Stepper
                 className={classNames(styles.stepper, "flex flex-col items-stretch justify-between")}
                 components={[ <BaseDetails key={0} />, <Guest key={1} />, <Payment key={2} /> ]}
+                resetStepperRef={resetStepperRef}
                 steps={[ "Base details", "Guest", "Payment" ]} 
                 FinishButton={
                     () => (
