@@ -6,6 +6,7 @@ import { BOOKING_TYPE, SimpleBookingType } from "@/types/room";
 
 import useBooking from "./hooks/useBook";
 import useGuest from "./hooks/useGuest";
+import usePayment from "./hooks/usePayment";
 import { dateFormat } from "@/helpers/date";
 
 export const BookingContext = createContext<ContextType>({} as ContextType)
@@ -13,6 +14,7 @@ export const BookingContext = createContext<ContextType>({} as ContextType)
 export const BookingContextProvider = ({ children }: PropsType) => {
     const { booking, ...bookingRest } = useBooking()
     const { guest, ...guestRest } = useGuest()
+    const payment = usePayment(booking.totalPrice)
 
     const toString = () => {
         const book: SimpleBookingType = {
@@ -31,22 +33,21 @@ export const BookingContextProvider = ({ children }: PropsType) => {
             },
             id: null,
             paymentMethods: null,
-            room: null,
+            room: booking.room,
             store: null,
             type: booking.type.value,
-            totalPrice: 0
+            totalPrice: booking.totalPrice
         }
 
         return JSON.stringify(book)
     }
-
-
 
     return (
         <BookingContext.Provider
             value={{
                 booking, ...bookingRest,
                 guest, ...guestRest,
+                ...payment,
                 toString
             }}>
             { children }

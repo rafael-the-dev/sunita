@@ -2,6 +2,8 @@ import { ChangeEvent, ReactNode } from "react"
 
 import { BOOKING_TYPE, RoomType } from "@/types/room"
 import { DOCUMENT_TYPE } from "@/types/user"
+import { PaymentFunctionsType } from "@/hooks/usePayment/types"
+import { PaymentType } from "@/types/payment-method"
 
 export type PropsType = {
     children: ReactNode
@@ -15,7 +17,7 @@ type InputType = {
 
 type ChangeNameKeyType = "first" | "last"
 
-export type ContextType = {
+export type ContextType = PaymentFunctionsType & {
     booking: {
         checkIn: InputType,
         checkOut: InputType,
@@ -45,6 +47,8 @@ export type ContextType = {
     changeRoom: (id: string) => void,
     changeType: (bookingType: BOOKING_TYPE) => void,
     changeTime: (prop: "checkIn" | "checkOut") => (newTime: string) => void,
+
+    getPayment: () => PaymentType;
 
     toString: () => string
 }
