@@ -12,6 +12,7 @@ import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
 import BaseDetails from "./components/BaseDetails"
 import Guest from "./components/Guest"
+import Payment from "./components/Payment"
 import Stepper from "@/components/stepper"
 
 const BookingForm = () => {
@@ -86,7 +87,7 @@ const BookingForm = () => {
             { alert }
             <Stepper
                 className={classNames(styles.stepper, "flex flex-col items-stretch justify-between")}
-                components={[ <BaseDetails key={0} />, <Guest key={1} /> ]}
+                components={[ <BaseDetails key={0} />, <Guest key={1} />, <Payment key={2} /> ]}
                 steps={[ "Base details", "Guest", "Payment" ]} 
                 FinishButton={
                     () => (
