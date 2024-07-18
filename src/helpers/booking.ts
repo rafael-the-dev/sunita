@@ -2,8 +2,11 @@ import moment from "moment"
 import currency from "currency.js"
 
 import { BOOKING_TYPE, RoomType } from "@/types/room"
+import { PaymentType } from "@/types/payment-method"
 
 import { dateTimeFormat } from "./date"
+
+type DateType = string | Date
 
 export const getMinCheckOutTime = (bookingType: BOOKING_TYPE, checkIn: string) => {
     const checkInTime = moment(checkIn)
@@ -16,7 +19,7 @@ export const getMinCheckOutTime = (bookingType: BOOKING_TYPE, checkIn: string) =
     return checkInTime.add("1", "day").toISOString()
 }
 
-const calculateHourlyPrice = (checkIn: string, checkOut: string, room: RoomType) => {
+const calculateHourlyPrice = (checkIn: DateType, checkOut: DateType, room: RoomType) => {
     const checkInTime = moment(checkIn);
     const checkOutTime = moment(checkOut);
     const { hourlyPrice } = room;
@@ -31,7 +34,7 @@ const calculateHourlyPrice = (checkIn: string, checkOut: string, room: RoomType)
     return totalPrice;
 }
 
-const calculateDailylyPrice = (checkIn: string, checkOut: string, room: RoomType) => {
+const calculateDailylyPrice = (checkIn: DateType, checkOut: DateType, room: RoomType) => {
     const checkInTime = moment(checkIn);
     const checkOutTime = moment(checkOut);
     const { hourlyPrice } = room;
@@ -48,8 +51,25 @@ const calculateDailylyPrice = (checkIn: string, checkOut: string, room: RoomType
 }
 
 
-export const getTotalPrice = (bookingType:BOOKING_TYPE, checkIn: string, checkOut: string, room: RoomType) => {
+export const getTotalPrice = (bookingType:BOOKING_TYPE, checkIn: DateType, checkOut: DateType, room: RoomType) => {
     if(bookingType === BOOKING_TYPE.HOURLY) return calculateHourlyPrice(checkIn, checkOut, room);
 
     return 0;
+}
+
+export const calculatePayment = (payment: PaymentType, total: number) => {
+    const totalReceived = payment
+        .paymentMethods
+        .reduce(
+            (prevValue, currentPM) => {
+                return currency(prevValue).add(currentPM.amount).value
+            }, 
+            0
+        );
+    
+    const difference = currency(total).subtract(totalReceived).value
+
+    payment.changes = totalReceived > total ? Math.abs(difference) : 0;
+    payment.remainingAmount = totalReceived <= total ? difference : 0;
+    payment.totalReceived = totalReceived;
 }
