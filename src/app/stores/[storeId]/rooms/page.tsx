@@ -36,14 +36,16 @@ const tabs = [
 const RoomsPage = () => {
     const { getActiveTab } = useContext(FixedTabsContext)
 
+    const activeTab = getActiveTab().id
+
     return (
-        <div className={classNames("scrollable overflow-x-auto pt-6 px-2 md:px-4")}>
+        <div className={classNames("scrollable overflow-x-auto pt-6", { "px-2 md:px-4": activeTab !== TABS_TYPE.BOOKING })}>
             {
                 {
                     [TABS_TYPE.BOOKING]: <Booking />,
                     [TABS_TYPE.ROOMS]: <Rooms />,
                     [TABS_TYPE.MORE]: <div></div>
-                }[getActiveTab().id]
+                }[activeTab]
             }
         </div>
     )
