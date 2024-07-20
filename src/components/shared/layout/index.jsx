@@ -9,8 +9,12 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import "@/styles/reset.css";
+
+import 'devextreme/dist/css/dx.light.css';
+
 import "@/styles/tailwind.css";
 import "@/styles/globals.css";
+
 
 import { theme } from "./mui/theme";
 import { AppContextProvider } from "@/context/AppContext";
