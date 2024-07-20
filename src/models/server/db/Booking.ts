@@ -1,7 +1,7 @@
 
 import { BookingDBType } from "@/types/room"
 import { ConfigType } from "@/types/app-config-server"
-import { SimpleBookingType } from "@/types/room"
+import { SimpleBookingType, BookingRoomType } from "@/types/room"
 
 import { getId } from "@/helpers/id"
 import getBookingProxy from "../proxy/booking"
@@ -17,7 +17,6 @@ class Booking {
     static async getAll({ filter }: GetAllPropsType, { mongoDbConfig, user }: ConfigType) {
         const  { storeId }  = user.stores[0]
 
-        try {
         const bookings = await mongoDbConfig
             .collections
             .WAREHOUSES
@@ -48,12 +47,9 @@ class Booking {
                     }
                 ]
             )
-            .toArray()
-            console.log(bookings)
-            return bookings
-        } catch(e) {
-            console.error(e)
-        }
+            .toArray() as BookingRoomType[];
+
+        return bookings
     }
 
     static async register(clientBooking: SimpleBookingType, { mongoDbConfig, user }: ConfigType) {
