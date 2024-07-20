@@ -6,16 +6,15 @@ import { URLParamsType } from "@/types/app-config-server"
 import { apiHandler } from "@/middlewares/route-handler"
 
 import Booking from "@/models/server/db/Booking"
-import Rooms from "@/models/server/db/Room"
 
 export const GET = (req: NextRequest, { params: { storeId } }: URLParamsType) => {
     return apiHandler(
         req,
         async ({ mongoDbConfig, user }) => {
-            const rooms = await Rooms.getAll(
+            const rooms = await Booking.getAll(
                 { 
                     filter: {
-                        id: storeId
+                        //id: storeId
                     } 
                 },
                 { 

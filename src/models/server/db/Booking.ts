@@ -9,10 +9,56 @@ import getBookingProxy from "../proxy/booking"
 import Guest from "./Guest"
 import Room from "./Room"
 
+type GetAllPropsType = {
+    filter?: Object
+}
+
 class Booking {
-    static async register(clientBooking: SimpleBookingType, { mongoDbConfig, user }: ConfigType) {
-        const id = getId()
+    static async getAll({ filter }: GetAllPropsType, { mongoDbConfig, user }: ConfigType) {
         const  { storeId }  = user.stores[0]
+
+        try {
+        const bookings = await mongoDbConfig
+            .collections
+            .WAREHOUSES
+            .aggregate(
+                [
+                    {
+                        $match: {
+                            id: storeId
+                        }
+                    },
+                    {
+                        $match: filter ?? {}
+                    },
+                    {
+                        $unwind: "$rooms-booking"
+                    },
+                    {
+                        $group: {
+                            _id: "$rooms-booking.id",
+                            checkIn: { $first: "$rooms-booking.checkIn" },
+                            checkOut: { $first: "$rooms-booking.checkOut" },
+                            id: { $first: "$rooms-booking.id" },
+                            payment: { $first: "$rooms-booking.payment" },
+                            room: { $first: "$rooms-booking.room" },
+                            type: { $first: "$rooms-booking.type" },
+                            totalPrice: { $first: "$rooms-booking.totalPrice" }
+                        }
+                    }
+                ]
+            )
+            .toArray()
+            console.log(bookings)
+            return bookings
+        } catch(e) {
+            console.error(e)
+        }
+    }
+
+    static async register(clientBooking: SimpleBookingType, { mongoDbConfig, user }: ConfigType) {
+        const id = getId();
+        const  { storeId }  = user.stores[0];
 
         const {
             checkIn, checkOut,
@@ -21,7 +67,7 @@ class Booking {
             room,
             type,
             totalPrice
-        } = clientBooking
+        } = clientBooking;
 
         const selectedRooom = await Room.get(
             {
