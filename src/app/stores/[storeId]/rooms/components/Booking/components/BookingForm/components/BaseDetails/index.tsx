@@ -77,13 +77,13 @@ const BaseDetails = () => {
                     { ...booking.checkIn }
                     className="mb-0 w-full sm:w-1/2"
                     label="Check in"
-                    onChange={changeTime("checkIn")}
+                    onChange={booking.room ? changeTime("checkIn") : () => {}}
                 />
                 <DateTime 
                     { ...booking.checkOut }
                     className="mb-0 w-full sm:w-1/2"
                     label="Check out"
-                    onChange={changeTime("checkOut")}
+                    onChange={booking.room ? changeTime("checkOut") : () => {}}
                 />
             </Row>
             <div className="flex justify-end"> 

@@ -1,0 +1,11 @@
+
+
+.schedulerContainer {
+    max-height: 70vh;
+}
+
+@media screen and (width >= 900px) {
+    .schedulerContainer {
+        width: calc(100vw - 240px);
+    }
+}
