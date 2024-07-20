@@ -74,31 +74,41 @@ const useBooking = () => {
             (newTime: string) => {
                 setBooking(
                     booking => {
-                        let error = false
-                        let helperText = ""
-                        let totalPrice = 0
+                        let error = false;
+                        let helperText = "";
+                        let totalPrice = 0;
+
+                        const bookingClone = { ...booking };
 
                         if(prop === "checkIn") {
                             const { hasError, message } = validateCheckIn(newTime, booking.checkOut.value);
+
                             error = hasError;
                             helperText = message;
-                            totalPrice = getTotalPrice(booking.type.value, newTime, booking.checkOut.value, booking.room)
+    
+                            bookingClone.totalPrice = getTotalPrice(booking.type.value, newTime, booking.checkOut.value, booking.room);
                         } else {
                             const { hasError, message } = validateCheckOut(booking.checkIn.value, newTime);
+
                             error = hasError;
                             helperText = message;
-                            totalPrice = getTotalPrice(booking.type.value, booking.checkIn.value, newTime, booking.room)
+                            bookingClone.totalPrice = getTotalPrice(booking.type.value, booking.checkIn.value, newTime, booking.room);
+                            
+                            const checkInValidation = validateCheckIn(bookingClone.checkIn.value, newTime);
+
+                            bookingClone["checkIn"].error = checkInValidation.hasError;
+                            bookingClone['checkIn'].helperText = checkInValidation.message;
                         }
 
-                        return {
-                            ...booking,
-                            totalPrice,
-                            [prop]: {
-                                error,
-                                helperText,
-                                value: newTime
-                            }
-                        }
+                        bookingClone[prop] = {
+                            error,
+                            helperText,
+                            value: newTime
+                        };
+
+
+
+                        return bookingClone;
                     }
                 )
             },
