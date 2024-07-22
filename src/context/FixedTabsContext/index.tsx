@@ -41,7 +41,7 @@ export const FixedTabsContextProvider = ({ children, tabs }: PropsType) => {
     const setDialog = useCallback(
         (newDialog: DialogType) => {
             dialog.current = newDialog;
-            console.log(newDialog)
+            
             if(newDialog) onOpenRef.current?.();
         },
         []
