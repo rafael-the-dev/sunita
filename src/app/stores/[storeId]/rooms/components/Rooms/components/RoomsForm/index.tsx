@@ -8,6 +8,7 @@ import { ROOM_TYPE, RoomType } from "@/types/room"
 
 import { LoginContext } from "@/context/LoginContext"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
+import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 
 import useFetch from "@/hooks/useFetch"
 import useForm from "./hooks/useForm"
@@ -17,16 +18,12 @@ import Button from "@/components/shared/button"
 import Select from "@/components/shared/combobox"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import Textfield from "@/components/Textfield"
-import { FetchDataFuncType } from "@/hooks/useFetch/types"
 
-type PropsType = {
-    fetchRooms: FetchDataFuncType;
-}
-
-const RoomsForm = ({ fetchRooms }: PropsType) => {
+const RoomsForm = () => {
     const { credentials } = useContext(LoginContext);
     const { getDialog } = useContext(FixedTabsContext);
-
+    const { fetchRooms } = useContext(RoomsContext)
+    
     const room = getDialog().current.payload as RoomType;
 
     const { fetchData, loading  } = useFetch(
@@ -86,7 +83,7 @@ const RoomsForm = ({ fetchRooms }: PropsType) => {
 
         onCloseAlert.current?.();
 
-        const room: RoomType = {
+        const newRoom: RoomType = {
             dailyPrice: currency(input.dailyPrice.value).value,
             hourlyPrice: currency(input.hourlyPrice.value).value,
             id: "",
@@ -98,7 +95,7 @@ const RoomsForm = ({ fetchRooms }: PropsType) => {
         await fetchData(
             {
                 options: {
-                    body: JSON.stringify(room),
+                    body: JSON.stringify(newRoom),
                     method: room ? "PUT" : "POST"
                 },
                 onError(error) {
@@ -170,22 +167,13 @@ const RoomsForm = ({ fetchRooms }: PropsType) => {
                     </Row>
                 </div>
             </div>
-            <div className="flex flex-col items-stretch justify-end sm:flex-row ">
+            <div className="flex flex-col items-stretch justify-end mt-6 sm:flex-row ">
                 { 
-                    room ? (
-                        <Button
-                            className="py-2"
-                            type="submit">
-                            { loading ? "Loading..." : "Update" }
-                        </Button>
-                    ) : 
-                    (
-                        <Button
-                            className="py-2"
-                            type="submit">
-                            { loading ? "Loading..." : "Submit" }
-                        </Button>
-                    )
+                     <Button
+                        className="py-2"
+                        type="submit">
+                        { loading ? "Loading..." : ( room ? "Update" : "Submit" ) }
+                    </Button>
                 }
             </div>
         </form>

@@ -2,6 +2,7 @@ import { useCallback, useContext, useEffect, useRef } from "react"
 
 import { LoginContext } from "@/context/LoginContext"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
+import { RoomsContext } from "../../context"
 
 import { RoomType } from "@/types/room"
 import { TableHeadersType } from "@/components/table/types"
@@ -22,6 +23,7 @@ enum DIALOG_TYPE {
 const Rooms = () => {
     const { credentials } = useContext(LoginContext)
     const { setDialog } = useContext(FixedTabsContext)
+    const { fetchRooms, getRooms } = useContext(RoomsContext)
 
     const searchParams = useSearchParams()
 
@@ -66,17 +68,10 @@ const Rooms = () => {
         ]
     )
 
-    const { data, fetchData, loading } = useFetch<RoomType[]>(
-        {
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms`
-        }
+    const getRoomsList = useCallback(
+        () => getRooms(),
+        [ getRooms ]
     )
-
-    const getRoomsList = () => {
-        if(!data) return [] as RoomType[];
-
-        return data
-    }
 
     const openDialogHandler = useCallback(
         (value: DIALOG_TYPE) => () => searchParams.setSearchParam("dialog", value),
@@ -90,12 +85,12 @@ const Rooms = () => {
                     header: {
                         title
                     },
-                    body: <RoomsForm fetchRooms={fetchData} />,
+                    body: <RoomsForm />,
                     payload: room
                 }
             )
         },
-        [ fetchData, setDialog ]
+        [ setDialog ]
     )
 
     const openRegisterRoomDialog = useCallback(
@@ -126,7 +121,7 @@ const Rooms = () => {
                     onClickRow={openUpdateRoomDialog}
                 />
             </div>
-            <div className="flex flex-col gap-y-3 items-stretch sm:flex-row sm:gap-x-3 sm:gap-y-0 sm:justify-end">
+            <div className="flex flex-col gap-y-3 items-stretch mt-8 sm:flex-row sm:gap-x-3 sm:gap-y-0 sm:justify-end">
                 <Button
                     className="py-2"
                     onClick={openDialogHandler(DIALOG_TYPE.REGISTER_ROOM)}>
