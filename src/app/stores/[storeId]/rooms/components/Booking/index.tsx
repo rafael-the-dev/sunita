@@ -76,7 +76,7 @@ const Booking = () => {
                     startDateExpr="checkIn">
                 </Scheduler>
             </div>
-            <div className="flex flex-col items-stretch px-2 md:px-4 sm:flex-row sm:justify-end">
+            <div className="flex flex-col items-stretch mt-8 px-2 md:px-4 sm:flex-row sm:justify-end">
                 <Button 
                     className="py-2"
                     onClick={openDialog(DIALOG_TYPE.BOOKING)}>
