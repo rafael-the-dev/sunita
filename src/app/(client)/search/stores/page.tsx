@@ -4,6 +4,7 @@ import { useContext } from "react"
 
 import { StoresContext, StoresContextProvider } from "./context"
 
+import List from "./components/List"
 import SearchBox from "./components/Searchbox"
 import Tabs from "./components/Tabs"
 
@@ -12,10 +13,11 @@ const StoresPage = () => {
 
     return (
         <div>
-            <main className="px-2 md:px-4">
+            <main className="px-2 pt-6 pb-8 md:px-4">
                 <div>
                     <SearchBox />
                     <Tabs />
+                    <List />
                 </div>
             </main>
         </div>
