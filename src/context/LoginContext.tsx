@@ -7,6 +7,7 @@ import { CredentialsType } from "@/types/login" ;
 import { UserType } from "@/types/user";
 
 import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
+import { isPublicRoute } from "@/helpers";
 
 type LoginContextType = {
     credentials: CredentialsType,
@@ -22,6 +23,8 @@ LoginContext.displayName = "LoginContext";
 export const LoginContextProvider = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const router = useRouter();
+
+    const isPublicPath = isPublicRoute(pathname)
 
     const [ credentials, setCredentials ] = React.useState<CredentialsType | null>(null);
     const [ revalidatingToken, setRevalidatingToken ] = React.useState(true)
@@ -88,30 +91,45 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         }
     }, [ pathname, router ]);
 
+    const fetchPublicAccess = React.useCallback(
+        async (controller: AbortController) => {
+            try {
+                const res = await fetch("/api/auth/public-access", { signal: controller.signal });
+
+                const credentials = await res.json() as CredentialsType;
+
+                setCredentials(credentials);
+                setRevalidatingToken(false)
+            } catch(e) {
+                console.error(e)
+            }
+        },
+        []
+    )
+
     React.useEffect(() => {
+        const controller = new AbortController();
+
+        if(isPublicPath) {
+            fetchPublicAccess(controller)
+            return;
+        }
+
         if(isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
         
-        const controller = new AbortController();
-
         validateSavedToken({ signal: controller.signal });
 
         return () => controller.abort();
-    }, [ validateSavedToken ]);
+    }, [ fetchPublicAccess, isPublicPath, validateSavedToken ]);
     
     React.useEffect(() => {
-        const ignorablePaths = [
-            "/login"
-        ];
-
-        const isIgnorablePath = ignorablePaths.includes(pathname);
-
-        if(!isIgnorablePath && !credentials && !revalidatingToken) {
+        if(!isPublicPath && !credentials && !revalidatingToken) {
             router.push("/login")
         }
-    }, [ credentials, pathname, router, revalidatingToken ]);
+    }, [ credentials, isPublicPath, router, revalidatingToken ]);
 
     return (
         <LoginContext.Provider
