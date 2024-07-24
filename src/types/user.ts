@@ -2,8 +2,9 @@ import { STATUS } from ".";
 
 export enum USER_CATEGORY {
     ADMIN = "admin",
+    CLIENT = "client",
     EMPLOYEE = "employee",
-    MANAGER = "manager"
+    MANAGER = "manager",
 }
 
 export enum DOCUMENT_TYPE {
