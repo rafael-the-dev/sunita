@@ -6,7 +6,6 @@ export enum TABS {
 }
 
 export type PropsType = {
-    activeTab: TABS,
     children: ReactNode,
     id: TABS
 }

@@ -1,18 +1,16 @@
-import { ReactNode, useCallback } from "react"
+import { useCallback } from "react"
 import classNames from "classnames"
 
 import { PropsType } from "./types"
 
-import useSearchParams from "@/hooks/useSearchParams"
+import useTab from "../../hooks/useTab"
 
-const Tab = ({ activeTab, children, id }: PropsType) => {
-    const searchParams = useSearchParams()
-
-    const isActive = id === activeTab
+const Tab = ({ children, id }: PropsType) => {
+    const { isActive, setTab } = useTab()
 
     const clickHandler = useCallback(
-        () => searchParams.setSearchParam("tab", id),
-        [ id, searchParams ]
+        () => setTab(id),
+        [ id, setTab ]
     )
 
     return (
@@ -20,7 +18,7 @@ const Tab = ({ activeTab, children, id }: PropsType) => {
             <button 
                 className={classNames(
                     `border-0 outline-none py-2 w-full`,
-                    isActive ? "bg-primary-700 text-white" : "bg-transparent text-primary-700"
+                    isActive(id) ? "bg-primary-700 text-white" : "bg-transparent text-primary-700"
                 )}
                 onClick={clickHandler}>
                 { children }
