@@ -1,18 +1,31 @@
 "use client"
 
-import SearchBox from "./components/Searchbox"
+import { useContext } from "react"
 
-const Stores = () => {
+import { StoresContext, StoresContextProvider } from "./context"
+
+import SearchBox from "./components/Searchbox"
+import Tabs from "./components/Tabs"
+
+const StoresPage = () => {
+    const { getStores } = useContext(StoresContext)
 
     return (
         <div>
             <main className="px-2 md:px-4">
                 <div>
                     <SearchBox />
+                    <Tabs />
                 </div>
             </main>
         </div>
     )
 }
 
-export default Stores
+const Provider = () => (
+    <StoresContextProvider>
+        <StoresPage />
+    </StoresContextProvider>
+)
+
+export default Provider
