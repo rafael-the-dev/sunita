@@ -1,7 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from "react"
-import IconButton from "@mui/material/IconButton"
-
-import SearchIcon from "@mui/icons-material/Search"
+import { ChangeEvent, useCallback, useMemo } from "react"
 
 import useSearchParams from "@/hooks/useSearchParams"
 
@@ -10,8 +7,6 @@ import SearchBox from "@/components/shared/product-search-box"
 
 const SearchBoxContainer = () => {
     const searchParams = useSearchParams()
-    const inputRef = useRef<HTMLInputElement>(null)
-    const isFirstRender = useRef(true)
 
     const searchValue = searchParams.get("search", "")
 
@@ -25,16 +20,6 @@ const SearchBoxContainer = () => {
         [ searchParams ]
     )
 
-    useEffect(
-        () => {
-            if(isFirstRender.current && inputRef.current) {
-                inputRef.current.value = searchValue;
-                isFirstRender.current = false;
-            }
-        }, 
-        [ searchValue ]
-    )
-
     return (
         <form>
             <SearchBox>
@@ -43,12 +28,8 @@ const SearchBoxContainer = () => {
                     className="grow"
                     onChange={changeHandler}
                     placeholder="Insert search key"
-                    ref={inputRef}
+                    value={searchValue}
                 />
-                <IconButton
-                    type="submit">
-                    <SearchIcon />
-                </IconButton>
             </SearchBox>
         </form>
     )
