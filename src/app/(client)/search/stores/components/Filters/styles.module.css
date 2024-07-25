@@ -3,3 +3,9 @@
     max-height: 80vh;
     min-width: 250px;
 }
+
+@media screen and (width >= 900px) {
+    .container {
+        max-height: 93vh;
+    }
+}
