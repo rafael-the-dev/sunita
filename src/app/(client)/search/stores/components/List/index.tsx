@@ -1,6 +1,8 @@
 import { useContext } from "react"
 import classNames from "classnames"
 
+import styles from "./styles.module.css"
+
 import { TABS } from "../Tabs/components/Tab/types"
 
 import { StoresContext } from "../../context"
@@ -15,7 +17,7 @@ const List = () => {
     const { isActive } = useTab()
 
     return (
-        <ul className={classNames("flex flex-col gap-y-4", { "hidden md:flex": !isActive(TABS.LIST)})}>
+        <ul className={classNames(styles.list, "flex flex-col gap-y-4", { "hidden md:flex": !isActive(TABS.LIST)})}>
             {
                 getStores()
                     .list
