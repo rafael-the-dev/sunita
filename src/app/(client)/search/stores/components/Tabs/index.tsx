@@ -1,8 +1,6 @@
-
 import { TABS } from "./components/Tab/types"
 
 import Tab from "./components/Tab"
-
 
 const Tabs = () => {
     return (
