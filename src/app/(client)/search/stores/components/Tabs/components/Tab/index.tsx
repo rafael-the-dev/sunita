@@ -17,7 +17,7 @@ const Tab = ({ children, id }: PropsType) => {
         <li className="w-1/2">
             <button 
                 className={classNames(
-                    `border-0 outline-none py-2 w-full`,
+                    `border-0 outline-none py-3 w-full`,
                     isActive(id) ? "bg-primary-700 text-white" : "bg-transparent text-primary-700"
                 )}
                 onClick={clickHandler}>
