@@ -1,0 +1,40 @@
+
+
+.container {
+    background-color: #ebeaea4f;
+}
+
+.content {
+    padding: 1rem .9rem 1rem 1.4rem;
+}
+
+.status {
+    transform: translate(1rem, 1rem);
+}
+
+.imageContainer {
+    height: 220px;
+    width: 100%;
+}
+
+@media screen and (width >= 600px) {
+    .imageContainer {
+        height: 168px;
+        width: 190px;
+    }
+
+    .content {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .status {
+        transform: translate(0, 0);
+    }
+}
+
+@media screen and (width >= 1024px) {
+    .imageContainer {
+        width: 280px;
+    }
+}
