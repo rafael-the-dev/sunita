@@ -30,7 +30,7 @@ const RoomType = () => {
     )
 
     return (
-        <Collapse title="Room Type">
+        <Collapse classes={{ root: "bg-white" }} title="Room Type">
             <FormGroup>
                 {
                     list.map(item => (
