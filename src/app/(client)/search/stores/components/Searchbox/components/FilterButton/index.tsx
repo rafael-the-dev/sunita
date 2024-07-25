@@ -1,4 +1,5 @@
 import { MouseEvent, useCallback, useRef } from "react"
+import Hidden from "@mui/material/Hidden"
 import IconButton from "@mui/material/IconButton"
 
 import FilterIcon from '@mui/icons-material/FilterAlt';
@@ -16,16 +17,18 @@ const Container = () => {
 
     return (
         <>
-            <IconButton
-                className="p-2"
-                onClick={clickHandler}>
-                <FilterIcon />
-            </IconButton>
-            <Popover
-                id="Filters-popover"
-                onClickRef={onOpenFuncRef}>
-                <Filters />
-            </Popover>
+            <Hidden lgUp>
+                <IconButton
+                    className="p-2"
+                    onClick={clickHandler}>
+                    <FilterIcon />
+                </IconButton>
+                <Popover
+                    id="Filters-popover"
+                    onClickRef={onOpenFuncRef}>
+                    <Filters />
+                </Popover>
+            </Hidden>
         </>
     )
 }
