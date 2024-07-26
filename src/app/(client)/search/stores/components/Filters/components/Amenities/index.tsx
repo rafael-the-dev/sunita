@@ -3,13 +3,13 @@ import FormGroup from "@mui/material/FormGroup"
 
 import { STORE_AMENITIES } from "@/types/warehouse"
 
-import useSearchParams from "@/hooks/useSearchParams"
+import useSearchParams from "../../../../hooks/useSearchParams"
 
 import Collapse from "@/components/shared/collapse"
 import Checkbox from "@/components/checkbox"
 
 const Amenities = () => {
-    const searchParams = useSearchParams()
+    const { changeHandler, searchParams } = useSearchParams()
 
     const amenities = searchParams.getAll("amenities")
 
@@ -19,26 +19,16 @@ const Amenities = () => {
         []
     )
 
-    const changeHandler = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => searchParams.setSearchParams("amenities", e.target.value),
-        [ searchParams ]
-    )
-
-    const isSelected = useCallback(
-        (value: STORE_AMENITIES) => amenities.includes(value),
-        [ amenities ]
-    )
-
     return (
         <Collapse classes={{ root: "bg-white" }} title="Amenities">
             <FormGroup>
                 {
                     list.map(item => (
                         <Checkbox 
-                            checked={isSelected(item)}
+                            checked={searchParams.isChecked(amenities, item)}
                             key={item}
                             label={item}
-                            onChange={changeHandler}
+                            onChange={changeHandler("amenities", searchParams.setSearchParams)}
                             value={item}
                         />
                     ))

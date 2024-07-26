@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback } from "react"
 import FormGroup from "@mui/material/FormGroup"
 
-import useSearchParams from "@/hooks/useSearchParams"
+import useSearchParams from "../../../../hooks/useSearchParams"
 
 import Collapse from "@/components/shared/collapse"
 import RadioButton from "@/components/radio-button"
@@ -13,14 +13,9 @@ enum PRICING_TYPES {
 }
 
 const PricingType = () => {
-    const searchParams = useSearchParams()
+    const { changeHandler, searchParams } = useSearchParams()
 
     const pricingType = searchParams.get("pricing-type", PRICING_TYPES.ALL)
-
-    const changeHandler = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => searchParams.setSearchParam("pricing-type", e.target.value),
-        [ searchParams ]
-    )
 
     return (
         <Collapse classes={{ root: "bg-white" }} title="Type of price">
@@ -33,7 +28,7 @@ const PricingType = () => {
                                 checked={searchParams.isChecked(pricingType, value)}
                                 key={value}
                                 label={value}
-                                onChange={changeHandler}
+                                onChange={changeHandler("pricing-type", searchParams.setSearchParam)}
                                 value={value}
                             />
                         ))

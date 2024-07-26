@@ -3,13 +3,13 @@ import FormGroup from "@mui/material/FormGroup"
 
 import { ROOM_TYPE } from "@/types/room"
 
-import useSearchParams from "@/hooks/useSearchParams"
+import useSearchParams from "../../../../hooks/useSearchParams"
 
 import Collapse from "@/components/shared/collapse"
 import RadioButton from "@/components/radio-button"
 
 const RoomType = () => {
-    const searchParams = useSearchParams()
+    const { changeHandler, searchParams } = useSearchParams()
 
     const room = searchParams.get("room", "")
 
@@ -18,27 +18,16 @@ const RoomType = () => {
             .values(ROOM_TYPE),
         []
     )
-
-    const changeHandler = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => searchParams.setSearchParam("room", e.target.value),
-        [ searchParams ]
-    )
-
-    const isSelected = useCallback(
-        (value: ROOM_TYPE) => room === value,
-        [ room ]
-    )
-
     return (
         <Collapse classes={{ root: "bg-white" }} title="Room Type">
             <FormGroup>
                 {
                     list.map(item => (
                         <RadioButton 
-                            checked={isSelected(item)}
+                            checked={searchParams.isChecked(room, item)}
                             key={item}
                             label={item}
-                            onChange={changeHandler}
+                            onChange={changeHandler("room", searchParams.setSearchParam)}
                             value={item}
                         />
                     ))
