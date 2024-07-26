@@ -1,0 +1,10 @@
+
+.container {
+    background-color: #ebeaea4f;
+}
+
+@media screen and (width >= 768px) {
+    .filtersContainer {
+        width: 300px;
+    }
+}
