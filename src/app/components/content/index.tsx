@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import Hidden from "@mui/material/Hidden";
 
 import { LoginContext } from "@/context/LoginContext";
+import { isPublicRoute } from "@/helpers";
 
 import Header from "@/components/shared/header";
 import LoadingContainer from "./components/loading";
@@ -13,7 +14,7 @@ const Container = ({ children }) => {
 
     const pathname = usePathname();
 
-    const isLoginPage = pathname === "/login";
+    const isPublicPath = isPublicRoute(pathname);
 
     if(revalidatingToken) return <LoadingContainer />;
 
@@ -21,14 +22,14 @@ const Container = ({ children }) => {
     return (
         <div className="md:flex">
             { 
-                !isLoginPage && (
+                !isPublicPath && (
                     <Hidden mdDown>
                         <Sidebar />
                     </Hidden>
                 )
             }
             <div className="grow">
-                { !isLoginPage && <Header /> }
+                { !isPublicPath && <Header /> }
                 { children }
             </div>
         </div>
