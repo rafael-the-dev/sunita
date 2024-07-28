@@ -89,7 +89,13 @@ const useSearchParamsHook = () => {
 
     }, [ getSearchParams, pathname, router ]);
 
+    const changeHandler = React.useCallback(
+        (key: string, func: (key: string, value: string) => void) => (e: React.ChangeEvent<HTMLInputElement>) => func(key, e.target.value),
+        []
+    )
+
     return {
+        changeHandler,
         get, getAll,
         isChecked,
         removeSearchParam,
