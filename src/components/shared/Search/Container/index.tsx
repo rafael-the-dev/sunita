@@ -6,11 +6,20 @@ import FiltersPopover from "@/components/shared/FiltersPopover"
 import SearchBox from "@/components/shared/product-search-box"
 
 type PropsType = {
+    classes?: {
+        filters?: {
+            button?: string,
+            popover?: {
+                paper: string,
+                root: string
+            }
+        }
+    },
     className?: string,
     filters?: ReactNode
 }
 
-const Container = ({ className, filters }: PropsType) => {
+const Container = ({ classes, className, filters }: PropsType) => {
     const searchParams = useSearchParams()
 
     const isFirstRender = useRef(true)
@@ -31,7 +40,7 @@ const Container = ({ className, filters }: PropsType) => {
     return (
         <SearchBox
             className={className}>
-            { filters && <FiltersPopover>{ filters }</FiltersPopover>}
+            { filters && <FiltersPopover classes={classes?.filters}>{ filters }</FiltersPopover>}
             <SearchBox.Input 
                 className="grow"
                 onChange={searchParams.changeHandler("search", searchParams.setSearchParam)}

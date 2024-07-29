@@ -10,7 +10,10 @@ type PropsType = {
     children: ReactNode,
     classes?: {
         button?: string;
-        popover?: string;
+        popover?: {
+            paper: string;
+            root: string
+        }
     }
 }
 
@@ -30,6 +33,7 @@ const Filters = ({ children, classes }: PropsType) => {
                 <FilterIcon />
             </IconButton>
             <Popover
+                classes={classes?.popover}
                 id="filter popover"
                 onClickRef={onOpenFuncRef}>
                 { children }
