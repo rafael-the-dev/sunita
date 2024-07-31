@@ -11,7 +11,7 @@ export type PhoneType = {
 }
 
 export type ContactType = {
-    email: string,
+    email?: string,
     facebook?: string;
     instagram?: string;
     phone: PhoneType[],
