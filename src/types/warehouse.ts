@@ -39,12 +39,18 @@ export type BaseStore = {
     status: STATUS
 }
 
+type Supplier = {
+    createdAt: string | Date,
+    id: string
+}
+
 export type WarehouseType = BaseStore & {
     "expenses-categories": ExpenseCategory[],
     expenses: ExpenseType[];
     products: WarehouseProductType[];
     "rooms-booking": BookingDBType[],
     sales: SaleType[];
+    suppliers: Supplier[],
     "stock-reports": StockReportType[];
     users: StoreUserType[]
 };
