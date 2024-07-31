@@ -1,0 +1,10 @@
+
+.form {
+    width: 90vw;
+}
+
+@media screen and (width >= 769px) {
+    .form {
+        width: 650px;
+    }
+}
