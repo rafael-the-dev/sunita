@@ -6,12 +6,14 @@ import { User } from "@/types/user";
 import { GblobalProductType } from "@/types/product";
 import { WarehouseType } from "@/types/warehouse";
 import { CategoryType } from "@/types/category";
+import { SupplierDBType } from "@/types/Supplier";
 
 const initialCollections = {
     EXPENSES_CATEGORIES: null,
     GUESTS: null,
     PRODUCTS: null,
     PRODUCTS_CATEGORIES: null,
+    SUPPLIERS: null,
     USERS: null,
     WAREHOUSES: null,
 }
@@ -47,6 +49,7 @@ const createMongoDBConnection = async () => {
                 GUESTS: clusterDB.collection<GuestDBType>("guests"),
                 PRODUCTS: clusterDB.collection<GblobalProductType>("products"),
                 PRODUCTS_CATEGORIES: clusterDB.collection<CategoryType>("products-categories"),
+                SUPPLIERS: clusterDB.collection<SupplierDBType>("products-categories"),
                 USERS: clusterDB.collection<User>("users"),
                 WAREHOUSES: clusterDB.collection<WarehouseType>("warehouses")
             };
