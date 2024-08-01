@@ -10,6 +10,7 @@ import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
 import { StockContextProvider } from "@/context/StockContext";
 import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
+import { ProductsPageContextProvider } from "./context"
 
 import useSearchParams from "@/hooks/useSearchParams";
 
@@ -62,12 +63,14 @@ const Container = () => {
 const ProductsPage = () => {
 
     return (
+        <ProductsPageContextProvider>
         <FixedTabsContextProvider
             tabs={tabs}>
             <ProductFilterContextProvider>
-                <Container />
+                
+                    <Container />
             </ProductFilterContextProvider>
-        </FixedTabsContextProvider>
+        </FixedTabsContextProvider></ProductsPageContextProvider>
     )
 }
 
