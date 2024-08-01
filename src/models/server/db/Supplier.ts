@@ -1,5 +1,5 @@
 import { ConfigType } from "@/types/app-config-server";
-import { SupplierDBType, SupplierType } from "@/types/Supplier";
+import { SupplierDBType, SupplierType, SuppliersResponseType } from "@/types/Supplier";
 import { STATUS } from "@/types";
 
 import { toISOString } from "@/helpers/date"
@@ -7,6 +7,57 @@ import { getId } from "@/helpers/id";
 import getSupplierProxy from "../proxy/supplier";
 
 class Supplier {
+    static async getAll({ filters }: { filters?: Object }, { mongoDbConfig, user }: ConfigType) {
+        const id = user.stores[0].storeId;
+
+        try {
+        const suppliersList = await mongoDbConfig
+            .collections
+            .WAREHOUSES
+            .aggregate(
+                [
+                    { 
+                        $match: { id }
+                    },
+                    {
+                        $match: filters ?? {}
+                    },
+                    {
+                        $lookup: {
+                            from: "suppliers",
+                            foreignField: "id",
+                            localField: "suppliers.id",
+                            as: "suppliersList"
+                        }
+                    },
+                    {
+                        $unwind: "$suppliersList"
+                    },
+                    {
+                        $group: {
+                            _id: "$suppliersList.id",
+                            address: { $first: "$suppliersList.address" },
+                            contact: { $first: "$suppliersList.contact"},
+                            id: { $first: "$suppliersList.id" },
+                            name: { $first: "$suppliersList.name" },
+                            nuit: { $first: "$suppliersList.nuit" },
+                            status: { $first: "$suppliersList.status" }
+                        }
+                    }
+                ]
+            )
+            .toArray() as SupplierType[]
+
+            const response: SuppliersResponseType = {
+                list: suppliersList
+            }
+
+            return response
+        } catch(e) {
+            console.error(e)
+            return []
+        }
+    }
 
     static async register(supplier: SupplierType, { mongoDbConfig, user }: ConfigType) {
         const storeId = user.stores[0].storeId;
