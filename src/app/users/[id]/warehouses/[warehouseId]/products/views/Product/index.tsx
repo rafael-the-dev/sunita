@@ -11,10 +11,10 @@ import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
 import { StockContextProvider } from "@/context/StockContext";
-import { ProductFilterContext, ProductFilterContextProvider  } from "@/context/ProductFilterContext";
+import { ProductFilterContext } from "@/context/ProductFilterContext";
+import { ProductsPageContext } from "../../context"
 
 import useSearchParams from "@/hooks/useSearchParams";
-import useFechProducts from "@/hooks/useFetchProducts";
 
 import AddStock from "../../components/add-stock";
 import Button from "@/components/shared/button"
@@ -32,6 +32,8 @@ enum DIALOG_TYPES {
 
 const ProductsView = () => {
     const { credentials } = React.useContext(LoginContext)
+    const { products } = React.useContext(ProductsPageContext)
+
     const searchParams = useSearchParams()
 
     const { setDialog } = React.useContext(AppContext);
@@ -39,7 +41,7 @@ const ProductsView = () => {
 
     const reRendersCounter = React.useRef(0)
 
-    const { data, fetchProducts } = useFechProducts()
+    const { data, fetchProducts } = products;
 
     const productsList = React.useMemo(() => data ?? [], [ data ])
 

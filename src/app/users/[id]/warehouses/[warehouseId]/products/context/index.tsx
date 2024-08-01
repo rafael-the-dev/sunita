@@ -4,12 +4,15 @@ import { ContextType, PropsType } from "./types"
 import { SuppliersResponseType } from "@/types/Supplier"
 
 import { LoginContext } from "@/context/LoginContext"
+import useFechProducts from "@/hooks/useFetchProducts";
 import useFetch from "@/hooks/useFetch"
 
 export const ProductsPageContext = createContext<ContextType>({} as ContextType)
 
 export const ProductsPageContextProvider = ({ children }: PropsType) => {
     const { credentials } = useContext(LoginContext)
+
+    const products = useFechProducts()
 
     const suppliers = useFetch<SuppliersResponseType>(
         {
@@ -37,6 +40,7 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
     return (
         <ProductsPageContext.Provider
             value={{
+                products,
                 suppliers
             }}>
             { children }
