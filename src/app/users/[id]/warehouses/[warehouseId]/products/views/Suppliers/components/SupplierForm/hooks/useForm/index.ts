@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useCallback, useMemo, useState } from "react"
 
 import { isValidAddress, isValidName } from "@/validation/user"
 import { isValidNUIT } from "@/validation/document"
@@ -26,6 +26,20 @@ const defaultInput = {
 
 const useForm = () => {
     const [ input, setInput ] = useState(defaultInput)
+
+    const hasErrors = useMemo(
+        () => {
+            const invalidField = [
+                ...Object.values(input.address),
+                input.name,
+                input.nuit
+            ]
+            .find(item => item.error || !item.value.trim())
+
+            return Boolean(invalidField)
+        },
+        [ input ]
+    )
 
     const getInput = useCallback(
         () => structuredClone(input),
@@ -118,13 +132,21 @@ const useForm = () => {
         []
     )
 
+    const resetForm = useCallback(
+        () => setInput(defaultInput),
+        [ ]
+    )
+
 
     return {
+        hasErrors,
+
         changeAddressHandler,
         changeAddressNumberHandler,
         changeNameHandler,
         changeNUITHandler,
-        getInput
+        getInput,
+        resetForm
     }
 
 }

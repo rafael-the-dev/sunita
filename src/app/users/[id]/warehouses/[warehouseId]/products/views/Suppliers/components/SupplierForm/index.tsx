@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography"
 import styles from "./styles.module.css"
 
 import { LoginContext } from "@/context/LoginContext"
+import { ProductsPageContext } from "../../../../context"
 
 import { SupplierType } from "@/types/Supplier"
 
@@ -21,13 +22,16 @@ import TextField from "@/components/Textfield"
 
 const Form = () => {
     const { credentials } = React.useContext(LoginContext)
+    const { suppliers } = React.useContext(ProductsPageContext)
 
     const {
         addPhoneNumber,
         changePhone,
         getAvailableTypes,
         getContact,
-        removePhoneNumber
+        removePhoneNumber,
+        resetContact,
+        ...contactRest
     } = useContact()
 
     const { 
@@ -35,8 +39,12 @@ const Form = () => {
         changeAddressNumberHandler,
         changeNameHandler, 
         changeNUITHandler, 
-        getInput 
+        getInput,
+        resetForm,
+        ...formRest
     } = useForm()
+
+    const hasErrors = contactRest.hasErrors || formRest.hasErrors
 
     const { fetchData, loading } = useFetch(
         {
@@ -46,6 +54,7 @@ const Form = () => {
     )
 
     const alertProps = React.useRef({
+        
         description: "Supplier was successfully registered",
         severity: "success",
         title: "Success"
@@ -58,7 +67,8 @@ const Form = () => {
         () => (
             <Alert 
                 { ...alertProps.current }
-                className={classNames(loading && "", `mb-6`)}
+                className={classNames(loading && "", `mb-6
+                    `)}
                 onClose={onCloseFuncRef}
                 onOpen={onOpenFuncRef}
             />
@@ -98,7 +108,7 @@ const Form = () => {
     const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        if(loading) return;
+        if(loading || hasErrors) return;
 
         onCloseFuncRef.current?.()
 
@@ -137,12 +147,17 @@ const Form = () => {
                         title: "Error"
                     }
                 },
-                onSuccess(res, data) {
+                async onSuccess(res, data) {
                     alertProps.current = {
                         description: "Supplier was successfully registered.",
                         severity: "success",
                         title: "Success"
                     }
+
+                    await suppliers.fetchData({})
+
+                    resetForm()
+                    resetContact()
                 },
             }
         )
@@ -238,13 +253,14 @@ const Form = () => {
             <div className="flex flex-col gap-y-4 justify-end sm:flex-row sm:gap-y-0 sm:gap-x-4 mt-16">
                 <Button
                     className="!border-red-600 py-2 !text-red-600 hover:!bg-red-600 hover:!text-white"
+                    onClick={() => suppliers.fetchData({})}
                     type="button"
                     variant="outlined">
                     Cancel
                 </Button>
                 <Button
                     className="py-2"
-                    disabled={loading}
+                    disabled={loading || hasErrors}
                     type="submit">
                     { loading ? "Loading..." : "Submit" }
                 </Button>
