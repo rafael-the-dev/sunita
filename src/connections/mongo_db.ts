@@ -49,7 +49,7 @@ const createMongoDBConnection = async () => {
                 GUESTS: clusterDB.collection<GuestDBType>("guests"),
                 PRODUCTS: clusterDB.collection<GblobalProductType>("products"),
                 PRODUCTS_CATEGORIES: clusterDB.collection<CategoryType>("products-categories"),
-                SUPPLIERS: clusterDB.collection<SupplierDBType>("products-categories"),
+                SUPPLIERS: clusterDB.collection<SupplierDBType>("suppliers"),
                 USERS: clusterDB.collection<User>("users"),
                 WAREHOUSES: clusterDB.collection<WarehouseType>("warehouses")
             };
