@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useCallback, useMemo, useState } from "react"
 
 import { ContactType, PHONE_TYPE } from "@/types/contact"
 
@@ -34,6 +34,15 @@ const initialContact: InputContactType = {
 
 const useContact = () => {
     const [ contact, setContact ] = useState(initialContact)
+
+    const hasErrors = useMemo(
+        () => Boolean(
+            contact
+                .phone
+                .find(item => item.number.error || !Boolean(item.number.value.trim()))
+        ),
+        [ contact ]
+    )
 
     const getAvailableTypesList = useCallback(
         (contact: InputContactType) => {
@@ -142,12 +151,20 @@ const useContact = () => {
         []
     )
 
+    const resetContact = useCallback(
+        () => setContact(initialContact),
+        []
+    )
+
     return {
+        hasErrors,
+
         addPhoneNumber,
         changePhone,
         getAvailableTypes,
         getContact,
-        removePhoneNumber
+        removePhoneNumber,
+        resetContact
     }
 }
 
