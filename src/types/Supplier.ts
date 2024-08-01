@@ -21,3 +21,7 @@ export type SupplierType = {
 export type SupplierDBType = SupplierType & {
     stores: string[]
 }
+
+export type SuppliersResponseType = {
+    list: SupplierType[]
+}
