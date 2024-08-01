@@ -6,6 +6,22 @@ import { apiHandler } from "@/middlewares/route-handler"
 
 import SupplierModel from "@/models/server/db/Supplier"
 
+export const GET = async (req: NextRequest) => {
+    return await apiHandler(
+        req,
+        async ({ mongoDbConfig, user }) => {
+            const response = await SupplierModel.getAll(
+                {},
+                { mongoDbConfig, user }
+            )
+
+            return NextResponse.json(
+                response
+            )
+        } 
+    )
+}
+
 export const POST = async (req: NextRequest) => {
     return await apiHandler(
         req,
