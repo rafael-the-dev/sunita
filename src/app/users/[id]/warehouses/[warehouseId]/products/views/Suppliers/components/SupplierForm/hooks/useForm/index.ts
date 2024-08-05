@@ -1,4 +1,8 @@
-import { ChangeEvent, useCallback, useMemo, useState } from "react"
+import { ChangeEvent, useCallback, useContext, useMemo, useState } from "react"
+
+import { FixedTabsContext } from "@/context/FixedTabsContext"
+
+import { SupplierType } from "@/types/Supplier"
 
 import { isValidAddress, isValidName } from "@/validation/user"
 import { isValidNUIT } from "@/validation/document"
@@ -25,7 +29,27 @@ const defaultInput = {
 }
 
 const useForm = () => {
-    const [ input, setInput ] = useState(defaultInput)
+    const { getDialog } = useContext(FixedTabsContext)
+
+    const supplier = getDialog().current?.payload as SupplierType;
+
+    const [ input, setInput ] = useState(
+        () => {
+            if(!supplier) return defaultInput;
+
+            return {
+                address: {
+                    country: structuredClone({ ...initialInput, value: supplier.address.country }),
+                    city: structuredClone({ ...initialInput, value: supplier.address.city }),
+                    number: structuredClone({ ...initialInput, value: supplier.address.number.toString() }),
+                    province: structuredClone({ ...initialInput, value: supplier.address.province }),
+                    street: structuredClone({ ...initialInput, value: supplier.address.street })
+                },
+                name: structuredClone({ ...initialInput, value: supplier.name }),
+                nuit: structuredClone({ ...initialInput, value: supplier.nuit.toString() })
+            }
+        }
+    )
 
     const hasErrors = useMemo(
         () => {

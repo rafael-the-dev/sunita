@@ -7,6 +7,7 @@ import styles from "./styles.module.css"
 
 import { LoginContext } from "@/context/LoginContext"
 import { ProductsPageContext } from "../../../../context"
+import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 import { SupplierType } from "@/types/Supplier"
 
@@ -23,6 +24,10 @@ import TextField from "@/components/Textfield"
 const Form = () => {
     const { credentials } = React.useContext(LoginContext)
     const { suppliers } = React.useContext(ProductsPageContext)
+    const { getDialog, setDialog } = React.useContext(FixedTabsContext)
+
+    const supplierPayload = getDialog().current?.payload as SupplierType;
+    const hasSupplier = Boolean(supplierPayload);
 
     const {
         addPhoneNumber,
@@ -32,7 +37,7 @@ const Form = () => {
         removePhoneNumber,
         resetContact,
         ...contactRest
-    } = useContact()
+    } = useContact(supplierPayload?.contact)
 
     const { 
         changeAddressHandler, 
@@ -44,17 +49,17 @@ const Form = () => {
         ...formRest
     } = useForm()
 
-    const hasErrors = contactRest.hasErrors || formRest.hasErrors
+
+    const hasErrors = contactRest.hasErrors || formRest.hasErrors;
 
     const { fetchData, loading } = useFetch(
         {
             autoFetch: false,
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/suppliers`
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/suppliers/${ hasSupplier ? supplierPayload.id : ""}`
         }
-    )
+    );
 
     const alertProps = React.useRef({
-        
         description: "Supplier was successfully registered",
         severity: "success",
         title: "Success"
@@ -105,6 +110,11 @@ const Form = () => {
         [ addPhoneNumber ]
     )
 
+    const closeDialog = React.useCallback(
+        () => setDialog(null),
+        [ setDialog ]
+    )
+
     const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
@@ -128,17 +138,17 @@ const Form = () => {
                     .phone
                     .map(item => ({ number: item.number.value, type: item.type.value }))
             },
-            id: null,
+            id: hasSupplier ? supplierPayload.id : null,
             name: input.name.value,
             nuit: currency(input.nuit.value).value,
-            status: null
+            status: hasSupplier ? supplierPayload.status : null
         }
 
         await fetchData(
             {
                 options: {
                     body: JSON.stringify(supplier),
-                    method: "POST"
+                    method: hasSupplier ? "PUT" : "POST"
                 },
                 onError(error) {
                     alertProps.current = {
@@ -156,8 +166,13 @@ const Form = () => {
 
                     await suppliers.fetchData({})
 
-                    resetForm()
-                    resetContact()
+                    if(hasSupplier) {
+                        closeDialog();
+                        return;
+                    }
+
+                    resetForm();
+                    resetContact();
                 },
             }
         )
@@ -253,7 +268,7 @@ const Form = () => {
             <div className="flex flex-col gap-y-4 justify-end sm:flex-row sm:gap-y-0 sm:gap-x-4 mt-16">
                 <Button
                     className="!border-red-600 py-2 !text-red-600 hover:!bg-red-600 hover:!text-white"
-                    onClick={() => suppliers.fetchData({})}
+                    onClick={closeDialog}
                     type="button"
                     variant="outlined">
                     Cancel
@@ -262,7 +277,7 @@ const Form = () => {
                     className="py-2"
                     disabled={loading || hasErrors}
                     type="submit">
-                    { loading ? "Loading..." : "Submit" }
+                    { loading ? "Loading..." : ( hasSupplier ? "Update" : "Submit" ) }
                 </Button>
             </div>
         </form>
