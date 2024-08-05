@@ -15,5 +15,6 @@ export type URLParamsType = {
         roomId?: string;
         storeId?: string;
         saleId?: string;
+        supplierId?: string;
     }
 }

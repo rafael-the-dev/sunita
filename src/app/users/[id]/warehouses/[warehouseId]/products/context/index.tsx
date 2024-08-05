@@ -23,8 +23,6 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
 
     const fetchSuppliers = suppliers.fetchData
 
-    console.log(suppliers.data)
-
     useEffect(
         () => {
             const timeOut = setTimeout(

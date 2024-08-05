@@ -1,15 +1,18 @@
-import { useContext, useRef } from "react"
+import { useCallback, useContext, useRef } from "react"
 
 import { SupplierType } from "@/types/Supplier"
 import { TableHeadersType } from "@/components/table/types"
 
 import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
+import { FixedTabsContext } from "@/context/FixedTabsContext"
 
+import Form from "../SupplierForm"
 import Status from "@/components/shared/Status"
 import Table from "@/components/shared/table"
 
 const TableContainer = () => {
     const { suppliers } = useContext(ProductsPageContext);
+    const { setDialog } = useContext(FixedTabsContext)
 
     const headers = useRef<TableHeadersType[]>(
         [
@@ -58,6 +61,21 @@ const TableContainer = () => {
         ]
     )
 
+    const clickHandler = useCallback(
+        (payload: SupplierType) => () => {
+            setDialog(
+                {
+                    header: {
+                        title: "Update Supplier"
+                    },
+                    body: <Form />,
+                    payload
+                }
+            )
+        },
+        [ setDialog ]
+    )
+
     const suppliersList = suppliers?.data?.list ?? [];
 
     return (
@@ -65,6 +83,7 @@ const TableContainer = () => {
             classes={{ root: "mt-6 table-body" }}
             data={suppliersList}
             headers={headers}
+            onClickRow={clickHandler}
         />
     )
 }
