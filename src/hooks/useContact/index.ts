@@ -23,7 +23,7 @@ const initialInput = {
     value: ""
 }
 
-const initialContact: InputContactType = {
+const defaultContact: InputContactType = {
     phone: [
         {
             type: { ...initialInput, value: PHONE_TYPE.WORK },
@@ -32,8 +32,23 @@ const initialContact: InputContactType = {
     ]
 }
 
-const useContact = () => {
-    const [ contact, setContact ] = useState(initialContact)
+const useContact = (initialContact: ContactType) => {
+    const [ contact, setContact ] = useState(
+        () => {
+            if(!initialContact) return defaultContact;
+
+            return {
+                phone: initialContact
+                    .phone
+                    .map(item => (
+                        {
+                            type: { ...initialInput, value: item.type },
+                            number: { ...initialInput, value: item.number }
+                        }
+                    ))
+            }
+        }
+    )
 
     const hasErrors = useMemo(
         () => Boolean(
@@ -152,7 +167,7 @@ const useContact = () => {
     )
 
     const resetContact = useCallback(
-        () => setContact(initialContact),
+        () => setContact(defaultContact),
         []
     )
 
