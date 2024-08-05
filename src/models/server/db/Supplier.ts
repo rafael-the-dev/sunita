@@ -5,58 +5,39 @@ import { STATUS } from "@/types";
 import { toISOString } from "@/helpers/date"
 import { getId } from "@/helpers/id";
 import getSupplierProxy from "../proxy/supplier";
+import { retrieveSuppliers, updateSupplier } from "@/helpers/suppliers";
+
+import Error404 from "@/errors/server/404Error";
 
 class Supplier {
-    static async getAll({ filters }: { filters?: Object }, { mongoDbConfig, user }: ConfigType) {
-        const id = user.stores[0].storeId;
+    static async getAll({ filters }: { filters?: Object }, config: ConfigType) {
+        const suppliersList = await retrieveSuppliers(
+            { filters },
+            config
+        )
 
-        try {
-        const suppliersList = await mongoDbConfig
-            .collections
-            .WAREHOUSES
-            .aggregate(
-                [
-                    { 
-                        $match: { id }
-                    },
-                    {
-                        $match: filters ?? {}
-                    },
-                    {
-                        $lookup: {
-                            from: "suppliers",
-                            foreignField: "id",
-                            localField: "suppliers.id",
-                            as: "suppliersList"
-                        }
-                    },
-                    {
-                        $unwind: "$suppliersList"
-                    },
-                    {
-                        $group: {
-                            _id: "$suppliersList.id",
-                            address: { $first: "$suppliersList.address" },
-                            contact: { $first: "$suppliersList.contact"},
-                            id: { $first: "$suppliersList.id" },
-                            name: { $first: "$suppliersList.name" },
-                            nuit: { $first: "$suppliersList.nuit" },
-                            status: { $first: "$suppliersList.status" }
-                        }
-                    }
-                ]
-            )
-            .toArray() as SupplierType[]
-
-            const response: SuppliersResponseType = {
-                list: suppliersList
-            }
-
-            return response
-        } catch(e) {
-            console.error(e)
-            return []
+        const response: SuppliersResponseType = {
+            list: suppliersList
         }
+
+        return response
+    }
+
+    static async get({ id, filters }: { id: string, filters?: Object }, config: ConfigType) {
+        const innerFilters = filters ?? {}
+
+        innerFilters["suppliers.id"] = id
+
+        const suppliersList = await retrieveSuppliers(
+            { 
+                filters: innerFilters
+            },
+            config
+        )
+
+        if(suppliersList.length === 0) throw new Error404("Supplier not found")
+
+        return suppliersList[0]
     }
 
     static async register(supplier: SupplierType, { mongoDbConfig, user }: ConfigType) {
@@ -134,6 +115,47 @@ class Supplier {
             throw e
         }
     }
+
+    static async update(supplier: SupplierType, { mongoDbConfig, user }: ConfigType) {
+        const savedSupplier = await this.get(
+            {
+                id: supplier.id
+            },
+            {
+                mongoDbConfig,
+                user
+            }
+        )
+
+        const storeId = user.stores[0].storeId;
+
+        const updatedSupplier: SupplierDBType = {
+            ...savedSupplier,
+            stores: [ storeId ]
+        };
+
+        const supplierProxy = getSupplierProxy(updatedSupplier);
+
+        supplierProxy.address = supplier.address;
+        supplierProxy.contact = supplier.contact;
+        supplierProxy.name = supplier.name;
+        supplierProxy.nuit = supplier.nuit;
+
+        try {
+            await updateSupplier(
+                { supplier: updatedSupplier },
+                { mongoDbConfig, user }
+            )
+        } catch(e) {
+            await updateSupplier(
+                { supplier: savedSupplier },
+                { mongoDbConfig, user }
+            )
+
+            throw e
+        }
+    }
+
 }
 
 export default Supplier
