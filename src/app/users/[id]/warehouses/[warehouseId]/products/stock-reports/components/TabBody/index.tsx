@@ -64,9 +64,8 @@ const TabBody = () => {
                     title: "Stock Report"
                 },
                 body: (
-                    <StockContextProvider 
-                        productsList={[]}>
-                        <AddStock refreshProducts={fetchData} />
+                    <StockContextProvider >
+                        <AddStock />
                     </StockContextProvider>
                 ),
                 payload: stockReport
@@ -74,7 +73,7 @@ const TabBody = () => {
         } catch(e) {
             console.error(e)
         }
-    }, [ fetchData, setDialog ])
+    }, [ setDialog ])
 
     if(!data) return <h1>Loading</h1>;
 
