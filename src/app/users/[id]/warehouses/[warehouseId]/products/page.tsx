@@ -16,6 +16,7 @@ import useSearchParams from "@/hooks/useSearchParams";
 
 import ProductsView from "./views/Product"
 import SuppliersView from "./views/Suppliers"
+import StockReportView from "./views/StockReport"
 
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
 import { Provider as FixedTabsContextProvider } from "@/components/shared/FixedTabsContainer"
@@ -52,7 +53,7 @@ const Container = () => {
             {
                 {
                     [TABS.PRODUCTS]: <ProductsView />,
-                    [TABS.REPORT]: <div></div>,
+                    [TABS.REPORT]: <StockReportView />,
                     [TABS.SUPPLIERS]: <SuppliersView />
                 }[activeTab]
             }
