@@ -5,6 +5,7 @@ import { AppContext } from "@/context/AppContext"
 import useDialog from "@/hooks/useDialog"
 
 import { FixedTabsContext as StaticContext } from "@/context/FixedTabsContext"
+import { ProductsPageContext } from "../../context"
 
 import Button from "@/components/shared/button"
 import Form from "./components/SupplierForm"
@@ -19,6 +20,7 @@ const SuppliersContainer = () => {
     const { changeDialog, dialog } = useDialog()
 
     const { setDialog } = React.useContext(StaticContext)
+    const { suppliers } = React.useContext(ProductsPageContext)
 
     const openRegisterDialog = React.useCallback(
         (title: string, payload?: Object) => {
@@ -45,6 +47,21 @@ const SuppliersContainer = () => {
             if(dialog === DIALOG_TYPES.REGISTER) openRegisterDialog("Register Supplier")
         },
         [ dialog, openRegisterDialog ]
+    )
+
+    const { data, fetchData } = suppliers;
+
+    React.useEffect(
+        () => {
+            const controller = new AbortController();
+
+            if(!data) {
+                fetchData({ signal: controller.signal });
+            }
+
+            return () => controller.abort();
+        },
+        [ data, fetchData ]
     )
 
     return (

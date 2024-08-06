@@ -33,20 +33,6 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
         url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/stock-reports`
     })
 
-    const fetchSuppliers = suppliers.fetchData
-
-    useEffect(
-        () => {
-            const timeOut = setTimeout(
-                () => fetchSuppliers({}),
-                60000
-            )
-
-            return () => clearTimeout(timeOut)
-        },
-        [ fetchSuppliers ]
-    )
-
     return (
         <ProductsPageContext.Provider
             value={{
