@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useContext, useMemo, useRef } from "react";
+import { useCallback, useContext, useRef } from "react";
 import classNames from "classnames";
 import moment from "moment";
 
@@ -7,7 +7,6 @@ import Typography from "@mui/material/Typography"
 import styles from "./styles.module.css";
 
 import { LoginContext } from "@/context/LoginContext";
-import { FiltersContext } from "@/context/FiltersContext"
 
 import { AppContext } from "@/context/AppContext";
 import { CartItem } from "@/types/cart";
@@ -33,24 +32,18 @@ const alertSuccessProps = {
 const AddStock = () => {
     const { dialog, setDialog } = useContext(AppContext)
     const { credentials } = useContext(LoginContext)
-    const filtersContext = useContext(FiltersContext)
 
-    const { products } = useContext(ProductsPageContext)
-
-    const { fetchProducts } = products;
-
-    
-
+    const { products, stockReports } = useContext(ProductsPageContext)
+  
     const { 
         getCart, getStockReport,
         hasErrors,
         removeItem, reset,
-        setDate, setQuantity, setReference, setSellPrice, setTotal,
+        setDate, setReference,
         toString 
     } = useContext(StockContext)
 
     const cancelHandler = useCallback(() => setDialog(null), [ setDialog ]);
-    const removeHandler = useCallback((row: CartItem<ProductInfoType>) => () => removeItem(row.product.id), [ removeItem ]);
 
     const referenceChangeHandler = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setReference(e.target.value), [ setReference ])
 
@@ -89,8 +82,8 @@ const AddStock = () => {
             async onSuccess(res, data) {
                 await Promise.all(
                     [
-                        fetchProducts({}),
-                        filtersContext.fetchData({})
+                        products.fetchData({}),
+                        stockReports.fetchData({})
                     ]
                 );
 
