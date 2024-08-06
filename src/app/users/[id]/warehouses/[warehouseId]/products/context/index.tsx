@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef } from "react"
 
 import { ContextType, PropsType } from "./types"
+import { CategoryType } from "@/types/category";
 import { SuppliersResponseType } from "@/types/Supplier"
 import { AnalyticStockReportInfoType } from "@/types/stock";
 
@@ -14,6 +15,11 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
     const { credentials } = useContext(LoginContext)
 
     const products = useFechProducts()
+
+    const categories = useFetch<CategoryType[]>({
+        autoFetch: true,
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`
+    })
 
     const suppliers = useFetch<SuppliersResponseType>(
         {
@@ -33,7 +39,7 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
         () => {
             const timeOut = setTimeout(
                 () => fetchSuppliers({}),
-                9000
+                60000
             )
 
             return () => clearTimeout(timeOut)
@@ -44,7 +50,11 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
     return (
         <ProductsPageContext.Provider
             value={{
-                products,
+                categories,
+                products: {
+                    ...products,
+                    fetchData: products.fetchProducts
+                },
                 suppliers,
                 stockReports
             }}>
