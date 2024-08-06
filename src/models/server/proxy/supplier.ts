@@ -8,7 +8,7 @@ import { isValidAddress } from "@/validation/user"
 import { isValidPhoneNumber, isValidPhoneType } from "@/validation/contact"
 import { isValidNUIT } from "@/validation/document"
 import { isValidName } from "@/validation/user"
-import { isValidAddressNumber } from "@/validation/address"
+import { isValidAddressNumber, isValidAddressStreet } from "@/validation/address"
 
 type PropsType = "address" | "contact" | "name" | "nuit"
 
@@ -24,7 +24,7 @@ const getSupplierProxy = (target: SupplierType) => {
                     validate(address.country, "Invalid country name", isValidAddress);
                     validate(address.province, "Invalid province name", isValidAddress);
                     validate(address.city, "Invalid city name", isValidAddress);
-                    validate(address.street, "Invalid street name", isValidAddress);
+                    validate(address.street, "Invalid street name", isValidAddressStreet);
                     validate(address.number?.toString(), "Invalid address number", isValidAddressNumber);
 
                     return Reflect.set(target, prop, newValue);
