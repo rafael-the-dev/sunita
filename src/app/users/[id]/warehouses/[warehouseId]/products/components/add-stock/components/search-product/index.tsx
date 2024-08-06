@@ -6,12 +6,15 @@ import currency from "currency.js";
 import styles from "./styles.module.css";
 
 import useFech from "@/hooks/useFetch";
+import useSearchParams from "@/hooks/useSearchParams";
+
 import { ProductInfoType } from "@/types/product";
 import { TableHeadersType } from "@/components/table/types";
 
 import { LoginContext } from "@/context/LoginContext";
+import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context";
 import { StockContext } from "@/context/StockContext";
-import useSearchParams from "@/hooks/useSearchParams";
+
 import { CartItem } from "@/types/cart";
 import { getId } from "@/helpers/id";
 import { isInvalidNumber } from "@/helpers/validation";
@@ -23,12 +26,14 @@ import Textfield from "@/components/Textfield";
 
 const SearchProduct = () => {
     const { credentials } = useContext(LoginContext)
-    const { addItem, productsList } = useContext(StockContext)
+    const { addItem } = useContext(StockContext)
+    const { products } = useContext(ProductsPageContext)
 
     const [ cartItem, setCartItem ] = useState<CartItem<ProductInfoType> | null>(null)
     const [ value, settValue ] = useState("");
 
     const searchParams = useSearchParams()
+    const productsList = products.data
 
     const onCloseRef = useRef<() => void>(null)
     const onOpenRef = useRef<() => void>(null)

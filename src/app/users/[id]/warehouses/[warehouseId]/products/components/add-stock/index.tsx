@@ -1,29 +1,28 @@
-import { ChangeEvent, useCallback, useContext, useEffect, useRef } from "react";
+import { ChangeEvent, useCallback, useContext, useMemo, useRef } from "react";
 import classNames from "classnames";
+import moment from "moment";
+
 import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css";
 
 import { LoginContext } from "@/context/LoginContext";
+import { FiltersContext } from "@/context/FiltersContext"
 
-import { CartItem } from "@/types/cart";
-import { ProductInfoType } from "@/types/product";
 import { AppContext } from "@/context/AppContext";
+import { CartItem } from "@/types/cart";
+import { ProductsPageContext } from "../../context";
+import { ProductInfoType } from "@/types/product";
 import { StockContext } from "@/context/StockContext";
-import { TableHeadersType } from "@/components/table/types";
-import { SetterFuncType } from "@/context/StockContext/types";
+
+import useFetch from "@/hooks/useFetch";
 
 import Alert from "@/components/alert";
 import Button from "@/components/shared/button";
-import Collapse from "@/components/collapse";
 import DateTimeInput from "@/components/date"
-import QuantityInput from "@/components/shared/quantity-input"
 import SearchProduct from "./components/search-product";
-import Table from "@/components/shared/table";
+import Table from "./components/Table";
 import Textfield from "@/components/Textfield"
-import useFech from "@/hooks/useFetch";
-import moment from "moment";
-import { isLessOrEqualToZero } from "@/helpers/stock-report";
 
 const alertSuccessProps = {
     description: "Stock was successfully sent",
@@ -31,13 +30,16 @@ const alertSuccessProps = {
     title: "Success"
 };
 
-const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal: AbortSignal }) => Promise<void> }) => {
+const AddStock = () => {
     const { dialog, setDialog } = useContext(AppContext)
     const { credentials } = useContext(LoginContext)
+    const filtersContext = useContext(FiltersContext)
 
-    const changeHandler = useCallback((product: ProductInfoType, func: SetterFuncType) => (e: ChangeEvent<HTMLInputElement>) => {
-        func(product, e.target.value, "CHANGE");
-    }, [])
+    const { products } = useContext(ProductsPageContext)
+
+    const { fetchProducts } = products;
+
+    
 
     const { 
         getCart, getStockReport,
@@ -46,99 +48,6 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
         setDate, setQuantity, setReference, setSellPrice, setTotal,
         toString 
     } = useContext(StockContext)
-
-    const headers = useRef<TableHeadersType[]>([
-        {
-            label: "Name",
-            key: {
-                value: "product",
-                subKey: {
-                    value: "name"
-                }
-            }
-        },
-        {
-            label: "Quantity",
-            getComponent: ({ item }) => {
-                const cartItem = item as CartItem<ProductInfoType>;
-                return (
-                    <QuantityInput 
-                        hasError={isLessOrEqualToZero(cartItem.quantity)}
-                        onChange={changeHandler(cartItem.product, setQuantity)}
-                        onDecrement={() => setQuantity(cartItem.product, -1)}
-                        onIncrement={() => setQuantity(cartItem.product, 1)}
-                        value={cartItem.quantity}
-                    />
-                )
-            },
-            key: {
-                value: "quantity"
-            }
-        },
-        {
-            label: "Total",
-            getComponent: ({ item }) => {
-                const cartItem = item as CartItem<ProductInfoType>;
-                return (
-                    <QuantityInput 
-                        hasError={isLessOrEqualToZero(cartItem.total)}
-                        onChange={changeHandler(cartItem.product, setTotal)}
-                        onDecrement={() => setTotal(cartItem.product, -1)}
-                        onIncrement={() => setTotal(cartItem.product, 1)}
-                        value={cartItem.total}
-                    />
-                )
-            },
-            key: {
-                value: "total"
-            }
-        },
-        {
-            label: "Purchase price",
-            key: {
-                value: "product",
-                subKey: {
-                    value: "purchasePrice"
-                }
-            }
-        },
-        {
-            label: "Sell price",
-            getComponent: ({ item }) => {
-                const cartItem = item as CartItem<ProductInfoType>;
-                return (
-                    <QuantityInput 
-                        hasError={isLessOrEqualToZero(cartItem.product.sellPrice) || cartItem.product.purchasePrice >= cartItem.product.sellPrice}
-                        onChange={changeHandler(cartItem.product, setSellPrice)}
-                        onDecrement={() => setSellPrice(cartItem.product, -1)}
-                        onIncrement={() => setSellPrice(cartItem.product, 1)}
-                        value={cartItem.product.sellPrice}
-                    />
-                )
-            },
-            key: {
-                value: "product",
-                subKey: {
-                    value: "sellPrice"
-                }
-            }
-        },
-        {
-            label: "Profit",
-            key: {
-                value: "product",
-                subKey: {
-                    value: "profit"
-                }
-            }
-        },
-        {
-            label: "Remove",
-            key: {
-                value: "delete"
-            }
-        }
-    ]);
 
     const cancelHandler = useCallback(() => setDialog(null), [ setDialog ]);
     const removeHandler = useCallback((row: CartItem<ProductInfoType>) => () => removeItem(row.product.id), [ removeItem ]);
@@ -150,7 +59,7 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
     const onCloseAlertRef = useRef<() => void>(null);
     const onOpenAlertRef = useRef<() => void>(null);
 
-    const { fetchData, loading } = useFech({
+    const { fetchData, loading } = useFetch({
         autoFetch: false,
         url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/stock-reports`
     });
@@ -178,8 +87,15 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
                 };
             },
             async onSuccess(res, data) {
-                await refreshProducts({ signal: null });
+                await Promise.all(
+                    [
+                        fetchProducts({}),
+                        filtersContext.fetchData({})
+                    ]
+                );
+
                 alertProps.current = alertSuccessProps;
+
                 reset();
             },
         })
@@ -218,11 +134,7 @@ const AddStock = ({ refreshProducts }: { refreshProducts: ({ signal }: { signal:
             {
                 getCart().items.length > 0 && (
                     <div className="px-3 pb-6">
-                        <Table 
-                            data={getCart().items}
-                            headers={headers}
-                            onRemoveRow={removeHandler}
-                        />
+                        <Table />
                         <div className="flex justify-end mt-16">
                             <div className={classNames(styles.formTotal, `bg-primary-700 mb-4 text-white px-6 py-4 md:flex flex-col
                                 justify-around md:mb-0 md:pl-8`)}>
