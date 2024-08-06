@@ -6,7 +6,7 @@ import { SupplierType } from "@/types/Supplier"
 
 import { isValidAddress, isValidName } from "@/validation/user"
 import { isValidNUIT } from "@/validation/document"
-import { isValidAddressNumber } from "@/validation/address"
+import { isValidAddressNumber, isValidAddressStreet } from "@/validation/address"
 
 type AddressProps = "country" | "city" | "province" | "street"
 
@@ -110,27 +110,37 @@ const useForm = () => {
         []
     )
 
+    const setAddress = useCallback(
+        (key: string, value: typeof initialInput) => {
+            setInput(
+                input => ({
+                    ...input,
+                    address: {
+                        ...input.address,
+                        [key]: value
+                    }
+                })
+            )
+        },
+        []
+    )
+
     const changeAddressHandler = useCallback(
         (prop: AddressProps) => (e: ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target
 
             const hasError = !isValidAddress(value)
 
-            setInput(
-                input => ({
-                    ...input,
-                    address: {
-                        ...input.address,
-                        [prop]: {
-                            error: hasError,
-                            helperText: "",
-                            value
-                        }
-                    }
-                })
+            setAddress(
+                prop, 
+                {
+                    error: hasError,
+                    helperText: "",
+                    value
+                }
             )
         },
-        []
+        [ setAddress ]
     )
 
     const changeAddressNumberHandler = useCallback(
@@ -139,21 +149,34 @@ const useForm = () => {
 
             const hasError = !isValidAddressNumber(value)
 
-            setInput(
-                input => ({
-                    ...input,
-                    address: {
-                        ...input.address,
-                        number: {
-                            error: hasError,
-                            helperText: "",
-                            value
-                        }
-                    }
-                })
+            setAddress(
+                "number",
+                {
+                    error: hasError,
+                    helperText: "",
+                    value
+                }
             )
         },
-        []
+        [ setAddress ]
+    )
+
+    const changeAddressStreetHandler = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const { value } = e.target
+
+            const hasError = !isValidAddressStreet(value)
+
+            setAddress(
+                "street",
+                {
+                    error: hasError,
+                    helperText: "",
+                    value
+                }
+            )
+        },
+        [ setAddress ]
     )
 
     const resetForm = useCallback(
@@ -169,6 +192,7 @@ const useForm = () => {
         changeAddressNumberHandler,
         changeNameHandler,
         changeNUITHandler,
+        changeAddressStreetHandler,
         getInput,
         resetForm
     }

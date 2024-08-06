@@ -44,6 +44,7 @@ const Form = () => {
         changeAddressNumberHandler,
         changeNameHandler, 
         changeNUITHandler, 
+        changeAddressStreetHandler,
         getInput,
         resetForm,
         ...formRest
@@ -237,7 +238,7 @@ const Form = () => {
                         { ...getInput().address.street }
                         className="mb-0 w-full sm:w-1/2"
                         label="Street" 
-                        onChange={changeAddressHandler("street")}
+                        onChange={changeAddressStreetHandler}
                         required
                     />
                 </Row>
@@ -248,6 +249,7 @@ const Form = () => {
                         label="Number" 
                         onChange={changeAddressNumberHandler}
                         required
+                        type="number"
                     />
                 </Row>
             </fieldset>
