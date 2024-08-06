@@ -6,7 +6,6 @@ import classNames from "classnames";
 import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
 import { ProductFilterContext } from "@/context/ProductFilterContext";
-import { ProductsPageContext } from "../../context"
 import { StockContextProvider } from "@/context/StockContext";
 
 import useSearchParams from "@/hooks/useSearchParams";
@@ -26,7 +25,6 @@ enum DIALOG_TYPES {
 
 const ProductsView = () => {
     const { credentials } = React.useContext(LoginContext)
-    const { products } = React.useContext(ProductsPageContext)
 
     const searchParams = useSearchParams()
 
@@ -34,10 +32,6 @@ const ProductsView = () => {
     const { setUniqueSearchParams } = React.useContext(ProductFilterContext);
 
     const reRendersCounter = React.useRef(0)
-
-    const { data, fetchProducts } = products;
-
-    const productsList = React.useMemo(() => data ?? [], [ data ])
 
     const changeHandler = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => setUniqueSearchParams("search-key", e.target.value), 
@@ -50,10 +44,14 @@ const ProductsView = () => {
                 header: {
                     title: "Add stock"
                 },
-                body: <StockContextProvider productsList={productsList}><AddStock refreshProducts={fetchProducts} /></StockContextProvider>
+                body: (
+                    <StockContextProvider>
+                        <AddStock />
+                    </StockContextProvider>
+                )
             })
         }, 
-        [ fetchProducts, productsList, setDialog ]
+        [ setDialog ]
     )
 
     const openCategoriesDialog = React.useCallback(
@@ -98,7 +96,7 @@ const ProductsView = () => {
 
     return (
         <div className="flex flex-col h-full items-stretch justify-between">
-            <div className="px-3">
+            <div className="">
                 <form>
                     <SearchBox className="pr-2 rounded-md">
                         <SearchBox.Filters />
@@ -113,7 +111,7 @@ const ProductsView = () => {
                     <Table />
                 </div>
             </div>
-            <div className="flex flex-col items-stretch justify-end px-3 sm:flex-row">
+            <div className="flex flex-col items-stretch justify-end sm:flex-row">
                 <Button 
                     className="mb-3 sm:mb-0 sm:mr-3" 
                     onClick={openDialogHandler(DIALOG_TYPES.CATEGORIES)}
