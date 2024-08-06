@@ -16,7 +16,9 @@ const useFechProducts = () => {
         url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products`
     })
 
-    return { data, error, fetchProducts: fetchData, loading };
+    const productsList = data ?? []; 
+
+    return { data: productsList, error, fetchProducts: fetchData, loading };
 }
 
 export default useFechProducts;
