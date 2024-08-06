@@ -5,6 +5,7 @@ import classNames from "classnames";
 
 import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
+import { ProductsPageContext } from "../../context";
 import { ProductFilterContext } from "@/context/ProductFilterContext";
 import { StockContextProvider } from "@/context/StockContext";
 
@@ -25,12 +26,11 @@ enum DIALOG_TYPES {
 
 const ProductsView = () => {
     const { credentials } = React.useContext(LoginContext)
-
-    const searchParams = useSearchParams()
-
+    const { categories } = React.useContext(ProductsPageContext)
     const { setDialog } = React.useContext(AppContext);
     const { setUniqueSearchParams } = React.useContext(ProductFilterContext);
-
+    
+    const searchParams = useSearchParams()
     const reRendersCounter = React.useRef(0)
 
     const changeHandler = React.useCallback(
@@ -60,10 +60,16 @@ const ProductsView = () => {
                 header: {
                     title: "Categories"
                 },
-                body: <Categories url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`} />
+                body: (
+                    <Categories 
+                        list={categories.data}
+                        refetchData={categories.fetchData}
+                        url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`} 
+                    />
+                )
             })
         }, 
-        [ credentials, setDialog ]
+        [ categories, credentials, setDialog ]
     )
 
     const openRegisterProductDialog = React.useCallback(
