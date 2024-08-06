@@ -4,6 +4,7 @@ import classNames from "classnames"
 import styles from "./styles.module.css"
 
 import { CategoryType } from "@/types/category"
+import { FetchDataFuncType } from "@/hooks/useFetch/types"
 
 import ListItem from "./components/ListItem"
 import RegisterCategory from "./components/RegisterListItem"
@@ -11,25 +12,31 @@ import TextField from "@/components/Textfield"
 
 import useFetch from "@/hooks/useFetch"
 
-const CategoriesContainer = ({ url }: { url: string }) => {
+const CategoriesContainer = ({ list, refetchData, url }: { refetchData?: FetchDataFuncType, list?: CategoryType[], url: string }) => {
     const [ value, setValue ] = useState("")
 
     const isFirstRender = useRef(true)
-
+    
     const { data, fetchData, loading } = useFetch<CategoryType[]>({
-        autoFetch: true,
+        autoFetch: !Boolean(list),
         url
     })
 
     const changeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value), [])
 
+    const getData = () => list ?? data;
+
     const getFilteredList = () => {
+        const data = getData()
+
         if(!data) return [];
 
         if(!value.trim()) return data;
 
         return data.filter(item => item.name.toLowerCase().includes(value.toLowerCase()))
     }
+
+    const refreshData = () => list ? refetchData : fetchData;
 
     if(loading && isFirstRender.current) return (
         <div className={classNames(styles.form, `font-bold px-3 pb-8 pt-4 text-md`)}>
@@ -55,13 +62,13 @@ const CategoriesContainer = ({ url }: { url: string }) => {
                         <ListItem 
                             { ...item }
                             key={item.id}
-                            refreshData={fetchData}
+                            refreshData={refreshData()}
                             url={url}
                         />
                     ))
                 }
             </ul>
-            <RegisterCategory refreshData={fetchData} url={url} />
+            <RegisterCategory refreshData={refreshData()} url={url} />
         </form>
     )
 }

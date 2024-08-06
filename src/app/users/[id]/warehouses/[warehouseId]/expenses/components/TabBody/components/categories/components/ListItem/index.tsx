@@ -87,7 +87,7 @@ const ListItem = ({ id, name, refreshData, status, url }: PropsTypes) => {
     ), [ status, toggle ])
 
     const statusChangeHandler = useCallback((e: ChangeEvent<HTMLInputElement>) => setCurrentStatus(e.target.value as CATEGORY_STATUS), [])
-    console.log(currentStatus)
+    
     const statusInputMemo = useMemo(() => (
         <Input
             onChange={statusChangeHandler}
