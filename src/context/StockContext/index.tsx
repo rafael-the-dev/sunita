@@ -1,8 +1,10 @@
 import * as React from "react";
 import moment from "moment";
 
+import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
 import { StockContextProviderPropsType, StockContextType, StockReportInputProps } from "./types";
 import { StockClientRequestBodyType, StockReportInfoType } from "@/types/stock";
+import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext";
 
 import useCart from "./hooks/useCart";
 import { isValidPrice } from "./ts/validation";
@@ -17,8 +19,9 @@ const inputProps: StockReportInputProps = {
     value: ""
 };
 
-export const StockContextProvider = ({ children, productsList }: StockContextProviderPropsType) => {
+export const StockContextProvider = ({ children }: StockContextProviderPropsType) => {
     const { dialog } = React.useContext(AppContext);
+    const { setDialog } = React.useContext(StaticTabsContext);
 
     const { getCart, ...cartRest } = useCart();
 
@@ -30,6 +33,7 @@ export const StockContextProvider = ({ children, productsList }: StockContextPro
 
         if(dialog?.payload) {
             const stockReport = dialog.payload as StockReportInfoType;
+            //@ts-ignore
             initial.date.value = stockReport.createdAt;
             initial.reference.value = stockReport.reference
         }
@@ -109,7 +113,6 @@ export const StockContextProvider = ({ children, productsList }: StockContextPro
                 ...cartRest,
                 getCart, getStockReport,
                 hasErrors,
-                productsList,
                 reset,
                 setDate, setReference,
                 toString

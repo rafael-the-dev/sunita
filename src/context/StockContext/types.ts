@@ -25,12 +25,10 @@ export type StockContextType = {
     setDate: (value: string) => void;
     setReference: (value: string) => void;
     setTotal: SetterFuncType;
-    productsList: ProductInfoType[];
     removeItem: (productId: string) => void;
     toString: () => string;
 }
 
 export type StockContextProviderPropsType = { 
     children: React.ReactNode;
-    productsList: ProductInfoType[];
 }
