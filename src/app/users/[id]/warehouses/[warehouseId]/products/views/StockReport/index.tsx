@@ -56,9 +56,13 @@ const StockReport = () => {
 
     React.useEffect(
         () => {
+            const controller = new AbortController()
+
             if(!data) {
-               fetchData({})
+               fetchData({ signal: controller.signal })
             }
+
+            return () => controller.abort()
         },
         [ data, fetchData ]
     )
