@@ -1,5 +1,6 @@
-import { ReactNode } from "react"
+import { MutableRefObject, ReactNode } from "react"
 
+import { AnalyticStockReportInfoType } from "@/types/stock"
 import { ProductInfoType } from "@/types/product"
 import { SuppliersResponseType } from "@/types/Supplier"
 
@@ -14,7 +15,12 @@ export type ContextType = {
         data: SuppliersResponseType,
         fetchData: FetchDataFuncType,
         
-    }
+    },
+    stockReports: {
+        data: AnalyticStockReportInfoType,
+        fetchData: FetchDataFuncType,
+        loading: boolean,
+    },
 }
 
 export type PropsType = {

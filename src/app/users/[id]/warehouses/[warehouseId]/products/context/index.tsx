@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect } from "react"
+import { createContext, useCallback, useContext, useEffect, useRef } from "react"
 
 import { ContextType, PropsType } from "./types"
 import { SuppliersResponseType } from "@/types/Supplier"
+import { AnalyticStockReportInfoType } from "@/types/stock";
 
 import { LoginContext } from "@/context/LoginContext"
 import useFechProducts from "@/hooks/useFetchProducts";
@@ -21,6 +22,11 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
         }
     )
 
+    const stockReports = useFetch<AnalyticStockReportInfoType>({
+        autoFetch: false,
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/stock-reports`
+    })
+
     const fetchSuppliers = suppliers.fetchData
 
     useEffect(
@@ -39,7 +45,8 @@ export const ProductsPageContextProvider = ({ children }: PropsType) => {
         <ProductsPageContext.Provider
             value={{
                 products,
-                suppliers
+                suppliers,
+                stockReports
             }}>
             { children }
         </ProductsPageContext.Provider>
