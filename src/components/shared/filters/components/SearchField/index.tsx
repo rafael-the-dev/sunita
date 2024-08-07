@@ -12,6 +12,11 @@ import Input from "@/components/Textfield";
 import Table from "@/components/shared/table";
 
 type PropsTypes<T> = {
+    classes?: {
+        table?: {
+            container?: string
+        }
+    };
     data: T[];
     headers: MutableRefObject<TableHeadersType[]>;
     hasItems: boolean;
@@ -20,7 +25,9 @@ type PropsTypes<T> = {
     value?: string;
 }
 
-const SearchField = <T extends { id: string }, >({ data, headers, hasItems, onChange, onRowChange, value }: PropsTypes<T>) => {
+const SearchField = <T extends { id: string }, >(props: PropsTypes<T>) => {
+    const { classes, data, headers, hasItems, onChange, onRowChange, value } = props;
+
     return (
         <div className="relative">
             <Input 
@@ -34,7 +41,7 @@ const SearchField = <T extends { id: string }, >({ data, headers, hasItems, onCh
             {
                 hasItems && (
                     <Paper 
-                        className={classNames(styles.tableContainer, "absolute left-0 overflow-y-auto w-full z-10")}>
+                        className={classNames(styles.tableContainer, classes?.table?.container, "absolute left-0 overflow-y-auto w-full z-10")}>
                         <Table 
                             headers={headers}
                             data={data}

@@ -5,5 +5,6 @@ export enum FILTERS_TYPES {
 }
 
 export type PropsTypes = {
-    children: ReactNode
+    children: ReactNode;
+    className?: string;
 }
