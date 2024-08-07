@@ -105,7 +105,7 @@ const ProductsView = () => {
             <div className="flex flex-col items-stretch">
                 <form>
                     <SearchBox className="pr-2 rounded-md">
-                        <SearchBox.Filters />
+                        { categories.data && <SearchBox.Filters categories={categories.data} /> }
                         <SearchBox.Input 
                             className="grow"
                             onChange={changeHandler}

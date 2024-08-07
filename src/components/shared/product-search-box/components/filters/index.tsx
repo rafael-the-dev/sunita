@@ -17,16 +17,19 @@ import Categories from "./components/categories";
 import Popover from "@/components/popover";
 import Price from "./components/price";
 
-const FiltersContainer = () => {
+type PropsType = {
+    categories?: CategoryType[];
+}
+
+const FiltersContainer = ({ categories }: PropsType) => {
     const { credentials } = React.useContext(LoginContext)
 
     const { data } = useFetch<CategoryType[]>(
         {
+            autoFetch: !Boolean(categories),
             url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`
         }
     )
-
-    const categories = data
 
     const onClickHandlerRef = React.useRef<(e: React.MouseEvent<HTMLButtonElement>) => void | null>(null);
 
@@ -42,7 +45,7 @@ const FiltersContainer = () => {
                 id="Product searcj filters"
                 onClickRef={onClickHandlerRef}>
                 <div className="py-3 px-2">
-                    <Categories list={categories} />
+                    <Categories list={categories ?? data} />
                     <Price />
                 </div>
             </Popover>

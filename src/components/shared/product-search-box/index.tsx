@@ -8,7 +8,7 @@ import SearchIcon from "./components/search-icon";
 type Props = {
     children: React.ReactNode;
     className?: string
-};
+}; 
 
 const ProductSearchBox = ({ children, className }: Props) => {
 
