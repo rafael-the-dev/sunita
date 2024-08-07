@@ -1,10 +1,11 @@
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useContext, useMemo, useRef, useState } from "react";
 
 import styles from "./styles.module.css"
 
 import { TableHeadersType } from "@/components/table/types";
 
-import useFetchProducts from "@/hooks/useFetchProducts"
+import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
+
 import useSearchParamsHook from "@/hooks/useSearchParams"
 
 import Filters from "@/components/shared/filters";
@@ -16,6 +17,8 @@ const includesValue = (searchField: string, value: string) => {
 } 
 
 const SearchFieldContainer = () => {
+    const { products } = useContext(ProductsPageContext)
+
     const searchParams = useSearchParamsHook();
 
     const headers = useRef<TableHeadersType[]>([
@@ -39,7 +42,7 @@ const SearchFieldContainer = () => {
         }
     ]);
 
-    const { data, loading } = useFetchProducts();
+    const { data, loading } = products;
 
     const value = searchParams.get("search", "");
     
