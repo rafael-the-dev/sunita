@@ -102,7 +102,7 @@ const ProductsView = () => {
 
     return (
         <div className="flex flex-col h-full items-stretch justify-between">
-            <div className="">
+            <div className="flex flex-col items-stretch">
                 <form>
                     <SearchBox className="pr-2 rounded-md">
                         <SearchBox.Filters />

@@ -66,7 +66,7 @@ const SuppliersContainer = () => {
 
     return (
         <div className="flex flex-col h-full items-stretch justify-between">
-            <div>
+            <div className="flex flex-col items-stretch">
                 <SearchBox />
                 <Table />
             </div>
