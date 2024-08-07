@@ -1,16 +1,18 @@
-import { ReactNode, useCallback, useMemo, useRef, useState } from "react"
+import { ReactNode, useCallback, useContext, useMemo, useRef, useState } from "react"
 import RadioGroup from "@mui/material/RadioGroup"
 
 import styles from "./styles.module.css"
+
+import { ProductsPageContext } from "../../../../context"
 
 import Filters from "@/components/shared/filters"
 import RadioButton from "@/components/radio-button"
 import SearchField from "./components/SearchField"
 
 enum FILTERS {
-    DATE,
-    PRODUCTS,
-    USER
+    DATE = "date",
+    PRODUCTS = "products",
+    USER = "users"
 }
 
 const filtersList = [
@@ -29,6 +31,8 @@ const filtersList = [
 ]
 
 const FiltersContainer = () => {
+    const { users } = useContext(ProductsPageContext)
+
     const [ filter, setFilter ] = useState(FILTERS.DATE)
 
     const changeHandler = useCallback((id: FILTERS) => () => setFilter(id), [])
@@ -56,7 +60,13 @@ const FiltersContainer = () => {
                 }
             </RadioGroup>
             <div className="mt-4 relative">
-                { filtersMapper.current.get(filter) }
+                {
+                    { 
+                        [FILTERS.DATE]: <Filters.Date key={0} />,
+                        [FILTERS.PRODUCTS]: searchFieldMemo,
+                        [FILTERS.USER]: <Filters.User list={ users.data } className="w-full sm:max-w-sm" key={2} refetchUsers={users.fetchData} />
+                    }[filter]
+                }
             </div>
             <Filters.SubmitButton />
         </Filters>

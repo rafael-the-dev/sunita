@@ -1,35 +1,44 @@
 
-import { ChangeEvent, useContext } from "react"
+import { ChangeEvent, useContext, useEffect } from "react"
 
 import { LoginContext } from "@/context/LoginContext"
 
 import useSearchParams from "@/hooks/useSearchParams"
 import useFetch from "@/hooks/useFetch"
-
-import Combobox from "@/components/shared/combobox"
+import { FetchDataFuncType } from "@/hooks/useFetch/types"
 import { UserType } from "@/types/user"
 
-const UserFilter = ({ className }: { className?: string }) => {
-    const { credentials } = useContext(LoginContext)
+import Combobox from "@/components/shared/combobox"
+
+type PropsTypes = {
+    className?: string;
+    list?: UserType[];
+    refetchUsers?: FetchDataFuncType;
+}
+
+const UserFilter = ({ className, list }: PropsTypes) => {
+    const { credentials } = useContext(LoginContext);
 
     const { data, loading } = useFetch<UserType[]>({
-        autoFetch: true,
+        autoFetch: !Boolean(list),
         url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/users`
     })
 
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
 
-    const value = searchParams.get("user", "")
+    const value = searchParams.get("user", "");
 
     const getList = () => {
-        if(!data) return []
+        const usersList = list ?? data;
 
-        return data.map(user => ({ label: `${user.firstName} ${user.lastName}`, value: user.username }))
+        if(!usersList) return [];
+
+        return usersList.map(user => ({ label: `${user.firstName} ${user.lastName}`, value: user.username }));
     }
 
-    const changeHandler = (e: ChangeEvent<HTMLInputElement>) => searchParams.setSearchParam("user", e.target.value)
+    const changeHandler = (e: ChangeEvent<HTMLInputElement>) => searchParams.setSearchParam("user", e.target.value);
 
-    if(loading) return <span>Loading...</span>
+    if(loading) return <span>Loading...</span>;
 
     return (
         <Combobox 

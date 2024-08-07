@@ -6,6 +6,7 @@ import { SuppliersResponseType } from "@/types/Supplier"
 
 import { FetchDataFuncType } from "@/hooks/useFetch/types"
 import { CategoryType } from "@/types/category"
+import { UserType } from "@/types/user"
 
 type ContextFieldType<T> = {
     data: T,
@@ -19,6 +20,7 @@ export type ContextType = {
     products: ContextFieldType<ProductInfoType[]>,
     suppliers: ContextFieldType<SuppliersResponseType>,
     stockReports: ContextFieldType<AnalyticStockReportInfoType>
+    users: ContextFieldType<UserType[]>
 }
 
 export type PropsType = {
