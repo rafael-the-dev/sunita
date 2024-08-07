@@ -1,0 +1,8 @@
+
+@media screen and (width >= 768px) {
+    .tableContainer {
+        position: relative !important;
+        transform: translate(0, 0) !important;
+        top: 0 !important;
+    }
+}

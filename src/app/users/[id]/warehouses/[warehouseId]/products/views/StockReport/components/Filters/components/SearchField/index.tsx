@@ -1,5 +1,7 @@
 import { ChangeEvent, useCallback, useMemo, useRef, useState } from "react";
 
+import styles from "./styles.module.css"
+
 import { TableHeadersType } from "@/components/table/types";
 
 import useFetchProducts from "@/hooks/useFetchProducts"
@@ -65,6 +67,13 @@ const SearchFieldContainer = () => {
 
     return (
         <Filters.SearchField 
+            classes={
+                {
+                    table: {
+                        container: styles.tableContainer
+                    }
+                }
+            }
             headers={headers}
             data={stockReportsList}
             hasItems={hasItems}
