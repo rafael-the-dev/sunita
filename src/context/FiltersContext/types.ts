@@ -9,7 +9,10 @@ export type FiltersContextType<T> = {
     url: string
 }
 
-export type PropsTypes = {
+export type PropsTypes<T> = {
+    autoFetch?: boolean;
     children: ReactNode,
+    list?: T;
+    refetchData?: FetchDataFuncType;
     url: string
 }
