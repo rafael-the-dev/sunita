@@ -1,0 +1,10 @@
+
+
+.productsIcon {
+    margin-right: .5rem;
+    transform: scale(1.6) translate(2px, 0px);
+}
+
+.expensesIcon {
+    transform: rotate(-90deg);
+}

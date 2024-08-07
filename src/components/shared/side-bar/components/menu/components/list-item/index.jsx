@@ -22,10 +22,11 @@ const ListItem = ({ icon, label, path }) => {
                 isSelected ? "bg-white text-primary-800" :  "text-white",
                 { [styles.listItemSelected]: isSelected }
                 )}>
-            <Link className="block text-current no-underline" href={path}>
+            <Link className="flex items-center text-current no-underline" href={path}>
+                { icon }
                 <Typography
                     component="span"
-                    className={classNames()}>
+                    className={classNames("ml-3")}>
                     { label }
                 </Typography>
             </Link>
