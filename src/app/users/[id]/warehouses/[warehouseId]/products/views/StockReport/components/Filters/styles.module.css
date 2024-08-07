@@ -1,0 +1,7 @@
+
+
+@media screen and (width >= 768px) {
+    .container {
+        max-height: 220px;
+    }
+}

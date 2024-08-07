@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useMemo, useRef, useState } from "react"
 import RadioGroup from "@mui/material/RadioGroup"
 
-import { getId } from "@/helpers/id"
+import styles from "./styles.module.css"
 
 import Filters from "@/components/shared/filters"
 import RadioButton from "@/components/radio-button"
@@ -42,7 +42,7 @@ const FiltersContainer = () => {
     ]))
 
     return (
-        <Filters>
+        <Filters className={styles.container}>
             <RadioGroup row>
                 {
                     filtersList.map(item => (
