@@ -69,11 +69,12 @@ const Booking = () => {
             <div className={classNames(styles.schedulerContainer, `overflow-y-auto`)}>
                 <Scheduler
                     dataSource={bookingsList}
+                    descriptionExpr="room.hourlyPrice"
                     endDateExpr="checkOut"
-                    textExpr="title"
                     allDayExpr="dayLong"
                     recurrenceRuleExpr="recurrence"
-                    startDateExpr="checkIn">
+                    startDateExpr="checkIn"
+                    textExpr="room.type">
                 </Scheduler>
             </div>
             <div className="flex flex-col items-stretch mt-8 px-2 md:px-4 sm:flex-row sm:justify-end">
