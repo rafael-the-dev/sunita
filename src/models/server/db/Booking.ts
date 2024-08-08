@@ -1,58 +1,42 @@
+import moment from "moment"
 
 import { BookingDBType } from "@/types/room"
 import { ConfigType } from "@/types/app-config-server"
-import { SimpleBookingType, BookingRoomType } from "@/types/room"
+import { SimpleBookingType } from "@/types/room"
 
 import { getId } from "@/helpers/id"
+import { toISOString } from "@/helpers/date"
 import getBookingProxy from "../proxy/booking"
+import { getBookings, isBookingAvailable } from "@/helpers/booking"
+
+import Error404 from "@/errors/server/404Error"
+import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
 import Guest from "./Guest"
 import Room from "./Room"
 
 type GetAllPropsType = {
-    filter?: Object
+    filters?: {
+        $match: {[key: string]: string | Object }
+    }[]
 }
 
 class Booking {
-    static async getAll({ filter }: GetAllPropsType, { mongoDbConfig, user }: ConfigType) {
-        const  { storeId }  = user.stores[0]
-
-        const bookings = await mongoDbConfig
-            .collections
-            .WAREHOUSES
-            .aggregate(
-                [
-                    {
-                        $match: {
-                            id: storeId
-                        }
-                    },
-                    {
-                        $match: filter ?? {}
-                    },
-                    {
-                        $unwind: "$rooms-booking"
-                    },
-                    {
-                        $group: {
-                            _id: "$rooms-booking.id",
-                            checkIn: { $first: "$rooms-booking.checkIn" },
-                            checkOut: { $first: "$rooms-booking.checkOut" },
-                            id: { $first: "$rooms-booking.id" },
-                            payment: { $first: "$rooms-booking.payment" },
-                            room: { $first: "$rooms-booking.room" },
-                            type: { $first: "$rooms-booking.type" },
-                            totalPrice: { $first: "$rooms-booking.totalPrice" }
-                        }
-                    }
-                ]
-            )
-            .toArray() as BookingRoomType[];
-
-        return bookings
+    static async getAll({ filters }: GetAllPropsType, config: ConfigType) {
+        return await getBookings({ filters }, config)
     }
 
-    static async register(clientBooking: SimpleBookingType, { mongoDbConfig, user }: ConfigType) {
+    static async get({ filters }: GetAllPropsType, config: ConfigType) {
+        const bookings = await getBookings({ filters }, config)
+        
+        if(bookings.length === 0) throw new Error404("Booking not found");
+
+        return bookings[0];
+    }
+
+    static async register(clientBooking: SimpleBookingType, config: ConfigType) {
+        const { mongoDbConfig, user } = config;
+
         const id = getId();
         const  { storeId }  = user.stores[0];
 
@@ -71,22 +55,26 @@ class Booking {
                     "rooms.id": room.id
                 }
             }, 
-            { mongoDbConfig, user }
-        )
+            config
+        );
+        
+        const isAvailable = await isBookingAvailable(clientBooking, config)
+        
+        if(!isAvailable) throw new InvalidArgumentError("Room not available, It is already booked.");
 
         try {
             const booking: BookingDBType = {
                 checkIn: null,
                 checkOut: null,
-                date: "",
+                date: toISOString(moment(checkIn)),
                 guest: guest.document.number,
                 id, 
                 payment: null,
                 room: selectedRooom,
                 type: null,
                 totalPrice: 0
-            }
-
+            };
+            
             const bookingProxy = getBookingProxy(booking, totalPrice);
 
             bookingProxy.checkIn = checkIn;
@@ -94,7 +82,7 @@ class Booking {
             bookingProxy.type = type;
             bookingProxy.payment = payment
             
-            await Guest.register(guest, { mongoDbConfig, user });
+            await Guest.register(guest, config);
 
             await mongoDbConfig
                 .collections
