@@ -1,39 +1,39 @@
-import Menu from "@mui/material/TextField";
-import MenuItem from "@mui/material/MenuItem";
+import { ChangeEvent, useMemo } from "react";
 import classNames from "classnames";
 
 import styles from "./styles.module.css";
 
-const Categories = () => {
-    const list = [
-        {
-            label: "T-shirt",
-            value: "T-SHIRT"
-        },
-        {
-            label: "Trouser",
-            value: "TROUSER"
-        },
-        {
-            label: "Sneacker",
-            value: "SNEACKER"
-        }
-    ];
+import { PRODUCTS_CATEGORIES } from "@/types/product"
+
+import Select from "../combobox"
+
+type PropsType = {
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void,
+    value: PRODUCTS_CATEGORIES
+}
+
+const Categories = (props: PropsType) => {
+
+    const list = useMemo(
+        () => Object
+            .values(PRODUCTS_CATEGORIES)
+            .map(
+                category => (
+                    {
+                        label: category,
+                        value: category
+                    }
+                )
+            ),
+        []
+    );
 
     return (
-        <Menu 
+        <Select 
+            { ...props }
             className={classNames(styles.formInput)}
-            select>
-            {
-                list.map(item => (
-                    <MenuItem 
-                        key={item.value}
-                    >
-                        { item.label }
-                    </MenuItem>
-                ))
-            }
-        </Menu>
+            list={list}
+        />
     );
 };
 
