@@ -6,10 +6,10 @@ type PropsType = {
     title: string
 }
 
-const CategoryContainer = ({ children, title }: PropsType) => {
+const FieldsetContainer = ({ children, title }: PropsType) => {
     return (
-        <fieldset>
-            <Title>
+        <fieldset className="flex flex-col items-stretch mt-6">
+            <Title className="mb-4">
                 { title }
             </Title>
             { children }
@@ -17,4 +17,4 @@ const CategoryContainer = ({ children, title }: PropsType) => {
     )
 }
 
-export default CategoryContainer
+export default FieldsetContainer
