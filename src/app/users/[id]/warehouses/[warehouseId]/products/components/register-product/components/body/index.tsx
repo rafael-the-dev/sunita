@@ -10,6 +10,8 @@ import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
 import { ProductInfoType, ProductType } from "@/types/product";
 
+import { ProductFormContext } from "./context";
+
 import Collapse from "@/components/shared/collapse"
 import Categories from "@/components/shared/categories";
 import SubmitButton from "@/components/shared/submit-button";
@@ -22,6 +24,7 @@ type FormstateType = {
 const Body = () => {
     const { dialog, isLoading } = useContext(AppContext);
     const { credentials, user } = useContext(LoginContext)
+    const { changeCategory, input } = useContext(ProductFormContext)
 
     const isFirstRender = useRef(true);
     const formRef = useRef<HTMLFormElement | null>(null);
@@ -107,7 +110,10 @@ const Body = () => {
                         placeholder="Expires in"
                         label="Expires in"
                     />
-                    <Categories />
+                    <Categories 
+                        { ...input.category }
+                        onChange={changeCategory}
+                    />
                 </div>
                 <Collapse
                     classes={{ root: "border border-primary-300 border-solid rounded-md" }}
