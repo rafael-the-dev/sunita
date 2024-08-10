@@ -1,7 +1,6 @@
 
 import classNames from "classnames"
 
-import Collapse from "../Collapse"
 import Container from "../CategoryContainer"
 import DateInput from "@/components/date"
 import Row from "@/components/Form/RegisterUser/components/Row"

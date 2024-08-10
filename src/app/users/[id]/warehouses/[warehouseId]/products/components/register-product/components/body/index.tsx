@@ -1,21 +1,24 @@
 import { useContext, useEffect, useRef } from "react";
 import { useFormState } from "react-dom";
+import currency from "currency.js";
 import classNames from "classnames";
 
 import TextField from "@mui/material/TextField";
 
 import styles from "./styles.module.css";
 
+import { ProductInfoType, ProductType, PRODUCTS_CATEGORIES } from "@/types/product";
+
 import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
-import { ProductInfoType, ProductType } from "@/types/product";
-
 import { ProductFormContext } from "./context";
 
-import Collapse from "@/components/shared/collapse"
 import Categories from "@/components/shared/categories";
+import CarCategory from "./components/Car"
+import ExpirableProducts from "./components/ExpirableProducts";
+import Price from "./components/Price"
+import Row from "@/components/Form/RegisterUser/components/Row"
 import SubmitButton from "@/components/shared/submit-button";
-import currency from "currency.js";
 
 type FormstateType = {
 
@@ -52,7 +55,7 @@ const Body = () => {
 
         const product: ProductType = {
             barcode: formData.get("barcode-input"),
-            category: "t-shirt",
+            category: input.category.value,
             id: "123456789",
             name: formData.get("name-input"),
             purchasePrice: currency(formData.get("purchase-price-input")).value,
@@ -91,52 +94,27 @@ const Body = () => {
             className={classNames(styles.form, `flex flex-col justify-between`)}
             ref={formRef}>
             <div className={classNames(styles.formContent, styles.spacing, `grow overflow-y-auto`)}>
-                <div className="md:flex justify-between flex-wrap">
+                <Row>
                     <TextField
-                        className={classNames(styles.formInput)}
+                        className="mb-0 w-full sm:w-1/2"
                         name="name-input"
                         placeholder="Name"
                         label="Name"
                         required
                     />
-                    <TextField
-                        className={classNames(styles.formInput)}
-                        name="barcode-input"
-                        placeholder="Barcode"
-                        label="Barcode"
-                    />
-                    <TextField
-                        className={classNames(styles.formInput)}
-                        placeholder="Expires in"
-                        label="Expires in"
-                    />
                     <Categories 
                         { ...input.category }
+                        className="mb-0 w-full sm:w-1/2"
                         onChange={changeCategory}
                     />
-                </div>
-                <Collapse
-                    classes={{ root: "border border-primary-300 border-solid rounded-md" }}
-                    highlightOnOpen
-                    open
-                    title="Price">
-                    <div className="md:flex justify-between flex-wrap rounded">
-                        <TextField
-                            className={classNames(styles.formInput)}
-                            name="purchase-price-input"
-                            placeholder="Purchase price"
-                            label="Purchase price"
-                            required
-                        />
-                        <TextField
-                            className={classNames(styles.formInput)}
-                            name="sell-price-input"
-                            placeholder="Sell price"
-                            label="Sell price"
-                            required
-                        />
-                    </div>
-                </Collapse>
+                </Row>
+                <Price />
+                {
+                    {
+                        [PRODUCTS_CATEGORIES.CARS]: <CarCategory />,
+                        [PRODUCTS_CATEGORIES.EXPIRABLE]: <ExpirableProducts />
+                    }[input.category.value]
+                }
             </div>
             <div className={classNames("flex justify-end mt-4", styles.spacing)}>
                 <SubmitButton>
@@ -148,3 +126,18 @@ const Body = () => {
 };
 
 export default Body
+
+/**
+ * 
+                    <TextField
+                        className={classNames(styles.formInput)}
+                        name="barcode-input"
+                        placeholder="Barcode"
+                        label="Barcode"
+                    />
+                    <TextField
+                        className={classNames(styles.formInput)}
+                        placeholder="Expires in"
+                        label="Expires in"
+                    />
+ */
