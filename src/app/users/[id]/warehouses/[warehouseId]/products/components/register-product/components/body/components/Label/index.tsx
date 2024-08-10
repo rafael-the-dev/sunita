@@ -12,7 +12,7 @@ const Label = ({ children, className }: PropsType) => {
     return (
         <Typography 
             component="label"
-            className={classNames(className, "font-semibold mb-4 text-primary-600 text-sm")}>
+            className={classNames(className, "block font-semibold mb-3 text-primary-600 text-sm")}>
             { children }
         </Typography>
     )
