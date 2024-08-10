@@ -1,14 +1,16 @@
 import { ReactNode } from "react"
+import classNames from "classnames"
 import Title from "../Title"
 
 type PropsType = {
     children: ReactNode,
+    className?: string,
     title: string
 }
 
-const FieldsetContainer = ({ children, title }: PropsType) => {
+const FieldsetContainer = ({ children, className, title }: PropsType) => {
     return (
-        <fieldset className="flex flex-col items-stretch mt-6">
+        <fieldset className={classNames(className, "flex flex-col items-stretch mt-6")}>
             <Title className="mb-4">
                 { title }
             </Title>
