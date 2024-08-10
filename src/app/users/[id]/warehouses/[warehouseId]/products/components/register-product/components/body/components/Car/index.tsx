@@ -7,7 +7,7 @@ import Label from "../Label"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import TextField from "@/components/Textfield"
 
-const CarProductsContainer = () => {
+const CarDetailsContainer = () => {
 
     return (
         <Container 
@@ -50,4 +50,4 @@ const CarProductsContainer = () => {
     )
 }
 
-export default CarProductsContainer
+export default CarDetailsContainer
