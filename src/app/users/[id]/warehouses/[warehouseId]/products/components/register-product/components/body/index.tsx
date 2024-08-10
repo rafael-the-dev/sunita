@@ -3,8 +3,6 @@ import { useFormState } from "react-dom";
 import currency from "currency.js";
 import classNames from "classnames";
 
-import TextField from "@mui/material/TextField";
-
 import styles from "./styles.module.css";
 
 import { ProductInfoType, ProductType, PRODUCTS_CATEGORIES } from "@/types/product";
@@ -14,11 +12,14 @@ import { LoginContext } from "@/context/LoginContext";
 import { ProductFormContext } from "./context";
 
 import Categories from "@/components/shared/categories";
-import CarCategory from "./components/Car"
+import CarDetails from "./components/Car"
+import ClothDetails from "./components/Cloth";
 import ExpirableProducts from "./components/ExpirableProducts";
+import FurnitureDetails from "./components/Furniture";
 import Price from "./components/Price"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import SubmitButton from "@/components/shared/submit-button";
+import TextField from "@/components/Textfield"
 
 type FormstateType = {
 
@@ -111,10 +112,20 @@ const Body = () => {
                 <Price />
                 {
                     {
-                        [PRODUCTS_CATEGORIES.CARS]: <CarCategory />,
-                        [PRODUCTS_CATEGORIES.EXPIRABLE]: <ExpirableProducts />
+                        [PRODUCTS_CATEGORIES.CARS]: <CarDetails />,
+                        [PRODUCTS_CATEGORIES.CLOTH]: <ClothDetails />,
+                        [PRODUCTS_CATEGORIES.EXPIRABLE]: <ExpirableProducts />,
+                        [PRODUCTS_CATEGORIES.FURNITURE]: <FurnitureDetails />
                     }[input.category.value]
                 }
+                <Row>
+                    <TextField 
+                        className="mt-4 mb-0 w-full"
+                        label="Description"
+                        multiline
+                        minRows={4}
+                    />
+                </Row>
             </div>
             <div className={classNames("flex justify-end mt-4", styles.spacing)}>
                 <SubmitButton>
