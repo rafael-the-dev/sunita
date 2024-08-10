@@ -32,7 +32,7 @@ const Categories = (props: PropsType) => {
     return (
         <Select 
             { ...props }
-            className={classNames(styles.formInput)}
+            className={classNames(styles.formInput, props.className)}
             label="Categories"
             list={list}
         />
