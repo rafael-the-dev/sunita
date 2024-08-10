@@ -8,6 +8,7 @@ import { PRODUCTS_CATEGORIES } from "@/types/product"
 import Select from "../combobox"
 
 type PropsType = {
+    className?: string,
     onChange: (e: ChangeEvent<HTMLInputElement>) => void,
     value: PRODUCTS_CATEGORIES
 }
@@ -32,6 +33,7 @@ const Categories = (props: PropsType) => {
         <Select 
             { ...props }
             className={classNames(styles.formInput)}
+            label="Categories"
             list={list}
         />
     );
