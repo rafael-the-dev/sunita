@@ -28,7 +28,12 @@ type FormstateType = {
 const Body = () => {
     const { dialog, isLoading } = useContext(AppContext);
     const { credentials, user } = useContext(LoginContext)
-    const { changeCategory, input } = useContext(ProductFormContext)
+    const { 
+        changeCategory, 
+        changeName,
+        changePrice,
+        input 
+    } = useContext(ProductFormContext)
 
     const isFirstRender = useRef(true);
     const formRef = useRef<HTMLFormElement | null>(null);
@@ -97,10 +102,12 @@ const Body = () => {
             <div className={classNames(styles.formContent, styles.spacing, `grow overflow-y-auto`)}>
                 <Row>
                     <TextField
+                        { ...input.name }
                         className="mb-0 w-full sm:w-1/2"
                         name="name-input"
                         placeholder="Name"
                         label="Name"
+                        onChange={changeName}
                         required
                     />
                     <Categories 
