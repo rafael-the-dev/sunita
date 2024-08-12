@@ -33,7 +33,7 @@ export const isValidYear = (value: string) => {
  */
 export const isValidMake =  (value: string) => {
     const pattern = /^[a-zA-Z0-9\s\-]+$/;
-    return pattern.test(value)
+    return pattern.test(value) && Boolean(value.trim())
 };
 
 /**
@@ -44,7 +44,7 @@ export const isValidMake =  (value: string) => {
  */
 export const isValidModel =  (value: string) => {
     const pattern =/^[a-zA-Z0-9\s\-]+$/;
-    return pattern.test(value)
+    return pattern.test(value) && Boolean(value.trim())
 };
 
 /**
