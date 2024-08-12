@@ -2,21 +2,11 @@ import * as React from "react"
 import currency from "currency.js"
 
 import { PRODUCTS_CATEGORIES } from "@/types/product"
+import { ProductInputsType } from "../types"
 
-import { defaultInputField } from "@/config/input"
+import { defaultProduct } from "../values"
 
 import { isValidCategory, isValidColor, isValidName, isValidPurchasePrice, isValidSellPrice } from "@/validation/product"
-
-export const defaultProduct = {
-    category: { ...defaultInputField, value: PRODUCTS_CATEGORIES.EXPIRABLE },
-    color: structuredClone(defaultInputField ),
-    description: structuredClone(defaultInputField ),
-    name: structuredClone(defaultInputField ),
-    price: {
-        purchase: structuredClone(defaultInputField),
-        sell: structuredClone(defaultInputField)
-    }
-}
 
 const setPurchasePrice = (value: string, product: typeof defaultProduct) => {
     const hasError = !isValidPurchasePrice(value, currency(product.price.sell.value).value)
@@ -35,16 +25,14 @@ const setSellPrice = (value: string, product: typeof defaultProduct) => {
 }
 
 
-export const useProduct = () => {
-    const [ product, setProduct ] = React.useState(defaultProduct)
-
+const useProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
     const changeHelper = React.useCallback(
         (prop: "category" | "color" | "description" | "name", value: string, fn: (value: string) => boolean) => {
             const hasError = !fn(value)
 
-            setProduct(
-                product => ({
-                    ...product,
+            setInput(
+                input => ({
+                    ...input,
                     [prop]: {
                         error: hasError,
                         helperText: hasError ? "Invalid value" : "",
@@ -53,7 +41,7 @@ export const useProduct = () => {
                 })
             )
         },
-        []
+        [ setInput ]
     )
 
     const changeCategory = React.useCallback(
@@ -83,31 +71,32 @@ export const useProduct = () => {
         (prop: "purchase" | "sell") => (e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target
 
-            setProduct(
-                product => {
-                    const productClone = structuredClone(product)
+            setInput(
+                input => {
+                    const inputClone = structuredClone(input)
 
                     if(prop === "purchase") {
-                        setPurchasePrice(value, productClone)
-                        setSellPrice(productClone.price.sell.value, productClone)
+                        setPurchasePrice(value, inputClone)
+                        setSellPrice(inputClone.price.sell.value, inputClone)
                     } else {
-                        setSellPrice(value, productClone)
-                        setPurchasePrice(productClone.price.purchase.value, productClone)
+                        setSellPrice(value, inputClone)
+                        setPurchasePrice(inputClone.price.purchase.value, inputClone)
                     }   
                     
-                    return productClone
+                    return inputClone
                 }
             )
         },
-        []
+        [ setInput ]
     )
 
     return {
-        product,
         changeCategory,
         changeColor,
         changeDescription,
         changeName,
-        changePrice
+        changePrice,
     }
 }
+
+export default useProduct

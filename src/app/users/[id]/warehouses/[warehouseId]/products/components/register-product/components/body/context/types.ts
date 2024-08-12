@@ -1,29 +1,21 @@
 import { ChangeEvent, ReactNode } from "react"
 
-import { PRODUCTS_CATEGORIES } from "@/types/product"
-
-import { defaultInputField } from "@/config/input"
-
-import { defaultExpirableProduct } from "./hooks/useExpirableProduct"
-import { defaultFunicture } from "./hooks/useFurniture"
-import { defaultProduct } from "./hooks/index"
-import { defaultCarInput } from "./hooks/useCar"
-
-type InputField = typeof defaultInputField
+import {
+    defaultInput
+} from "./values"
 
 type ChangeHandler = (e: ChangeEvent<HTMLInputElement>) => void;
+
+export type ProductInputsType = typeof defaultInput
 
 export type ContextType = {
     changeCategory: ChangeHandler,
     changeColor: ChangeHandler;
     changeDescription: ChangeHandler;
-    input: typeof defaultProduct & {
-        car: typeof defaultCarInput,
-        expirable: typeof defaultExpirableProduct;
-        furnicture: typeof defaultFunicture
-    },
+    input: typeof defaultInput,
     changeName: ChangeHandler;
     changePrice: (prop: "purchase" | "sell") => ChangeHandler;
+    reset: () => void;
 
     // CAR
     changeEngineNumber: ChangeHandler;

@@ -1,17 +1,14 @@
 import * as React from "react"
 
-import { defaultInputField } from "@/config/input"
+import { ProductInputsType } from "../types"
+
+import { defaultExpirableProduct } from "../values"
 
 import { 
     isValidBestBefore,
     isValidManufactureDate 
 } from "@/validation/product"
-
-export const defaultExpirableProduct = {
-    barcode: structuredClone(defaultInputField),
-    expirationDate: structuredClone(defaultInputField),
-    manufactureDate: structuredClone(defaultInputField)
-}   
+ 
 
 const setBestBefore = (value: string, product: typeof defaultExpirableProduct) => {
     const hasError = !isValidBestBefore(value, product.manufactureDate.value);
@@ -30,34 +27,15 @@ const setManufactureDate = (value: string, product: typeof defaultExpirableProdu
 }
 
 
-export const useExpirableProduct = () => {
-    const [ expirableProduct, setExpirableProduct ] = React.useState(defaultExpirableProduct)
-
-    /*const changeHelper = React.useCallback(
-        (prop: "barcode" | "expirationDate" | "manufactureDate", value: string, fn: (value: string) => boolean) => {
-            const hasError = !fn(value)
-
-            setExpirableProduct(
-                product => ({
-                    ...product,
-                        [prop]: {
-                            error: hasError,
-                            helperText: hasError ? "Invalid value" : "",
-                            value
-                        }
-                    }
-                )
-            )
-        },
-        []
-    )*/
+const useExpirableProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
 
     const changeDate = React.useCallback(
         (prop: "expiration" | "manufacture", value: string, fn: (value: string, date: string) => boolean) => {
-            setExpirableProduct(
-                product => {
+            setInput(
+                input => {
 
-                    const productClone = { ...product };
+                    const inputClone = { ...input }
+                    const productClone = inputClone.expirable;
 
                     if(prop === "expiration") {
                         setBestBefore(value, productClone)
@@ -67,12 +45,12 @@ export const useExpirableProduct = () => {
                         setBestBefore(productClone.expirationDate.value, productClone)
                     }
 
-                    return productClone;
+                    return inputClone;
 
                 }
             )
         },
-        []
+        [ setInput ]
     )
 
     const changeBarcode = React.useCallback(
@@ -80,19 +58,22 @@ export const useExpirableProduct = () => {
             const { value } = e.target
             const hasError = !value.trim()
 
-            setExpirableProduct(
-                product => ({
-                    ...product,
-                        barcode: {
-                            error: hasError,
-                            helperText: hasError ? "Invalid value" : "",
-                            value
+            setInput(
+                input => ({
+                    ...input,
+                        expirable: {
+                            ...input.expirable,
+                            barcode: {
+                                error: hasError,
+                                helperText: hasError ? "Invalid value" : "",
+                                value
+                            }
                         }
                     }
                 )
             )
         },
-        [ ]
+        [ setInput ]
     )
 
     const changeExpirationDate = React.useCallback(
@@ -106,10 +87,10 @@ export const useExpirableProduct = () => {
     )
 
     return {
-        expirableProduct,
-
         changeBarcode,
         changeExpirationDate,
         changeManufactureDate
     }
 }
+
+export default useExpirableProduct

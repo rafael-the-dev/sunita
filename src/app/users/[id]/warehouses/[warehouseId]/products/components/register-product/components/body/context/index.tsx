@@ -1,21 +1,28 @@
-import { ChangeEvent, createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 
 import { ContextType, PropsType } from "./types";
 
-import { PRODUCTS_CATEGORIES } from "@/types/product";
-
-import { useCar } from "./hooks/useCar";
-import { useExpirableProduct } from "./hooks/useExpirableProduct"
-import { useFurniture } from "./hooks/useFurniture"
-import { useProduct } from "./hooks"
+import useCar from "./hooks/useCar";
+import useExpirableProduct from "./hooks/useExpirableProduct"
+import useFurniture from "./hooks/useFurniture"
+import useProduct  from "./hooks"
+import { defaultInput } from "./values";
 
 export const ProductFormContext = createContext<ContextType>({} as ContextType)
 
+
 export const ProductFormContextProvider = ({ children }: PropsType) => {
-    const { car, ...carMethods } = useCar()
-    const { expirableProduct, ...expirableProductMethods } = useExpirableProduct()
-    const { furnicture, ...furnictureMethods } = useFurniture()
-    const { product, ...productMethods } = useProduct()
+    const [ input, setInput ] = useState(defaultInput)
+
+    const carMethods = useCar(setInput)
+    const expirableProductMethods = useExpirableProduct(setInput)
+    const furnictureMethods = useFurniture(setInput)
+    const productMethods = useProduct(setInput)
+
+    const reset = useCallback(
+        () => setInput({ ...defaultInput }),
+        []
+    ) 
 
     return (
         <ProductFormContext.Provider
@@ -24,13 +31,8 @@ export const ProductFormContextProvider = ({ children }: PropsType) => {
                 ...expirableProductMethods,
                 ...furnictureMethods,
                 ...productMethods,
-                input: {
-                    ...product,
-                    car,
-                    expirable: expirableProduct,
-                    furnicture,
-
-                },
+                input,
+                reset
             }}>
             { children }
         </ProductFormContext.Provider>

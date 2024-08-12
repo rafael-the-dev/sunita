@@ -1,34 +1,21 @@
 import * as React from "react"
 
-import { defaultInputField } from "@/config/input"
+import { ProductInputsType } from "../types"
+
 import { isValidDimesions, isValidMaterial } from "@/validation/product/furniture"
 
-export const defaultFunicture = {
-    material: { ...defaultInputField },
-    dimensions: {
-        height: structuredClone(defaultInputField),
-        length: structuredClone(defaultInputField),
-        width: structuredClone(defaultInputField)
-    }
-}
-
-export const useFurniture = () => {
-    const [ furnicture, setFurniture ] = React.useState(
-        () => {
-            return defaultFunicture
-        }
-    )
-
+const useFurniture = (setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
     const changeDimensions = React.useCallback(
         (prop: "height" | "length" | "width") => (e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
 
-            setFurniture(furnicture => {
-                const furnictureClone = structuredClone(furnicture)
+            setInput(input => {
+                const inputClone = { ...input }
+                const furnictureClone = inputClone.furnicture
 
-                const height = prop === "height" ? value : furnicture.dimensions.height.value;
-                const length = prop === "length" ? value : furnicture.dimensions.length.value;
-                const width = prop === "width" ? value : furnicture.dimensions.width.value;
+                const height = prop === "height" ? value : furnictureClone.dimensions.height.value;
+                const length = prop === "length" ? value : furnictureClone.dimensions.length.value;
+                const width = prop === "width" ? value : furnictureClone.dimensions.width.value;
 
                 const hasError = !isValidDimesions(length, width, height);
 
@@ -36,47 +23,46 @@ export const useFurniture = () => {
                 furnictureClone.dimensions.length.error = hasError;
                 furnictureClone.dimensions.width.error = hasError;
 
-                return {
-                    ...furnictureClone,
-                    dimensions: {
-                        ...furnictureClone.dimensions,
-                        [prop]: {
-                            error: hasError,
-                            helperText: hasError ? "Invalid value": "",
-                            value
-                        }
+                furnictureClone.dimensions = {
+                    ...furnictureClone.dimensions,
+                    [prop]: {
+                        error: hasError,
+                        helperText: hasError ? "Invalid value": "",
+                        value
                     }
                 }
+
+                return inputClone
             })
         },
-        []
+        [ setInput ]
     )
 
     const changeMaterial = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
 
-            setFurniture(furnicture => {
+            setInput(input => {
+                const inputClone = { ...input }
+
                 const hasError = !isValidMaterial(value) || !value.trim();
 
-                return {
-                    ...furnicture,
-                    material: {
-                        error: hasError,
-                        helperText: hasError ? "Invalid Material": "",
-                        value
-                    }
+                inputClone.furnicture.material = {
+                    error: hasError,
+                    helperText: hasError ? "Invalid Material": "",
+                    value
                 }
+
+                return inputClone
             })
         },
-        []
+        [ setInput ]
     )
 
     return {
-        furnicture,
-
-        //methods
         changeDimensions,
         changeMaterial
     }
 }
+
+export default useFurniture

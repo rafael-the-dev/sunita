@@ -1,8 +1,6 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from "react"
 
-import { CAR_ENGINE_TYPE, CAR_TRANSMISSION } from "@/types/product"
-
-import { defaultInputField } from "@/config/input"
+import { ProductInputsType } from "../types"
 
 import { 
     isValidEngineNumber, isValidEngineType,
@@ -11,61 +9,53 @@ import {
     isValidYear
 } from "@/validation/product/car"
 
-export const defaultCarInput = {
-    color: structuredClone(defaultInputField),
-    engine: {
-        number: structuredClone(defaultInputField),
-        type: { ...defaultInputField, value: CAR_ENGINE_TYPE.DIESEL }
-    },
-    make: structuredClone(defaultInputField),
-    model: structuredClone(defaultInputField),
-    transmission: { ...defaultInputField, value: CAR_TRANSMISSION.AUTOMATIC },
-    year: structuredClone(defaultInputField),
-}
-
-export const useCar = () => {
-    const [ car, setCar ] = useState(defaultCarInput)
-
+const useCar = (setInput: Dispatch<SetStateAction<ProductInputsType>>) => {
     const changeEngine = useCallback(
         (prop: "number" | "type", value: string, fn: (value: string) => boolean) => {
 
             const hasError = !fn(value)
 
-            setCar(
-                car => ({
-                    ...car,
-                    engine: {
-                        ...car.engine,
-                        [prop]: {
-                            error: hasError,
-                            helperText: hasError ? "Invalid value" : "",
-                            value
-                        }
-                    }}
+            setInput(
+                input => ({
+                    ...input,
+                   car: {
+                        ...input.car,
+                        engine: {
+                            ...input.car.engine,
+                            [prop]: {
+                                error: hasError,
+                                helperText: hasError ? "Invalid value" : "",
+                                value
+                            }
+                        }}
+                   }
                 )
             )
 
         },
-        []
+        [ setInput ]
     )
 
     const changeHandler = useCallback(
         (prop: "make" | "model" | "transmission" | "year", value: string, fn: (value: string) => boolean) => {
             const hasError = !fn(value)
 
-            setCar(
-                car => ({
-                    ...car,
-                        [prop]: {
-                            error: hasError,
-                            helperText: hasError ? "Invalid value" : "",
-                            value
+            setInput(
+                input => ({
+                    ...input,
+                        car: {
+                            ...input.car,
+                            [prop]: {
+                                error: hasError,
+                                helperText: hasError ? "Invalid value" : "",
+                                value
+                            }
                         }
                     }
                 )
             )
         },
-        []
+        [ setInput ]
     )
 
     const changeEngineNumber = useCallback(
@@ -99,7 +89,6 @@ export const useCar = () => {
     )
 
     return {
-        car,
         changeEngineNumber,
         changeEngineType,
         changeMake, 
@@ -108,3 +97,5 @@ export const useCar = () => {
         changeYear
     }
 }
+
+export default useCar
