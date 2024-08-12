@@ -1,3 +1,5 @@
+import currency from "currency.js";
+import moment from "moment"
 
 import { CAR_ENGINE_TYPE, CAR_TRANSMISSION } from "@/types/product";
 
@@ -20,10 +22,20 @@ export const isValidEngineNumber = (value: string) => {
     return pattern.test(value)
 };
 
-// Year of Manufacture: A four-digit year
+/**
+ * Year of Manufacture: A four-digit year and It must not be greater than current year
+ * @param value - string
+ * @returns boolean
+ */
 export const isValidYear = (value: string) => {
     const pattern: RegExp = /^(19|20)\d{2}$/;
-    return pattern.test(value)
+
+    if(!pattern.test(value)) return false
+
+    const currentYear = new Date(Date.now()).getFullYear()
+    const year = currency(value).value
+
+    return year <= currentYear
 };
 
 /**
