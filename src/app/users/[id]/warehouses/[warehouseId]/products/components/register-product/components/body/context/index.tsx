@@ -4,48 +4,29 @@ import { ContextType, PropsType } from "./types";
 
 import { PRODUCTS_CATEGORIES } from "@/types/product";
 
+import { useCar } from "./hooks/useCar";
+import { useFurniture } from "./hooks/useFurniture"
+import { useProduct } from "./hooks"
+
 export const ProductFormContext = createContext<ContextType>({} as ContextType)
 
-const defaultInputField = {
-    error: false,
-    helperText: "",
-    value: ""
-}
-
-const defaultInput = {
-    category: { ...defaultInputField, value: PRODUCTS_CATEGORIES.EXPIRABLE }
-}
-
 export const ProductFormContextProvider = ({ children }: PropsType) => {
-    const [ input, setInput ] = useState(defaultInput)
-
-    const setInputHelper = useCallback(
-        (key: string, value: typeof defaultInputField) => {
-            setInput(
-                input => (
-                    {
-                        ...input,
-                        [key]: value
-                    }
-                )
-            )
-        },
-        []
-    )
-
-    const changeCategory = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            setInputHelper("category", { ...defaultInputField, value: e.target.value as PRODUCTS_CATEGORIES })
-        },
-        [ setInputHelper ]
-    )
+    const { car, ...carMethods } = useCar()
+    const { furnicture, ...furnictureMethods } = useFurniture()
+    const { product, ...productMethods } = useProduct()
 
     return (
         <ProductFormContext.Provider
             value={{
-                input,
+                ...carMethods,
+                ...furnictureMethods,
+                ...productMethods,
+                input: {
+                    ...product,
+                    car,
+                    furnicture,
 
-                changeCategory
+                },
             }}>
             { children }
         </ProductFormContext.Provider>
