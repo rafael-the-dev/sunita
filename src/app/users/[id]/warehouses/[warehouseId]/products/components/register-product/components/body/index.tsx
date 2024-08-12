@@ -31,7 +31,7 @@ const Body = () => {
     const { 
         changeCategory, 
         changeName,
-        changePrice,
+        changeDescription,
         input 
     } = useContext(ProductFormContext)
 
@@ -127,10 +127,12 @@ const Body = () => {
                 }
                 <Row>
                     <TextField 
+                        { ...input.description }
                         className="mt-4 mb-0 w-full"
                         label="Description"
                         multiline
                         minRows={4}
+                        onChange={changeDescription}
                     />
                 </Row>
             </div>
