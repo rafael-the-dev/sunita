@@ -26,7 +26,7 @@ export const isValidMaterial = (value: string) => {
  * @returns 
  */
 export const isValidDimesions = (length: string, width: string, height: string) => {
-    const pattern: RegExp = /^\d{1,3}(cm|in|m)?\s*x\s*\d{1,3}(cm|in|m)?\s*x\s*\d{1,3}(cm|in|m)?$/;
+    const pattern: RegExp = /^\d{1,3}(cm|in)?\s*x\s*\d{1,3}(cm|in)?\s*x\s*\d{1,3}(cm|in)?$/;
     return pattern.test(`${length}x${width}x${height}`)
 }
 
