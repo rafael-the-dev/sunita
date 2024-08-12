@@ -1,4 +1,42 @@
 import currency from "currency.js";
+import moment from "moment"
+
+import { PRODUCTS_CATEGORIES } from "@/types/product";
+
+export const isValidBestBefore = (date: string, manufactureDate: string) => {
+    const bestBefore = moment(date);
+    const isValid = bestBefore.isValid();
+
+    if(!isValid) return false;
+
+    const manufacturedDate = moment(manufactureDate)
+
+    const isAfterManufactureDate = bestBefore.isAfter(manufacturedDate);
+    const isAfterToday = bestBefore.isAfter(moment(moment.now()));
+
+    return isAfterManufactureDate && isAfterToday;
+}
+
+export const isValidManufactureDate = (date: string, bestBefore: string) => {
+    const manufactureDate = moment(date);
+    const isValid = manufactureDate.isValid();
+
+    if(!isValid) return false;
+
+    const isBeforeBestBefore = manufactureDate.isBefore(moment(bestBefore));
+
+    return isBeforeBestBefore;
+}
+
+
+/**
+ * 
+ * @param value - Product.PRODUCTS_CATEGORIES
+ * @returns boolean
+ */
+export const isValidCategory = (value: PRODUCTS_CATEGORIES) => Object
+    .values(PRODUCTS_CATEGORIES)
+    .includes(value);
 
 /**
  * This supports either a 3 or 6 character hexadecimal color code (e.g., #FFF, #FFFFFF) or common color names (e.g., "Red", "Blue").
