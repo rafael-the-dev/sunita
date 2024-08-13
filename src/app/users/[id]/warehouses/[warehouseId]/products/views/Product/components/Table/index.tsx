@@ -7,6 +7,7 @@ import { TableHeadersType } from "@/components/table/types";
 import { AppContext } from "@/context/AppContext";
 import { ProductsPageContext } from "../../../../context"
 import { ProductFilterContext } from "@/context/ProductFilterContext";
+import { ProductFormContextProvider } from "../../../../components/register-product/components/body/context";
 
 import DialogBody from "../../../../components/register-product/components/body";
 import Status from "@/components/shared/Status";
@@ -105,7 +106,11 @@ const ProductsTableContainer = () => {
     const rowClickHandler = React.useCallback((row: ProductInfoType) => () => {
         setDialog({
             header: { title: "Update product" },
-            body: <DialogBody />,
+            body: (
+                <ProductFormContextProvider>
+                    <DialogBody />
+                </ProductFormContextProvider>
+            ),
             payload: row
         });
     }, [ setDialog ]);
