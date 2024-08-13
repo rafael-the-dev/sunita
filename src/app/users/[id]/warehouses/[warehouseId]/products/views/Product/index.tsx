@@ -24,14 +24,31 @@ enum DIALOG_TYPES {
     REGIST_PRODUCT = "regist-product"
 }
 
-const ProductsView = () => {
+
+const CategoriesContainer = () => {
     const { credentials } = React.useContext(LoginContext)
     const { categories } = React.useContext(ProductsPageContext)
+
+    console.log(categories, credentials)
+
+    return (
+        <Categories 
+            list={categories?.data}
+            refetchData={categories?.fetchData}
+            url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`} 
+        />
+    )
+}
+
+const ProductsView = () => {
+    const { credentials } = React.useContext(LoginContext)
+    const { categories, products } = React.useContext(ProductsPageContext)
     const { setDialog } = React.useContext(AppContext);
     const { setUniqueSearchParams } = React.useContext(ProductFilterContext);
     
     const searchParams = useSearchParams()
     const reRendersCounter = React.useRef(0)
+    const categoriesRef = React.useRef<typeof categories>(null)
 
     const changeHandler = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => setUniqueSearchParams("search-key", e.target.value), 
@@ -62,14 +79,12 @@ const ProductsView = () => {
                 },
                 body: (
                     <Categories 
-                        list={categories.data}
-                        refetchData={categories.fetchData}
                         url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/products/categories`} 
                     />
                 )
             })
         }, 
-        [ categories, credentials, setDialog ]
+        [ credentials, setDialog ]
     )
 
     const openRegisterProductDialog = React.useCallback(
@@ -94,7 +109,7 @@ const ProductsView = () => {
     React.useEffect(
         () => {
             if(dialogQueryString === DIALOG_TYPES.ADD_STOCK) openAddStockDialog();
-            else if(dialogQueryString === DIALOG_TYPES.CATEGORIES) openCategoriesDialog();
+            if(dialogQueryString === DIALOG_TYPES.CATEGORIES) openCategoriesDialog()
             else if(dialogQueryString === DIALOG_TYPES.REGIST_PRODUCT) openRegisterProductDialog()
         }, 
         [ dialogQueryString, openAddStockDialog, openCategoriesDialog, openRegisterProductDialog ]
@@ -118,6 +133,12 @@ const ProductsView = () => {
                 </div>
             </div>
             <div className="flex flex-col items-stretch justify-end sm:flex-row">
+                <Button 
+                    className="mb-3 sm:mb-0 sm:mr-3" 
+                    onClick={() => products.fetchData({})}
+                    variant="outlined">
+                    Fetch
+                </Button>
                 <Button 
                     className="mb-3 sm:mb-0 sm:mr-3" 
                     onClick={openDialogHandler(DIALOG_TYPES.CATEGORIES)}
