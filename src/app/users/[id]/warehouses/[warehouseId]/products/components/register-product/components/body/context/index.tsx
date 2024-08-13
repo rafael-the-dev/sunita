@@ -1,20 +1,33 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useContext, useState } from "react";
 import currency from "currency.js";
 
-import { ContextType, PropsType } from "./types";
-import { StoreProductType } from "@/types/product";
+import { AppContext } from "@/context/AppContext"
+import { ContextType, PropsType, ProductInputsType } from "./types";
+import { ProductInfoType, StoreProductType } from "@/types/product";
 
 
 import useCar from "./hooks/useCar";
 import useExpirableProduct from "./hooks/useExpirableProduct"
 import useFurniture from "./hooks/useFurniture"
 import useProduct  from "./hooks"
-import { defaultInput } from "./values";
+import { defaultInput, getDefaultProductValues } from "./values";
 
 export const ProductFormContext = createContext<ContextType>({} as ContextType)
 
 export const ProductFormContextProvider = ({ children }: PropsType) => {
-    const [ input, setInput ] = useState(structuredClone(defaultInput));
+    const { dialog } = useContext(AppContext);
+
+    const hasPayload = Boolean(dialog?.payload);
+
+    const [ input, setInput ] = useState(() => {
+        if(!hasPayload) return structuredClone(defaultInput);
+
+        const productPayload = dialog.payload as ProductInfoType;
+        
+        const product: ProductInputsType = getDefaultProductValues(productPayload);
+
+        return product;
+    });
 
     const carMethods = useCar(input, setInput);
     const expirableProductMethods = useExpirableProduct(input, setInput);
@@ -68,6 +81,7 @@ export const ProductFormContextProvider = ({ children }: PropsType) => {
                 ...expirableProductMethods,
                 ...furnictureMethods,
                 ...productMethods,
+                hasPayload,
                 input,
                 hasErrors,
                 reset,
