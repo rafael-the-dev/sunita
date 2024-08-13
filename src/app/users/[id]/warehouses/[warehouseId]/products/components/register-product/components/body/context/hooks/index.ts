@@ -4,10 +4,12 @@ import currency from "currency.js"
 import { PRODUCTS_CATEGORIES } from "@/types/product"
 import { ProductInputsType } from "../types"
 
-import { defaultProduct } from "../values"
+import { defaultInput, getDefaultProduct } from "../values"
 
 import { isValidCategory, isValidColor, isValidName, isValidPurchasePrice, isValidSellPrice } from "@/validation/product"
 import { hasError } from "./helper"
+
+const defaultProduct = getDefaultProduct()
 
 const setPrice = (error: boolean, helperText: string, value: string, prop: "purchase" | "sell", product: typeof defaultProduct) => {
     product.price[prop] = {

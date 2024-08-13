@@ -3,7 +3,7 @@ import * as React from "react"
 import { ProductInputsType } from "../types"
 import { PRODUCTS_CATEGORIES } from "@/types/product"
 
-import { defaultExpirableProduct } from "../values"
+import { getDefaultExpirableProduct } from "../values"
 
 import { 
     isValidBestBefore,
@@ -11,8 +11,7 @@ import {
 } from "@/validation/product"
 import { hasError } from "./helper"
  
-
-
+const defaultExpirableProduct = getDefaultExpirableProduct()
 
 const setBestBefore = (value: string, product: typeof defaultExpirableProduct) => {
     const hasError = !isValidBestBefore(value, product.manufactureDate.value);
