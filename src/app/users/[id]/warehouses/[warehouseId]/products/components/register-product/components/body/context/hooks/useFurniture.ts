@@ -1,10 +1,12 @@
 import * as React from "react"
 
 import { ProductInputsType } from "../types"
+import { PRODUCTS_CATEGORIES } from "@/types/product"
 
 import { isValidDimesions, isValidMaterial } from "@/validation/product/furniture"
+import { hasError } from "./helper"
 
-const useFurniture = (setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
+const useFurniture = (input: ProductInputsType, setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
     const changeDimensions = React.useCallback(
         (prop: "height" | "length" | "width") => (e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
@@ -59,9 +61,30 @@ const useFurniture = (setInput: React.Dispatch<React.SetStateAction<ProductInput
         [ setInput ]
     )
 
+    const isNotFurnictureCategory = PRODUCTS_CATEGORIES.FURNITURE !== input.category.value;
+
+    const hasErrors = () => isNotFurnictureCategory ? false : [
+            hasError(input.furnicture.material),
+            hasError(input.furnicture.dimensions.height)
+        ].find(error => error);
+
+    const toString = () => {
+        return isNotFurnictureCategory ? null : {
+            material: input.furnicture.material.value,
+            dimensions: {
+                height: input.furnicture.dimensions.height,
+                length: input.furnicture.dimensions.length,
+                width: input.furnicture.dimensions.width
+            }
+        }
+    };
+    
+
     return {
         changeDimensions,
-        changeMaterial
+        changeMaterial,
+        hasErrors,
+        toString
     }
 }
 

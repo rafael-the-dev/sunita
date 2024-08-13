@@ -15,7 +15,9 @@ export type ContextType = {
     input: typeof defaultInput,
     changeName: ChangeHandler;
     changePrice: (prop: "purchase" | "sell") => ChangeHandler;
+    hasErrors: () => boolean;
     reset: () => void;
+    toString: () => string;
 
     // CAR
     changeEngineNumber: ChangeHandler;

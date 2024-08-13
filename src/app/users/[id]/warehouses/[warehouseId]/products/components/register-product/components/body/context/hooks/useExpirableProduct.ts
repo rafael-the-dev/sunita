@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { ProductInputsType } from "../types"
+import { PRODUCTS_CATEGORIES } from "@/types/product"
 
 import { defaultExpirableProduct } from "../values"
 
@@ -8,7 +9,10 @@ import {
     isValidBestBefore,
     isValidManufactureDate 
 } from "@/validation/product"
+import { hasError } from "./helper"
  
+
+
 
 const setBestBefore = (value: string, product: typeof defaultExpirableProduct) => {
     const hasError = !isValidBestBefore(value, product.manufactureDate.value);
@@ -27,7 +31,7 @@ const setManufactureDate = (value: string, product: typeof defaultExpirableProdu
 }
 
 
-const useExpirableProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
+const useExpirableProduct = (input: ProductInputsType, setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
 
     const changeDate = React.useCallback(
         (prop: "expiration" | "manufacture", value: string, fn: (value: string, date: string) => boolean) => {
@@ -86,10 +90,35 @@ const useExpirableProduct = (setInput: React.Dispatch<React.SetStateAction<Produ
         [ changeDate ]
     )
 
+    const isNotExpirableCategory = input.category.value !== PRODUCTS_CATEGORIES.EXPIRABLE;
+
+    const hasErrors = () => {
+        if(isNotExpirableCategory) return false;
+
+        const expirationDate = input.expirable.expirationDate.value;
+        const manufactureDate = input.expirable.manufactureDate.value;
+
+        return [
+                hasError(input.expirable.barcode),
+                !isValidManufactureDate(manufactureDate, expirationDate),
+                !isValidBestBefore(expirationDate, manufactureDate)
+            ].find(hasError => hasError);
+    }
+
+    const toString = () => {
+        return isNotExpirableCategory ? null : {
+            barcode: input.expirable.barcode.value,
+            expirationDate: input.expirable.expirationDate.value,
+            manufactureDate: input.expirable.manufactureDate.value
+        }
+    }
+
     return {
         changeBarcode,
         changeExpirationDate,
-        changeManufactureDate
+        changeManufactureDate,
+        hasErrors,
+        toString
     }
 }
 

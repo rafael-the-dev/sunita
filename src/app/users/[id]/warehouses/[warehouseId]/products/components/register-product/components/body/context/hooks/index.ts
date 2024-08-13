@@ -7,25 +7,28 @@ import { ProductInputsType } from "../types"
 import { defaultProduct } from "../values"
 
 import { isValidCategory, isValidColor, isValidName, isValidPurchasePrice, isValidSellPrice } from "@/validation/product"
+import { hasError } from "./helper"
+
+const setPrice = (error: boolean, helperText: string, value: string, prop: "purchase" | "sell", product: typeof defaultProduct) => {
+    product.price[prop] = {
+        error,
+        helperText: error ? helperText : "",
+        value
+    }
+}
 
 const setPurchasePrice = (value: string, product: typeof defaultProduct) => {
     const hasError = !isValidPurchasePrice(value, currency(product.price.sell.value).value)
-
-    product.price.purchase.error = hasError
-    product.price.purchase.helperText = hasError ? "Invalid price or It is greater than sell price" : "",
-    product.price.purchase.value = value
+    setPrice(hasError, "Invalid price or It is greater than sell price", value, "purchase", product)
 }
 
 const setSellPrice = (value: string, product: typeof defaultProduct) => {
     const hasError = !isValidSellPrice(value, currency(product.price.purchase.value).value)
-
-    product.price.sell.error = hasError
-    product.price.sell.helperText = hasError ? "Invalid price or It less than purchase price" : "",
-    product.price.sell.value = value
+    setPrice(hasError, "Invalid price or It less than purchase price", value, "sell", product)
 }
 
 
-const useProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
+const useProduct = (input: ProductInputsType, setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
     const changeHelper = React.useCallback(
         (prop: "category" | "color" | "description" | "name", value: string, fn: (value: string) => boolean) => {
             const hasError = !fn(value)
@@ -57,7 +60,7 @@ const useProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsT
     )
 
     const changeDescription = React.useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => changeHelper("description", e.target.value, (value: string) => Boolean(value.trim())),
+        (e: React.ChangeEvent<HTMLInputElement>) => changeHelper("description", e.target.value, (value: string) => true),
         [ changeHelper ]
     )
 
@@ -73,7 +76,7 @@ const useProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsT
 
             setInput(
                 input => {
-                    const inputClone = structuredClone(input)
+                    const inputClone = { ...input }
 
                     if(prop === "purchase") {
                         setPurchasePrice(value, inputClone)
@@ -90,12 +93,22 @@ const useProduct = (setInput: React.Dispatch<React.SetStateAction<ProductInputsT
         [ setInput ]
     )
 
+    const hasErrors = () => {
+        return [
+            hasError(input.category),
+            hasError(input.name),
+            hasError(input.price.purchase),
+            hasError(input.price.sell)
+        ].find(error => error)
+    }
+
     return {
         changeCategory,
         changeColor,
         changeDescription,
         changeName,
         changePrice,
+        hasErrors
     }
 }
 

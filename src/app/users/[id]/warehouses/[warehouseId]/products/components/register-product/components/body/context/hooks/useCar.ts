@@ -1,6 +1,8 @@
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from "react"
+import currency from "currency.js"
 
 import { ProductInputsType } from "../types"
+import { PRODUCTS_CATEGORIES } from "@/types/product"
 
 import { 
     isValidEngineNumber, isValidEngineType,
@@ -8,8 +10,9 @@ import {
     isValidTransmission,
     isValidYear
 } from "@/validation/product/car"
+import { hasError } from "./helper"
 
-const useCar = (setInput: Dispatch<SetStateAction<ProductInputsType>>) => {
+const useCar = (input: ProductInputsType, setInput: Dispatch<SetStateAction<ProductInputsType>>) => {
     const changeEngine = useCallback(
         (prop: "number" | "type", value: string, fn: (value: string) => boolean) => {
 
@@ -88,13 +91,45 @@ const useCar = (setInput: Dispatch<SetStateAction<ProductInputsType>>) => {
         [ changeHandler ]
     )
 
+    const isNotCarCategory = input.category.value !== PRODUCTS_CATEGORIES.CARS
+
+    const hasErrors = () => {
+        if(isNotCarCategory) return false;
+
+        return[
+                hasError(input.car.color),
+                hasError(input.car.engine.number),
+                hasError(input.car.engine.type),
+                hasError(input.car.make),
+                hasError(input.car.model),
+                hasError(input.car.transmission),
+                hasError(input.car.year)
+            ].find(hasError => hasError);
+    }
+
+    const toString = () => {
+        return isNotCarCategory ? null : {
+            color: input.car.color.value,
+            engine: {
+                horsepower: currency(input.car.engine.number.value).value,
+                type: input.car.engine.type.value
+            },
+            make: input.car.make.value,
+            model: input.car.model.value,
+            transmission: input.car.transmission.value,
+            year: currency(input.car.year.value).value
+        }
+    }
+
     return {
         changeEngineNumber,
         changeEngineType,
         changeMake, 
         changeModel,
         changeTransmission,
-        changeYear
+        changeYear,
+        hasErrors,
+        toString
     }
 }
 
