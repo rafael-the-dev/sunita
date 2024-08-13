@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import styles from "./styles.module.css";
 
-import { PRODUCTS_CATEGORIES } from "@/types/product";
+import { PRODUCTS_CATEGORIES, ProductInfoType } from "@/types/product";
 
 import { AppContext } from "@/context/AppContext";
 import { LoginContext } from "@/context/LoginContext";
@@ -23,17 +23,19 @@ import TextField from "@/components/Textfield"
 
 const Body = () => {
     const { dialog, isLoading } = useContext(AppContext);
-    const { credentials, user } = useContext(LoginContext)
+    const { credentials } = useContext(LoginContext)
+    
     const { 
         changeCategory, 
         changeName,
         changeDescription,
         hasErrors,
+        hasPayload,
         input,
         reset,
         toString
     } = useContext(ProductFormContext)
-
+    
     const { fetchData, loading } = useFetch({
         autoFetch: false,
         url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products`
@@ -51,11 +53,14 @@ const Body = () => {
         fetchData({
             options: {
                 body: toString(),
-                method: "POST"
+                method: hasPayload ? "PUT" : "POST",
+                
             },
+            path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/${hasPayload ? (dialog.payload as ProductInfoType).id: ""}`,
             onSuccess(res, data) {
                 reset()
             },
+            
         })
     };
 
@@ -102,7 +107,7 @@ const Body = () => {
             </div>
             <div className={classNames("flex justify-end mt-4", styles.spacing)}>
                 <SubmitButton disabled={ hasError || loading }>
-                    { loading ? "Loading..." : ( dialog?.payload ? "Update" : "Submit" ) }
+                    { loading ? "Loading..." : ( hasPayload ? "Update" : "Submit" ) }
                 </SubmitButton>
             </div>
         </form>
