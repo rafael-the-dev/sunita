@@ -12,6 +12,7 @@ export type ContextType = {
     changeCategory: ChangeHandler,
     changeColor: ChangeHandler;
     changeDescription: ChangeHandler;
+    hasPayload: boolean,
     input: typeof defaultInput,
     changeName: ChangeHandler;
     changePrice: (prop: "purchase" | "sell") => ChangeHandler;
