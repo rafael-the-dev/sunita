@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { ProductInfoType } from "@/types/product";
+import { STATUS } from "@/types";
 import { TableHeadersType } from "@/components/table/types";
 
 import { AppContext } from "@/context/AppContext";
@@ -8,6 +9,7 @@ import { ProductsPageContext } from "../../../../context"
 import { ProductFilterContext } from "@/context/ProductFilterContext";
 
 import DialogBody from "../../../../components/register-product/components/body";
+import Status from "@/components/shared/Status";
 import Table from "@/components/shared/table";
 
 const ProductsTableContainer = () => {
@@ -25,9 +27,9 @@ const ProductsTableContainer = () => {
             }
         },
         {
-            label: "Barcode",
+            label: "Created at",
             key: {
-                value: "barcode"
+                value: "createdAt"
             }
         },
         {
@@ -49,6 +51,22 @@ const ProductsTableContainer = () => {
                 subKey: {
                     value: "quantity"
                 }
+            }
+        },
+        {
+            label: "Status",
+            getComponent({ item, key }) {
+                const product = item as ProductInfoType
+
+                return (
+                    <Status
+                        //@ts-ignore
+                        status={product.status as STATUS}
+                    />
+                )
+            },
+            key: {
+                value: "stock"
             }
         }
     ]);
