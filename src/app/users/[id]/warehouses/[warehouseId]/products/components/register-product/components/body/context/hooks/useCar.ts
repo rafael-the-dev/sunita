@@ -95,9 +95,9 @@ const useCar = (input: ProductInputsType, setInput: Dispatch<SetStateAction<Prod
 
     const hasErrors = () => {
         if(isNotCarCategory) return false;
-
+       
         return[
-                hasError(input.car.color),
+                hasError(input.color),
                 hasError(input.car.engine.number),
                 hasError(input.car.engine.type),
                 hasError(input.car.make),
@@ -109,7 +109,7 @@ const useCar = (input: ProductInputsType, setInput: Dispatch<SetStateAction<Prod
 
     const toString = () => {
         return isNotCarCategory ? null : {
-            color: input.car.color.value,
+            color: input.color.value,
             engine: {
                 horsepower: currency(input.car.engine.number.value).value,
                 type: input.car.engine.type.value
