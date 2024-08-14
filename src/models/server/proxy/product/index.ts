@@ -24,6 +24,12 @@ const isLessThanZero = (newValue: string | number, errorMessage: string) => {
     return false 
 }
 
+const testCategory = (category: PRODUCTS_CATEGORIES, product: StoreProductType) => {
+    if(product.category !== category) {
+        throw new InvalidArgumentError(`You cannot set value to ${category} using ${product.category} category`)
+    }
+}
+
 const getProductProxy = (target: StoreProductType) => {
 
     const proxyHandler = {
@@ -39,7 +45,9 @@ const getProductProxy = (target: StoreProductType) => {
         set(obj: StoreProductType, prop: PropType, newValue: any) {
             switch(prop) {
                 case "car": {
-                    if(!newValue) return Reflect.set(obj, prop, null);
+                    testCategory(PRODUCTS_CATEGORIES.CARS, obj)
+
+                    if(typeof newValue !== "object" || !newValue) return Reflect.set(obj, prop, null);
                     
                     const carDetails = newValue as CarType;
 
@@ -59,7 +67,9 @@ const getProductProxy = (target: StoreProductType) => {
                     return Reflect.set(obj, prop, category);
                 }
                 case "expirable": {
-                    if(!newValue) return Reflect.set(obj, prop, null);
+                    testCategory(PRODUCTS_CATEGORIES.EXPIRABLE, obj)
+
+                    if(!newValue || typeof newValue !== "object") return Reflect.set(obj, prop, null);
                     
                     const expirableDetails = newValue as ExpirableProductType;
 
@@ -76,7 +86,9 @@ const getProductProxy = (target: StoreProductType) => {
                     return Reflect.set(obj, prop, expirableDetails);
                 }
                 case "furnicture": {
-                    if(!newValue) return Reflect.set(obj, prop, null);
+                    testCategory(PRODUCTS_CATEGORIES.FURNITURE, obj)
+
+                    if(!newValue || typeof newValue !== "object") return Reflect.set(obj, prop, null);
 
                     const furnicture = newValue as FurnictureType;
                     const { height, length, width } = furnicture.dimensions;
