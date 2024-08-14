@@ -22,7 +22,7 @@ import SubmitButton from "@/components/shared/submit-button";
 import TextField from "@/components/Textfield"
 
 const Body = () => {
-    const { dialog, isLoading } = useContext(AppContext);
+    const { dialog, fetchDataRef, isLoading } = useContext(AppContext);
     const { credentials } = useContext(LoginContext)
     
     const { 
@@ -57,7 +57,8 @@ const Body = () => {
                 
             },
             path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/${hasPayload ? (dialog.payload as ProductInfoType).id: ""}`,
-            onSuccess(res, data) {
+            async onSuccess(res, data) {
+                await fetchDataRef.current?.({})
                 reset()
             },
             

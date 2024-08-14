@@ -14,7 +14,7 @@ import Status from "@/components/shared/Status";
 import Table from "@/components/shared/table";
 
 const ProductsTableContainer = () => {
-    const { setDialog } = React.useContext(AppContext);
+    const { fetchDataRef, setDialog } = React.useContext(AppContext);
     const { products } = React.useContext(ProductsPageContext)
     const { category, price, searchKey, setUniqueSearchParams } = React.useContext(ProductFilterContext);
 
@@ -103,7 +103,11 @@ const ProductsTableContainer = () => {
         return productsList;
     }, [ category, price, productsList, searchKey ])
 
+    const fetchProducts = products.fetchData
+
     const rowClickHandler = React.useCallback((row: ProductInfoType) => () => {
+        fetchDataRef.current = fetchProducts
+
         setDialog({
             header: { title: "Update product" },
             body: (
@@ -113,7 +117,7 @@ const ProductsTableContainer = () => {
             ),
             payload: row
         });
-    }, [ setDialog ]);
+    }, [ fetchDataRef, fetchProducts, setDialog ]);
 
     return (
         <Table 
