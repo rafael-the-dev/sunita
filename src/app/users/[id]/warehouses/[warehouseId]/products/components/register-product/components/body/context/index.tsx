@@ -60,6 +60,7 @@ export const ProductFormContextProvider = ({ children }: PropsType) => {
             createdAt: null,
             category: input.category.value,
             expirable: expirableProductMethods.toString(),
+            furnicture: furnictureMethods.toString(),
             id: null,
             name: input.name.value,
             profit: null,

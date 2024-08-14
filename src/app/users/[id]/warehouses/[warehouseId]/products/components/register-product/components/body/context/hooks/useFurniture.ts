@@ -72,9 +72,9 @@ const useFurniture = (input: ProductInputsType, setInput: React.Dispatch<React.S
         return isNotFurnictureCategory ? null : {
             material: input.furnicture.material.value,
             dimensions: {
-                height: input.furnicture.dimensions.height,
-                length: input.furnicture.dimensions.length,
-                width: input.furnicture.dimensions.width
+                height: input.furnicture.dimensions.height.value,
+                length: input.furnicture.dimensions.length.value,
+                width: input.furnicture.dimensions.width.value
             }
         }
     };
