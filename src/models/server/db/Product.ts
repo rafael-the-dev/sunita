@@ -12,12 +12,12 @@ import getProductProxy from "../proxy/product";
 import Error404 from "@/errors/server/404Error";
 
 class Product {
-    static async get({ productId, storeId }: { productId: string, storeId: string }, { mongoDbConfig, user }: ConfigType) {
-        const products = await getProducts({ filter: { "products.id": productId, id: storeId,  } }, { mongoDbConfig, user })
+    static async get({ productId, storeId }: { productId: string, storeId: string }, config: ConfigType) {
+        const products = await getProducts({ filter: { id: productId, stores: storeId,  } }, config)
 
         if(products.length === 0) throw new Error404("Product not found")
 
-        return products
+        return products[0]
     }
 
     static async getAll({ filters, storeId }: { filters?: Object, storeId: string }, config: ConfigType) {
@@ -105,23 +105,78 @@ class Product {
                 .collections
                 .PRODUCTS
                 .insertOne(storeProduct);
-
-            /*await mongoDbConfig
-                .collections
-                .WAREHOUSES 
-                .updateOne(
-                    {
-                        id: storeId
-                    },
-                    {
-                        $push: {
-                            products: storeProduct
-                        }
-                    }
-                )*/
         } catch(e) {
             //delete this product if occured an error
             await this.delete({ id: productId, storeId }, { mongoDbConfig, user })
+
+            throw e;
+        }
+    }
+
+    static async update({ product, storeId }: { product: StoreProductType, storeId: string }, config: ConfigType) {
+        const { 
+            car,
+            category, 
+            cloth,
+            expirable,
+            furnicture,
+            name, 
+            purchasePrice, 
+            sellPrice 
+        } = product
+
+        const requestedProduct = await this.get(
+            {
+                productId: product.id,
+                storeId: "12345"
+            },
+            config
+        )
+
+        const  { mongoDbConfig, user } = config
+
+        try {
+            const productClone = structuredClone(requestedProduct)
+
+            const productProxy = getProductProxy(productClone)
+
+            productProxy.car = car;
+            productProxy.category = category;
+            productProxy.expirable = expirable;
+            productProxy.furnicture = furnicture;
+            productProxy.name = name;
+            productProxy.purchasePrice = purchasePrice;
+            productProxy.sellPrice = sellPrice;
+
+            //@ts-ignore
+            const { _id, ...productRest } = productClone
+    
+            await mongoDbConfig
+                .collections
+                .PRODUCTS
+                .updateOne(
+                    { id: product.id },
+                    {
+                        $set: {
+                            ...productRest
+                        }
+                    }
+                );
+        } catch(e) {
+            //@ts-ignore
+            const { _id, ...productRest } = requestedProduct
+
+            await mongoDbConfig
+                .collections
+                .PRODUCTS
+                .updateOne(
+                    { id: product.id },
+                    {
+                        $set: {
+                            ...productRest
+                        }
+                    }
+                );
 
             throw e;
         }
