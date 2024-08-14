@@ -80,9 +80,9 @@ export type ExpirableProductType = {
 export type FurnictureType = {
     material: string,
     dimensions: {
-        height: Number,
-        length: Number,
-        width: Number
+        height: string,
+        length: string,
+        width: string
     }
 }
 
