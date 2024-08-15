@@ -13,6 +13,8 @@ import DialogBody from "../../../../components/register-product/components/body"
 import Status from "@/components/shared/Status";
 import Table from "@/components/shared/table";
 
+const includes = (value: string, searchKey: string) => value.toLowerCase().includes(searchKey.toLowerCase())
+
 const ProductsTableContainer = () => {
     const { fetchDataRef, setDialog } = React.useContext(AppContext);
     const { products } = React.useContext(ProductsPageContext)
@@ -25,6 +27,12 @@ const ProductsTableContainer = () => {
             label: "Name",
             key: {
                 value: "name"
+            }
+        },
+        {
+            label: "ID/Barcode",
+            key: {
+                value: "barcode"
             }
         },
         {
@@ -80,8 +88,11 @@ const ProductsTableContainer = () => {
 
             list = list.filter(product => {
                 let isSelected = false;
+
+                const isOnName = includes(product.name, searchKey)
+                const isOnBarcode = includes(product.barcode, searchKey)
                 
-                if(searchKey.trim() && product.name?.toLowerCase()?.includes(searchKey.toLowerCase())) {
+                if(searchKey.trim() && (isOnBarcode || isOnName)) {
                     isSelected = true;
                 }
 
