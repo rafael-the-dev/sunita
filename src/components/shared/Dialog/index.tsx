@@ -72,7 +72,7 @@ const Container = ({ dialog, isLoading, onClose, onOpen, setDialog }: PropsType)
 
     useEffect(
         () => {
-            if(!dialog.current && !open) {
+            if(!dialog.current && !open && isOpen.current) {
                 searchParams.removeSearchParam("dialog");
                 isOpen.current = false;
             }
