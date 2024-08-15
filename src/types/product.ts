@@ -72,7 +72,6 @@ export type CarType = {
 }
 
 export type ExpirableProductType = {
-    barcode: string,
     expirationDate: string,
     manufactureDate: string,
 }
@@ -130,6 +129,7 @@ export type WarehouseProductType = {
 };
 
 export type StoreProductType = WarehouseProductType & {
+    barcode: string;
     createdAt: string;
     category: PRODUCTS_CATEGORIES;
     description?: string;
