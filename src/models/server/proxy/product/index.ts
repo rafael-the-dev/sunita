@@ -14,7 +14,7 @@ import { isValidMake, isValidModel, isValidTransmission, isValidYear } from "@/v
 import { isValidDimesions, isValidMaterial } from "@/validation/product/furniture"
 
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
-type PropType = "car" | "category" | "expirable" | "furnicture" | "name" | "profit" | "purchasePrice" | "quantity" | "stock" | "sellPrice"
+type PropType = "barcode" | "car" | "category" | "expirable" | "furnicture" | "name" | "profit" | "purchasePrice" | "quantity" | "stock" | "sellPrice"
 
 const isLessThanZero = (newValue: string | number, errorMessage: string) => {
     const value = currency(newValue as number).value
@@ -44,6 +44,13 @@ const getProductProxy = (target: StoreProductType) => {
         },
         set(obj: StoreProductType, prop: PropType, newValue: any) {
             switch(prop) {
+                case "barcode": {
+                    const barcode = newValue as string;
+
+                    validate(barcode, "Invalid barcode", (value: string) => Boolean(value.trim()));
+
+                    return Reflect.set(obj, prop, barcode);
+                }
                 case "car": {
                     if(typeof newValue !== "object" || !newValue) return Reflect.set(obj, prop, null);
 
@@ -72,8 +79,6 @@ const getProductProxy = (target: StoreProductType) => {
                     testCategory(PRODUCTS_CATEGORIES.EXPIRABLE, obj)
                     
                     const expirableDetails = newValue as ExpirableProductType; 
-
-                    validate(expirableDetails.barcode, "Invalid barcode", (value: string) => Boolean(value.trim()));
 
                     if(!isValidManufactureDate(expirableDetails.manufactureDate, expirableDetails.expirationDate)) {
                         throw new InvalidArgumentError( "Invalid manufacture date");
