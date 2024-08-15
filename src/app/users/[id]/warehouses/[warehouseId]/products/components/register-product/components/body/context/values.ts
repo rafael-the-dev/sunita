@@ -21,7 +21,6 @@ export const getDefaultCar = (product?: ProductInfoType) => (
 
 export const getDefaultExpirableProduct = (product?: ProductInfoType) => (
     {
-        barcode: getInitialValues(product?.expirable?.barcode),
         expirationDate: getInitialValues(product?.expirable?.expirationDate),
         manufactureDate: getInitialValues(product?.expirable?.manufactureDate)
     }  
@@ -40,6 +39,7 @@ export const getFurnicture = (product?: ProductInfoType) => (
 
 export const getDefaultProduct = (product?: ProductInfoType) => (
     {
+        barcode: getInitialValues(product?.barcode),
         category: { ...defaultInputField, value: product?.category ?? PRODUCTS_CATEGORIES.EXPIRABLE },
         color: structuredClone(defaultInputField ),
         description: getInitialValues(""),
