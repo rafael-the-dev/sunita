@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useEffect, useRef } from "react";
+import { FormEvent, useContext, useEffect, useMemo, useRef } from "react";
 import classNames from "classnames";
 
 import styles from "./styles.module.css";
@@ -11,6 +11,7 @@ import { ProductFormContext } from "./context";
 
 import useFetch from "@/hooks/useFetch";
 
+import Alert from "@/components/alert"
 import Categories from "@/components/shared/categories";
 import CarDetails from "./components/Car"
 import ClothDetails from "./components/Cloth";
@@ -20,6 +21,12 @@ import Price from "./components/Price"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import SubmitButton from "@/components/shared/submit-button";
 import TextField from "@/components/Textfield"
+
+let alertProps = {
+    description: "",
+    severity: "success",
+    title: ""
+}
 
 const Body = () => {
     const { dialog, fetchDataRef, isLoading } = useContext(AppContext);
@@ -41,7 +48,22 @@ const Body = () => {
         url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products`
     })
 
+    const onOpenAlertRef = useRef<() => void>(null)
+    const onCloseAlertRef = useRef<() => void>(null)
+
     const hasError = hasErrors()
+
+    const alertMemo = useMemo(
+        () => (
+            <Alert 
+                { ...alertProps }
+                className={classNames("mb-6", loading ?? "")}
+                onClose={onCloseAlertRef}
+                onOpen={onOpenAlertRef}
+            />
+        ),
+        [ loading ]
+    )
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -50,19 +72,35 @@ const Body = () => {
 
         isLoading.current = true;
 
-        fetchData({
+        await fetchData({
             options: {
                 body: toString(),
                 method: hasPayload ? "PUT" : "POST",
                 
             },
             path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/products/${hasPayload ? (dialog.payload as ProductInfoType).id: ""}`,
+            onError(error) {
+                alertProps = {
+                    description: error.message,
+                    severity: "error",
+                    title: "Error"
+                }
+            },
             async onSuccess(res, data) {
                 await fetchDataRef.current?.({})
+
                 reset()
+
+                alertProps = {
+                    description: `Product was successfully ${hasPayload ? "updated" : "registered"}`,
+                    severity: "success",
+                    title: "Success"
+                }
             },
             
         })
+
+        onOpenAlertRef.current?.()
     };
 
     return (
@@ -70,6 +108,7 @@ const Body = () => {
             className={classNames(styles.form, `flex flex-col justify-between`)}
             onSubmit={submitHandler}>
             <div className={classNames(styles.formContent, styles.spacing, `grow overflow-y-auto`)}>
+                { alertMemo }
                 <Row>
                     <TextField
                         { ...input.name }
