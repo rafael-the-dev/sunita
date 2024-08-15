@@ -39,7 +39,7 @@ export const ProductFilterContextProvider = ({ children }: { children: React.Rea
                     max: currency(params.get("max-price", 0)).value
                 },
                 isChecked,
-                searchKey: params.get("search-key", ""),
+                searchKey: `${params.get("search-key", "")}`,
 
                 // METHODS
                 setManySearchParams,
