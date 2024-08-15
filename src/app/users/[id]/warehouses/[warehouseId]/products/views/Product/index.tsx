@@ -132,14 +132,7 @@ const ProductsView = () => {
                     <Table />
                 </div>
             </div>
-            <div className="flex flex-col items-stretch justify-end sm:flex-row">
-                <Button 
-                    className="mb-3 sm:mb-0 sm:mr-3" 
-                    onClick={() => products.fetchData({})}
-                    variant="outlined">
-                    Fetch
-                </Button>
-                <Button 
+            <div className="flex flex-col items-stretch justify-end mt-8 sm:flex-row">                <Button 
                     className="mb-3 sm:mb-0 sm:mr-3" 
                     onClick={openDialogHandler(DIALOG_TYPES.CATEGORIES)}
                     variant="outlined">
