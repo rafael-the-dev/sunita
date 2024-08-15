@@ -20,13 +20,6 @@ const ExpirableProductsContainer = () => {
     return (
         <Container 
             title="Expirable">
-                <TextField
-                    { ...input.expirable.barcode }
-                    className={classNames("mb-6 w-full")}
-                    placeholder="Barcode"
-                    label="Barcode"
-                    onChange={changeBarcode}
-                />
             <Row>
                 <DateInput
                     { ...input.expirable.manufactureDate }
