@@ -32,7 +32,7 @@ const setSellPrice = (value: string, product: typeof defaultProduct) => {
 
 const useProduct = (input: ProductInputsType, setInput: React.Dispatch<React.SetStateAction<ProductInputsType>>) => {
     const changeHelper = React.useCallback(
-        (prop: "category" | "color" | "description" | "name", value: string, fn: (value: string) => boolean) => {
+        (prop: "barcode" | "category" | "color" | "description" | "name", value: string, fn: (value: string) => boolean) => {
             const hasError = !fn(value)
 
             setInput(
@@ -47,6 +47,13 @@ const useProduct = (input: ProductInputsType, setInput: React.Dispatch<React.Set
             )
         },
         [ setInput ]
+    )
+
+    const changeBarcode = React.useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            changeHelper("barcode",  e.target.value, (value) => Boolean(value.trim()))
+        },
+        [ changeHelper ]
     )
 
     const changeCategory = React.useCallback(
@@ -97,6 +104,7 @@ const useProduct = (input: ProductInputsType, setInput: React.Dispatch<React.Set
 
     const hasErrors = () => {
         return [
+            hasError(input.barcode),
             hasError(input.category),
             hasError(input.name),
             hasError(input.price.purchase),
@@ -105,6 +113,7 @@ const useProduct = (input: ProductInputsType, setInput: React.Dispatch<React.Set
     }
 
     return {
+        changeBarcode,
         changeCategory,
         changeColor,
         changeDescription,

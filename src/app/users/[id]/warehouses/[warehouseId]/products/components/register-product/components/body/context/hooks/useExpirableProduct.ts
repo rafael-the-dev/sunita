@@ -56,7 +56,7 @@ const useExpirableProduct = (input: ProductInputsType, setInput: React.Dispatch<
         [ setInput ]
     )
 
-    const changeBarcode = React.useCallback(
+    /*const changeBarcode = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target
             const hasError = !value.trim()
@@ -77,7 +77,7 @@ const useExpirableProduct = (input: ProductInputsType, setInput: React.Dispatch<
             )
         },
         [ setInput ]
-    )
+    )*/
 
     const changeExpirationDate = React.useCallback(
         (value: string) => changeDate("expiration", value, isValidBestBefore),
@@ -98,7 +98,6 @@ const useExpirableProduct = (input: ProductInputsType, setInput: React.Dispatch<
         const manufactureDate = input.expirable.manufactureDate.value;
 
         return [
-                hasError(input.expirable.barcode),
                 !isValidManufactureDate(manufactureDate, expirationDate),
                 !isValidBestBefore(expirationDate, manufactureDate)
             ].find(hasError => hasError);
@@ -106,14 +105,12 @@ const useExpirableProduct = (input: ProductInputsType, setInput: React.Dispatch<
 
     const toString = () => {
         return isNotExpirableCategory ? null : {
-            barcode: input.expirable.barcode.value,
             expirationDate: input.expirable.expirationDate.value,
             manufactureDate: input.expirable.manufactureDate.value
         }
     }
 
     return {
-        changeBarcode,
         changeExpirationDate,
         changeManufactureDate,
         hasErrors,
