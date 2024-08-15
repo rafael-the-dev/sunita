@@ -33,6 +33,7 @@ const Body = () => {
     const { credentials } = useContext(LoginContext)
     
     const { 
+        changeBarcode,
         changeCategory, 
         changeName,
         changeDescription,
@@ -111,14 +112,21 @@ const Body = () => {
             onSubmit={submitHandler}>
             <div className={classNames(styles.formContent, styles.spacing, `grow overflow-y-auto`)}>
                 { alertMemo }
+                <TextField
+                    { ...input.name }
+                    className="mb-6 w-full"
+                    placeholder="Name"
+                    label="Name"
+                    onChange={changeName}
+                    required
+                />
                 <Row>
                     <TextField
-                        { ...input.name }
+                        { ...input.barcode }
                         className="mb-0 w-full sm:w-1/2"
-                        name="name-input"
-                        placeholder="Name"
-                        label="Name"
-                        onChange={changeName}
+                        placeholder="Insert ID or Barcode"
+                        label="Id or barcode"
+                        onChange={changeBarcode}
                         required
                     />
                     <Categories 
