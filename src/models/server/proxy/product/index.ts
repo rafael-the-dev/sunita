@@ -45,9 +45,9 @@ const getProductProxy = (target: StoreProductType) => {
         set(obj: StoreProductType, prop: PropType, newValue: any) {
             switch(prop) {
                 case "car": {
-                    testCategory(PRODUCTS_CATEGORIES.CARS, obj)
-
                     if(typeof newValue !== "object" || !newValue) return Reflect.set(obj, prop, null);
+
+                    testCategory(PRODUCTS_CATEGORIES.CARS, obj)
                     
                     const carDetails = newValue as CarType;
 
@@ -67,11 +67,11 @@ const getProductProxy = (target: StoreProductType) => {
                     return Reflect.set(obj, prop, category);
                 }
                 case "expirable": {
-                    testCategory(PRODUCTS_CATEGORIES.EXPIRABLE, obj)
-
                     if(!newValue || typeof newValue !== "object") return Reflect.set(obj, prop, null);
+
+                    testCategory(PRODUCTS_CATEGORIES.EXPIRABLE, obj)
                     
-                    const expirableDetails = newValue as ExpirableProductType;
+                    const expirableDetails = newValue as ExpirableProductType; 
 
                     validate(expirableDetails.barcode, "Invalid barcode", (value: string) => Boolean(value.trim()));
 
@@ -86,9 +86,9 @@ const getProductProxy = (target: StoreProductType) => {
                     return Reflect.set(obj, prop, expirableDetails);
                 }
                 case "furnicture": {
-                    testCategory(PRODUCTS_CATEGORIES.FURNITURE, obj)
-
                     if(!newValue || typeof newValue !== "object") return Reflect.set(obj, prop, null);
+
+                    testCategory(PRODUCTS_CATEGORIES.FURNITURE, obj)
 
                     const furnicture = newValue as FurnictureType;
                     const { height, length, width } = furnicture.dimensions;
