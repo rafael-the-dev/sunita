@@ -56,9 +56,11 @@ export const ProductFormContextProvider = ({ children }: PropsType) => {
 
     const toString = () => {
         const product: StoreProductType = {
+            barcode: input.barcode.value,
             car: carMethods.toString(),
             createdAt: null,
             category: input.category.value,
+            description: input.description.value,
             expirable: expirableProductMethods.toString(),
             furnicture: furnictureMethods.toString(),
             id: null,
