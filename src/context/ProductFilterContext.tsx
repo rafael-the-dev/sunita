@@ -18,14 +18,6 @@ export const ProductFilterContext = React.createContext<FiltersType | null>(null
 export const ProductFilterContextProvider = ({ children }: { children: React.ReactNode }) => {
     const params = useSearchParams();
 
-    const get =  React.useCallback((key: string, defaultValue: any) => {
-        const  value = params.get(key, defaultValue);
-        
-        return value;
-    }, [ params ]);
-    
-    const getAll = React.useCallback((key: string) => params.getAll(key), [ params ]);
-
     const isChecked = React.useCallback((origin: string | string[], value: string): boolean => origin.includes(value), []);
 
     const setManySearchParams = React.useCallback(
@@ -43,11 +35,11 @@ export const ProductFilterContextProvider = ({ children }: { children: React.Rea
             value={{
                 category: params.getAll("category"),
                 price: {
-                    min: currency(get("min-price", 0)).value,
-                    max: currency(get("max-price", 0)).value
+                    min: currency(params.get("min-price", 0)).value,
+                    max: currency(params.get("max-price", 0)).value
                 },
                 isChecked,
-                searchKey: get("search-key", ""),
+                searchKey: params.get("search-key", ""),
 
                 // METHODS
                 setManySearchParams,
