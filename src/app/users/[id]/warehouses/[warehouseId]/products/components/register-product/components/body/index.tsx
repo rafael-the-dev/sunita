@@ -71,6 +71,7 @@ const Body = () => {
         if(hasError || loading) return;
 
         isLoading.current = true;
+        onCloseAlertRef.current?.()
 
         await fetchData({
             options: {
@@ -101,6 +102,7 @@ const Body = () => {
         })
 
         onOpenAlertRef.current?.()
+        isLoading.current = false
     };
 
     return (
