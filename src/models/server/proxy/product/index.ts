@@ -131,7 +131,7 @@ const getProductProxy = (target: StoreProductType) => {
                     return Reflect.set(obj, prop, newValue);
                 }
                 case "sellPrice": {
-                    const isValid = isValidSellPrice((newValue as number).toString(), obj.sellPrice)
+                    const isValid = isValidSellPrice((newValue as number).toString(), obj.purchasePrice)
 
                     if(!isValid) throw new InvalidArgumentError("Sell price must not be less than zero or less than purchase price")
 
