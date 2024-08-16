@@ -5,7 +5,9 @@ import { ConfigType } from "@/types/app-config-server";
 import { WarehouseType } from "@/types/warehouse";
 import { StoreProductType, WarehouseProductType } from "@/types/product";
 import { AnalyticStockReportInfoType, StockClientRequestBodyType, StockClientRequestItemType, StockReportInfoType, StockReportType } from "@/types/stock";
+
 import { isValidDate, isValidPrice, isValidReference } from "@/helpers/stock-report";
+import { updateProduct } from "@/helpers/products";
 
 
 import { getId } from "@/helpers/id";
@@ -27,20 +29,6 @@ type AddPropsType = {
 type GetAllProspType = {
     filters?: Object,
     storeId: string;
-}
-
-const updateProduct = async (product: StoreProductType, storeId: string, { mongoDbConfig }: ConfigType) => {
-    mongoDbConfig
-        .collections
-        .PRODUCTS
-        .updateOne(
-            { id: product.id, stores: storeId },
-            {
-                $set: {
-                    ...product
-                }
-            }
-        )
 }
 
 class Stock {
@@ -142,7 +130,7 @@ class Stock {
             }
         )
 
-        const stores = await mongoDbConfig
+        /*const stores = await mongoDbConfig
             .collections
             .WAREHOUSES
             .aggregate([
@@ -162,9 +150,9 @@ class Stock {
                     },
                 }}
             ])
-            .toArray() as WarehouseType[]
+            .toArray() as WarehouseType[]*/
         
-        if(!stores || stores?.length === 0) throw new Error404("Store not found");
+        if(productsList.length === 0 || productsList.length !== stockDetails.items.length) throw new Error404("Select products not found.");
 
         let currentProducts: WarehouseProductType[] = [];
        
@@ -226,11 +214,8 @@ class Stock {
                     productProxy.sellPrice = mappedStockItemProduct.sellPrice;
                     productProxy.purchasePrice = mappedStockItemProduct.purchasePrice;
                     productProxy.profit = currency(mappedStockItemProduct.sellPrice).subtract(mappedStockItemProduct.purchasePrice).value
-                    
-                    //@ts-ignore
-                    const { _id, ...productRest } = product
 
-                    return updateProduct(productRest, storeId, { mongoDbConfig, user })//updateProduct(productProxy, storeId, mongoDbConfig)
+                    return updateProduct(product, storeId, { mongoDbConfig, user })//updateProduct(productProxy, storeId, mongoDbConfig)
                 })
             )
             
@@ -254,10 +239,7 @@ class Stock {
                         }
                     ),
                 ...structuredClone(productsList).map(product => {
-                    //@ts-ignore
-                    const { _id, ...productRest } = product
-
-                    return updateProduct(productRest, storeId, { mongoDbConfig, user })
+                    return updateProduct(product, storeId, { mongoDbConfig, user })
                 })
             ])
 
