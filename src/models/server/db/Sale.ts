@@ -2,7 +2,7 @@ import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
-import { WarehouseProductType } from "@/types/product";
+import { StoreProductType, WarehouseProductType } from "@/types/product";
 import { SaleType, SaleInfoType, SaleItemType } from "@/types/sale";
 
 import { toISOString } from "@/helpers/date";
@@ -16,6 +16,7 @@ import getSaleProxy from "../proxy/sale";
 
 import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
+
 
 class Sale {
     static async getAll({ filters,  storeId }: { filters?: Object, storeId: string }, { mongoDbConfig, user }: ConfigType) {
@@ -114,8 +115,8 @@ class Sale {
         const products = await getProducts(
             {
                 filter: {
-                    id: storeId,
-                    "products.id": { $in: productsIds }
+                    stores: storeId,
+                    id: { $in: productsIds }
                 }
             },
             { 
@@ -126,7 +127,7 @@ class Sale {
 
         const productsClone = structuredClone(products)
         
-        const productsMapper = new Map<string, WarehouseProductType>();
+        const productsMapper = new Map<string, StoreProductType>();
 
         productsClone.forEach(product => {
             if(productsIds.includes(product.id)) {
@@ -172,6 +173,7 @@ class Sale {
         }, 0);
 
         try {
+
             let sale: SaleType = {
                 changes: cart.changes,
                 createdAt: toISOString(Date.now()),
@@ -211,7 +213,7 @@ class Sale {
                     
                     productProxy.stock.quantity = currency(productInfo.stock.quantity).subtract(mappedCartItem.quantity).value;
 
-                    return updateProduct(productProxy, storeId, mongoDbConfig)
+                    return updateProduct(productInfo, storeId, { mongoDbConfig, user })
                 })
             )
         } catch(e) {
@@ -230,7 +232,7 @@ class Sale {
                         }
                     ),
                 ...structuredClone(products).map(product => {
-                    return updateProduct(getProductProxy(product), storeId, mongoDbConfig)
+                    return updateProduct(product, storeId, { mongoDbConfig, user })
                 })
             ])
 
@@ -261,8 +263,8 @@ class Sale {
         const productsList = await getProducts(
             {
                 filter: {
-                    id: storeId,
-                    "products.id": { $in: productsIds }
+                    stores: storeId,
+                    id: { $in: productsIds }
                 }
             }, 
             { 
@@ -340,7 +342,7 @@ class Sale {
 
             await Promise.all(
                 productsClone.map(product => {
-                    return updateProduct(getProductProxy(product), storeId, mongoDbConfig)
+                    return updateProduct(getProductProxy(product), storeId, { mongoDbConfig, user })
                 })
             )
         } catch(e) {
@@ -348,7 +350,7 @@ class Sale {
                 [ 
                     updateSale(salesList[0], storeId, mongoDbConfig),
                     ...structuredClone(productsList).map(product => {
-                        return updateProduct(getProductProxy(product), storeId, mongoDbConfig)
+                        return updateProduct(getProductProxy(product), storeId, { mongoDbConfig, user })
                     })
                 ]
             )
