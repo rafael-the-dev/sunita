@@ -1,7 +1,7 @@
 
 import { ConfigType } from "@/types/app-config-server";
 import { MongoDbConfigType } from "@/types/mongoDb";
-import { ProductInfoType, WarehouseProductType } from "@/types/product";
+import { ProductInfoType, StoreProductType, WarehouseProductType } from "@/types/product";
 
 export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfig }: ConfigType) => {
     const products = await mongoDbConfig
@@ -17,7 +17,7 @@ export const getProducts = async ({ filter }: { filter: Object }, { mongoDbConfi
     return products;
 }
 
-export const updateProduct = (productProxy: WarehouseProductType, storeId: string, mongoDbConfig: MongoDbConfigType) => {
+/*export const updateProduct = (productProxy: WarehouseProductType, storeId: string, mongoDbConfig: MongoDbConfigType) => {
     return mongoDbConfig
         .collections
         .WAREHOUSES
@@ -35,6 +35,23 @@ export const updateProduct = (productProxy: WarehouseProductType, storeId: strin
                 arrayFilters: [
                     { "product.id": productProxy.id }
                 ]
+            }
+        )
+}*/
+
+export const updateProduct = async (product: StoreProductType, storeId: string, { mongoDbConfig }: ConfigType) => {
+    //@ts-ignore
+    const { _id, ...restProduct } = product
+
+    return mongoDbConfig
+        .collections
+        .PRODUCTS
+        .updateOne(
+            { id: product.id, stores: storeId },
+            {
+                $set: {
+                    ...restProduct
+                }
             }
         )
 }
