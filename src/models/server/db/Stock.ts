@@ -3,9 +3,9 @@ import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { WarehouseType } from "@/types/warehouse";
-import { WarehouseProductType } from "@/types/product";
+import { StoreProductType, WarehouseProductType } from "@/types/product";
 import { AnalyticStockReportInfoType, StockClientRequestBodyType, StockClientRequestItemType, StockReportInfoType, StockReportType } from "@/types/stock";
-import { isValidDate, isValidPrice, isValidReference, updateProduct } from "@/helpers/stock-report";
+import { isValidDate, isValidPrice, isValidReference } from "@/helpers/stock-report";
 
 
 import { getId } from "@/helpers/id";
@@ -16,6 +16,8 @@ import getStockProxy from "../proxy/stock";
 import Store from "./Warehouse";
 import Error404 from "@/errors/server/404Error";
 
+import Product from "./Product"
+
 
 type AddPropsType = {
     storeId: string;
@@ -25,6 +27,20 @@ type AddPropsType = {
 type GetAllProspType = {
     filters?: Object,
     storeId: string;
+}
+
+const updateProduct = async (product: StoreProductType, storeId: string, { mongoDbConfig }: ConfigType) => {
+    mongoDbConfig
+        .collections
+        .PRODUCTS
+        .updateOne(
+            { id: product.id, stores: storeId },
+            {
+                $set: {
+                    ...product
+                }
+            }
+        )
 }
 
 class Stock {
@@ -113,6 +129,19 @@ class Stock {
     static async add({ storeId, stockDetails }: AddPropsType, { mongoDbConfig, user }: ConfigType) {        
         const reportId = getId();
 
+        const productsList = await Product.getAll(
+            {
+                filters: {
+                    id: { $in: stockDetails.items.map(item => item.product.id) }
+                },
+                storeId
+            },
+            {
+                mongoDbConfig,
+                user
+            }
+        )
+
         const stores = await mongoDbConfig
             .collections
             .WAREHOUSES
@@ -173,11 +202,13 @@ class Stock {
                             "stock-reports": report
                         }
                     }
-                ),
+                )
+
+            const productsListClone = structuredClone(productsList)
             
             await Promise.all(
                 structuredClone(stockDetails).items.map((item) => {
-                    const product = structuredClone(stores[0].products).find(product => product.id === item.product.id)
+                    const product = productsListClone.find(product => product.id === item.product.id)
 
                     // get current product from mappedStockItem map
                     const mappedStockItem = productsMap.get(item.product.id);
@@ -196,7 +227,10 @@ class Stock {
                     productProxy.purchasePrice = mappedStockItemProduct.purchasePrice;
                     productProxy.profit = currency(mappedStockItemProduct.sellPrice).subtract(mappedStockItemProduct.purchasePrice).value
                     
-                    return updateProduct(productProxy, storeId, mongoDbConfig)
+                    //@ts-ignore
+                    const { _id, ...productRest } = product
+
+                    return updateProduct(productRest, storeId, { mongoDbConfig, user })//updateProduct(productProxy, storeId, mongoDbConfig)
                 })
             )
             
@@ -219,8 +253,11 @@ class Stock {
                             }
                         }
                     ),
-                ...structuredClone(stores[0].products).map(product => {
-                    return updateProduct(product, storeId, mongoDbConfig)
+                ...structuredClone(productsList).map(product => {
+                    //@ts-ignore
+                    const { _id, ...productRest } = product
+
+                    return updateProduct(productRest, storeId, { mongoDbConfig, user })
                 })
             ])
 
