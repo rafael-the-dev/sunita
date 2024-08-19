@@ -1,22 +1,10 @@
 import { ChangeEvent, useCallback, useState } from "react"
-import moment from "moment"
 
 import { DOCUMENT_TYPE } from "@/types/user"
 
+import { initial } from "./values"
+
 import { isValidDocumentExpireDate, isValidDocumentIssueDate,isValidDocumentNumber } from "@/validation/user"
-
-const initialInput = {
-    error: false,
-    helperText: "",
-    value: ""
-}
-
-const initial = {
-    expireDate: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).toISOString() }),
-    issueDate: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).toISOString() }),
-    type: structuredClone({ ...initialInput, value: DOCUMENT_TYPE.DRIVING_LICENCE }), 
-    number: structuredClone(initialInput) 
-}
 
 const useDocument = () => {
     const [ document, setDocument ] = useState(initial)
