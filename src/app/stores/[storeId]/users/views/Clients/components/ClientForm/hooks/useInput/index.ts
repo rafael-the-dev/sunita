@@ -5,6 +5,7 @@ import useContact from "@/hooks/useContact"
 import useDocument from "@/hooks/useDocument"
 import { defaultInputField } from "@/config/input"
 import { isValidName } from "@/validation/user"
+import { CustomerType } from "@/types/guest"
 
 const defaultCLient = {
     firstName: structuredClone(defaultInputField),
@@ -37,6 +38,20 @@ const useInput = () => {
         []
     )
 
+    const isValid = useCallback(
+        (obj: typeof defaultInputField) => obj.error || !obj.value.trim(),
+        []
+    )
+
+    const hasErrors = () => {
+        return [
+            contact.hasErrors,
+            document.hasErrors(),
+            isValid(input.firstName),
+            isValid(input.lastName)
+        ].find(error => error)
+    }
+
     const reset = useCallback(
         () => {
             setInput(structuredClone(defaultCLient))
@@ -46,13 +61,38 @@ const useInput = () => {
         [ resetContact, resetDocument ]
     )
 
+    const toString = () => {
+        const customer: CustomerType = {
+            contact: {
+                phone: contact
+                    .getContact()
+                    .phone
+                    .map(contact => ({ number: contact.number.value, type: contact.type.value }))
+            },
+            document: {
+                expireDate: document.document.expireDate.value,
+                issueDate: document.document.issueDate.value,
+                number: document.document.number.value,
+                type: document.document.type.value
+            },
+            firstName: input.firstName.value,
+            id: null,
+            lastName: input.lastName.value
+            
+        }
+
+        return JSON.stringify(customer)
+    }
+
     return {
         ...contact,
         ...document,
         ...input,
 
         changeName,
-        reset
+        hasErrors,
+        reset,
+        toString
     }
 }
 
