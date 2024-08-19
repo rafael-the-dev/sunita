@@ -7,6 +7,7 @@ import { SaleType } from "./sale";
 import { StockReportType } from "./stock";
 import { StoreUserType } from "./user";
 import { STATUS } from ".";
+import { StoreCustomerType } from "./guest";
 
 export enum STORE_AMENITIES {
     BAR = "bar",
@@ -45,6 +46,7 @@ type Supplier = {
 }
 
 export type WarehouseType = BaseStore & {
+    clients: StoreCustomerType[],
     "expenses-categories": ExpenseCategory[],
     expenses: ExpenseType[];
     products: WarehouseProductType[];
