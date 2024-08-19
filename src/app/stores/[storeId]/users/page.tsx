@@ -9,6 +9,8 @@ import { FixedTabsContext as StaticTabsContext  } from "@/context/FixedTabsConte
 import { UsersContextProvider } from "@/context/UsersContext"
 
 import { Provider as StaticTabsProvider } from "@/components/shared/FixedTabsContainer"
+
+import ClientsView from "./views/Clients"
 import UsersView from "./views/Users"
 
 enum TABS {
@@ -39,6 +41,7 @@ const UsersPage = () => {
         <div className={classNames("scrollable overflow-x-auto pt-8")}>
             {
                 {
+                    [TABS.CLIENTS]: <ClientsView />,
                     [TABS.USERS]: <UsersView />
                 }[getActiveTab().id]
             }
