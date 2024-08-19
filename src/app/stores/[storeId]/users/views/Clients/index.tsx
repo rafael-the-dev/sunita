@@ -1,6 +1,8 @@
 import { useCallback, useContext, useEffect } from "react"
 
+import { AppContext } from "@/context/AppContext"
 import { FixedTabsContext as StaticContext } from "@/context/FixedTabsContext"
+import { UsersPageContext } from "../../context"
 
 import useSearchParams from "@/hooks/useSearchParams"
 
@@ -14,13 +16,19 @@ enum DIALOG {
 }
 
 const ClientsView = () => {
-    const { setDialog } = useContext(StaticContext)
+    const { fetchDataRef } = useContext(AppContext);
+    const { setDialog } = useContext(StaticContext);
+    const { customers } = useContext(UsersPageContext);
 
-    const searchParams = useSearchParams()
-    const dialog = searchParams.get("dialog", "")
+    const searchParams = useSearchParams();
+    const dialog = searchParams.get("dialog", "");
+
+    const fetchCustomers = customers.fetchData;
 
     const openClientForm = useCallback(
         () => {
+            fetchDataRef.current = fetchCustomers
+
             setDialog(
                 {
                     header: {
@@ -30,7 +38,7 @@ const ClientsView = () => {
                 }
             )
         },
-        [ setDialog ]
+        [ fetchCustomers, fetchDataRef, setDialog ]
     )
 
     const registerClientClickHandler = useCallback(
