@@ -5,6 +5,7 @@ import { DOCUMENT_TYPE } from "@/types/user"
 import { initial } from "./values"
 
 import { isValidDocumentExpireDate, isValidDocumentIssueDate,isValidDocumentNumber } from "@/validation/user"
+import { defaultInputField } from "@/config/input"
 
 const useDocument = () => {
     const [ document, setDocument ] = useState(initial)
@@ -70,6 +71,20 @@ const useDocument = () => {
         []
     )
 
+    const isValid = useCallback(
+        (obj: typeof defaultInputField) => obj.error || !obj.value.trim(),
+        []
+    )
+
+    const hasErrors = () => {
+        return [
+            document.expireDate.error,
+            document.issueDate.error,
+            isValid(document.number),
+            isValid(document.type)
+        ].find(error => error)
+    }
+
     return {
         document,
 
@@ -77,7 +92,8 @@ const useDocument = () => {
         changeDocumentIssueDate,
         changeDocumentNumber,
         changeDocumentType,
-        resetDocument
+        resetDocument,
+        hasErrors
     }
 }
 
