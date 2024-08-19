@@ -61,7 +61,7 @@ const UsersView = () => {
                 <Filters />
                 <Table />
             </div>
-            <div className="flex flex-col gap-y-4 mt-36 sm:flex-row sm:justify-end sm:gap-y-0 sm:gap-x-4 md:mt-6">
+            <div className="flex flex-col gap-y-4 mt-8 sm:flex-row sm:justify-end sm:gap-y-0 sm:gap-x-4">
                 <Button className="py-2" variant="outlined">
                     Pay salaries
                 </Button>
