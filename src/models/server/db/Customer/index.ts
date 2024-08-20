@@ -9,6 +9,7 @@ import { getCustomers, getCustomerDetails } from "./helpers"
 import { toISOString } from "@/helpers/date"
 
 import Error404 from "@/errors/server/404Error"
+import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
 class Customer {
     static async getAll({ filters }: { filters?: FiltersType }, config: ConfigType) {
@@ -39,7 +40,8 @@ class Customer {
         const  { storeId }  = user.stores[0]
         const customerId = getId()
 
-        const pushCustomerToStore = () => {
+        //This is a helper method that appends customer's details to store.clients array
+        const pushCustomerToStore = (id: string) => {
             return mongoDbConfig
                 .collections
                 .WAREHOUSES
@@ -48,7 +50,7 @@ class Customer {
                     {
                         $push: {
                             clients: {
-                                id: customerId,
+                                id,
                                 createdAt: toISOString(Date.now())
                             }
                         }
@@ -58,77 +60,73 @@ class Customer {
 
         const customer: CustomerType = getCustomerDetails({ ...newCustomer, id: customerId });
 
-        /*try {
-            const customer = await this.get(
-                { 
-                    filter: {
-                        "document.number": document.number,
-                        "document.type": document.type
-                    }
-                },
-                { 
-                    mongoDbConfig, user 
+        //Retrieve customer's details from CLIENTS table
+        const customerDetailsInDB = await mongoDbConfig
+            .collections
+            .CUSTOMERS
+            .findOne(
+                {
+                    "document.number": newCustomer.document.number,
+                    "document.type": newCustomer.document.type
                 }
-            )
+            );
 
-            const store = guest.stores.find(store => store.id === storeId);
-
-            //if store was found, exit register function
-            if(store) return;
-
-            //if store was not found, append current store to Guest.stores
-            return await mongoDbConfig
-                .collections
-                .GUESTS
-                .updateOne(
-                    { "document.number": document.number },
-                    {
-                        $push: {
-                            stores: {
-                                createdAt: new Date(Date.now()).toISOString(),
-                                id: storeId
-                            }
-                        }
-                    }
-                )
-        } catch(e) {
-            //continue with the followind code, if store was not found in the catch block
-        }*/
-
-       try {
-            await mongoDbConfig
-                .collections
-                .CUSTOMERS
-                .insertOne(customer);
-
-            await pushCustomerToStore();
-            
-       } catch(e) {
-            await mongoDbConfig
-                .collections
-                .CUSTOMERS
-                .deleteOne(
-                    {
-                        id: customerId
-                    }
-                );
-
-            await mongoDbConfig
+        //If customer is already registered in the system, check if It is also in the current store
+        if(customerDetailsInDB) {
+            const customerInStore = await mongoDbConfig
                 .collections
                 .WAREHOUSES
-                .updateOne(
-                    { id: storeId },
+                .findOne(
                     {
-                        $pull: {
-                            clients: {
-                                id: customerId
-                            }
-                        }
+                        "clients.id": customerDetailsInDB.id,
+                        id: storeId,
                     }
-                )
-
-            throw e;
-       }
+                );
+           
+            //If customer if already registered in current store, throw an error and leave
+            if(customerInStore) throw new InvalidArgumentError("Client already registered, or check document type and number.");
+            
+            //If customer is not in current store, append his details to store.clients, then leave
+            await pushCustomerToStore(customerDetailsInDB.id);
+            return;
+        } else {
+            //Register customer, If he is not alredy registered
+            try {
+                 await mongoDbConfig
+                     .collections
+                     .CUSTOMERS
+                     .insertOne(customer);
+     
+                 await pushCustomerToStore(customerId);
+                 
+            } catch(e) {
+                // delete customer when an error occurs
+                 await mongoDbConfig
+                     .collections
+                     .CUSTOMERS
+                     .deleteOne(
+                         {
+                             id: customerId
+                         }
+                     );
+     
+                 await mongoDbConfig
+                     .collections
+                     .WAREHOUSES
+                     .updateOne(
+                         { id: storeId },
+                         {
+                             $pull: {
+                                 clients: {
+                                    id: customerId
+                                }
+                             }
+                         }
+                     )
+     
+                 throw e;
+            }
+        }
     }
 
     static async update(customerDetails: CustomerType, { mongoDbConfig, user }: ConfigType) {
