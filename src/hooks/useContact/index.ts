@@ -3,36 +3,11 @@ import { ChangeEvent, useCallback, useMemo, useState } from "react"
 import { ContactType, PHONE_TYPE } from "@/types/contact"
 
 import { isValidPhoneType, isValidPhoneNumber } from "@/validation/contact"
+import { defaultInputField } from "@/config/input";
+import { defaultContact } from "./values";
 
-type InputType = {
-    error: boolean;
-    helperText: string;
-    value: string;
-}
 
-type InputContactType = {
-    phone: {
-        number: InputType,
-        type: InputType & { value: PHONE_TYPE }
-    }[]
-}
-
-const initialInput = {
-    error: false,
-    helperText: "",
-    value: ""
-}
-
-const defaultContact: InputContactType = {
-    phone: [
-        {
-            type: { ...initialInput, value: PHONE_TYPE.WORK },
-            number: structuredClone(initialInput)
-        }
-    ]
-}
-
-const useContact = (initialContact: ContactType) => {
+const useContact = (initialContact?: ContactType) => {
     const [ contact, setContact ] = useState(
         () => {
             if(!initialContact) return defaultContact;
@@ -42,8 +17,8 @@ const useContact = (initialContact: ContactType) => {
                     .phone
                     .map(item => (
                         {
-                            type: { ...initialInput, value: item.type },
-                            number: { ...initialInput, value: item.number }
+                            type: { ...defaultInputField, value: item.type },
+                            number: { ...defaultInputField, value: item.number }
                         }
                     ))
             }
@@ -55,12 +30,12 @@ const useContact = (initialContact: ContactType) => {
             contact
                 .phone
                 .find(item => item.number.error || !Boolean(item.number.value.trim()))
-        ),
+            ),
         [ contact ]
     )
 
     const getAvailableTypesList = useCallback(
-        (contact: InputContactType) => {
+        (contact: typeof defaultContact) => {
             return Object
                 .values(PHONE_TYPE)
                 .filter(
@@ -105,8 +80,8 @@ const useContact = (initialContact: ContactType) => {
                             .phone
                             .push(
                                 {
-                                    type: { ...initialInput, value: phoneType.value },
-                                    number: structuredClone(initialInput)
+                                    type: { ...defaultInputField, value: phoneType.value },
+                                    number: structuredClone(defaultInputField)
                                 }
                             )
                     }
@@ -171,6 +146,14 @@ const useContact = (initialContact: ContactType) => {
         []
     )
 
+    const toLiteralObject = (): ContactType => {
+        return {
+            phone: contact
+                .phone
+                .map(contact => ({ number: contact.number.value, type: contact.type.value }))
+        }
+    }
+
     return {
         hasErrors,
 
@@ -179,7 +162,8 @@ const useContact = (initialContact: ContactType) => {
         getAvailableTypes,
         getContact,
         removePhoneNumber,
-        resetContact
+        resetContact,
+        toLiteralObject
     }
 }
 
