@@ -33,12 +33,13 @@ const GuestContainer = () => {
     } = useContext(LoginContext)
 
     const {
+        customerPayload,
         document,
         firstName,
         lastName,
 
         changeName,
-        hasErrors,
+        hasErrors, hasPayload,
         reset,
         toString,
 
@@ -60,7 +61,7 @@ const GuestContainer = () => {
     const { loading, fetchData } = useFetch(
         {
             autoFetch: false,
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/clients`
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/clients/${hasPayload ? customerPayload.id : ""}`
         }
     )
 
@@ -141,7 +142,7 @@ const GuestContainer = () => {
             {
                 options: {
                     body: toString(),
-                    method: "POST"
+                    method: hasPayload ? "PUT" : "POST"
                 },
                 onError(e) {
                     alertProps.current = {
@@ -152,7 +153,7 @@ const GuestContainer = () => {
                 },
                 onSuccess() {
                     alertProps.current = {
-                        description: "Client was successfully registered",
+                        description: `Client was successfully ${hasPayload ? "updated" : "registered"}`,
                         severity: "success",
                         title: "Success"
                     }
@@ -219,7 +220,7 @@ const GuestContainer = () => {
                 <Button
                     disabled={hasError}
                     type="submit">
-                    { loading ? "Loading..." : "Submit" }
+                    { loading ? "Loading..." : (hasPayload ? "Update" : "Submit") }
                 </Button>
                 <Button
                     className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"

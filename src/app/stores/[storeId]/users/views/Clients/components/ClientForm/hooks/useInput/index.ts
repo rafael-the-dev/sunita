@@ -1,11 +1,15 @@
-import { ChangeEvent, useCallback, useState } from "react"
+import { ChangeEvent, useCallback, useContext, useState } from "react"
+
+import { CustomerInfoType, CustomerType } from "@/types/guest"
+
+import { FixedTabsContext as StaticContext } from "@/context/FixedTabsContext"
+
+import { defaultInputField, getInputFieldObject } from "@/config/input"
+import { isValidName } from "@/validation/user"
 
 import useAddress from "@/hooks/useContact"
 import useContact from "@/hooks/useContact"
 import useDocument from "@/hooks/useDocument"
-import { defaultInputField } from "@/config/input"
-import { isValidName } from "@/validation/user"
-import { CustomerType } from "@/types/guest"
 
 const defaultCLient = {
     firstName: structuredClone(defaultInputField),
@@ -13,10 +17,25 @@ const defaultCLient = {
 }
 
 const useInput = () => {
-    const [ input, setInput ] = useState(structuredClone(defaultCLient))
+    const { getDialog } = useContext(StaticContext)
 
-    const contact = useContact(null)
-    const document = useDocument()
+    const customer = getDialog()?.current?.payload as CustomerInfoType
+
+    const hasPayload = Boolean(customer)
+
+    const [ input, setInput ] = useState(
+        () => {
+            if(!hasPayload) return structuredClone(defaultCLient);
+
+            return {
+                firstName: getInputFieldObject(customer.firstName),
+                lastName: getInputFieldObject(customer.lastName)
+            }
+        }
+    )
+
+    const contact = useContact(customer?.contact)
+    const document = useDocument(customer?.document)
 
     const resetContact = contact.resetContact
     const resetDocument = document.resetDocument
@@ -89,8 +108,11 @@ const useInput = () => {
         ...document,
         ...input,
 
+        customerPayload: customer,
+
         changeName,
         hasErrors,
+        hasPayload,
         reset,
         toString
     }
