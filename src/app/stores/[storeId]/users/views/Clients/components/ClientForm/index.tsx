@@ -16,7 +16,7 @@ import useFetch from "@/hooks/useFetch"
 
 import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
-import Contact from "@/components/shared/contact"
+import ContactList from "@/components/shared/ContactList"
 import Document from "@/components/shared/Document"
 import DateInput from "@/components/date"
 import Legend from "@/components/shared/Legend"
@@ -89,34 +89,17 @@ const GuestContainer = () => {
 
     const contactList = useMemo(
         () => (
-            <div className="flex flex-col gap-y-4 items-stretch">
-                {
-                    getContact()
-                        .phone
-                        .map(contact => (
-                            <Contact 
-                                { ...contact }
-                                key={contact.type.value}
-                                list={getAvailableTypes()}
-                                onChange={changePhone}
-                                onRemove={removePhoneNumber}
-                            />
-                        ))
-                }
-            </div>
+            <ContactList
+                addPhoneNumber={addPhoneNumber}
+                contact={getContact()}
+                changePhone={changePhone}
+                getAvailableTypes={getAvailableTypes}
+                hasErrors={null}
+                removePhoneNumber={removePhoneNumber}
+                resetContact={null}
+            />
         ),
-        [ changePhone, getAvailableTypes, getContact, removePhoneNumber ]
-    )
-
-    const addContactButtonMemo = useMemo(
-        () => (
-            <Button
-                className="py-2"
-                onClick={addPhoneNumber}>
-                Add contact
-            </Button>
-        ),
-        [ addPhoneNumber ]
+        [ addPhoneNumber, changePhone, getAvailableTypes, getContact, removePhoneNumber ]
     )
 
     const documentsList = useMemo(
@@ -194,13 +177,6 @@ const GuestContainer = () => {
                         Contact
                     </Legend>
                     { contactList }
-                    {
-                        getAvailableTypes().length > 0 && (
-                            <div>
-                                { addContactButtonMemo }
-                            </div>
-                        )
-                    }
                 </fieldset>
                 <fieldset className="flex flex-col gap-y-4 mt-4">
                     <Legend
