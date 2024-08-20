@@ -1,6 +1,6 @@
 import { MongoClient, Collection, Db } from "mongodb";
 
-import { CustomerType, GuestDBType } from "@/types/guest";
+import { CustomerType, GuestType } from "@/types/guest";
 import { MongoDbConfigType } from "@/types/mongoDb";
 import { User } from "@/types/user";
 import { StoreProductType } from "@/types/product";
@@ -48,7 +48,7 @@ const createMongoDBConnection = async () => {
             mongoDBConfig.collections = {
                 CUSTOMERS: clusterDB.collection<CustomerType>("clients"),
                 EXPENSES_CATEGORIES: clusterDB.collection<CategoryType>("expenses-categories"),
-                GUESTS: clusterDB.collection<GuestDBType>("guests"),
+                GUESTS: clusterDB.collection<GuestType>("guests"),
                 PRODUCTS: clusterDB.collection<StoreProductType>("products"),
                 PRODUCTS_CATEGORIES: clusterDB.collection<CategoryType>("products-categories"),
                 SUPPLIERS: clusterDB.collection<SupplierDBType>("suppliers"),

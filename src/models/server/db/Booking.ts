@@ -12,7 +12,7 @@ import { getBookings, isBookingAvailable } from "@/helpers/booking"
 import Error404 from "@/errors/server/404Error"
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
-import Guest from "./Guest"
+import Guest from "./Customer"
 import Room from "./Room"
 
 type GetAllPropsType = {
@@ -82,7 +82,7 @@ class Booking {
             bookingProxy.type = type;
             bookingProxy.payment = payment
             
-            await Guest.register(guest, config);
+            await Guest.register(guest, "GUESTS", config);
 
             await mongoDbConfig
                 .collections

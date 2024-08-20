@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 
 import { CustomerType } from "@/types/guest"
-import { User, UserType } from "@/types/user"
 
 import { apiHandler } from "@/middlewares/route-handler";
 
@@ -25,7 +24,7 @@ export const PUT = async (req: NextRequest, { params: { clientId }}: URLParamsTy
     return await apiHandler(
         req,
         async (config) => {
-            await Customer.update({ ...customer, id: clientId }, config);
+            await Customer.update({ ...customer, id: clientId }, "CUSTOMERS", config);
 
             return NextResponse.json({}, { status: 201 });
         }
