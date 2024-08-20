@@ -86,6 +86,15 @@ const useDocument = (initialDocument?: Document) => {
         []
     )
 
+    const toLiteralObject = () => {
+        return {
+            expireDate: document.expireDate.value,
+            issueDate: document.issueDate.value,
+            number: document.number.value,
+            type: document.type.value
+        }
+    }
+
     const isValid = useCallback(
         (obj: typeof defaultInputField) => obj.error || !obj.value.trim(),
         []
@@ -108,7 +117,8 @@ const useDocument = (initialDocument?: Document) => {
         changeDocumentNumber,
         changeDocumentType,
         resetDocument,
-        hasErrors
+        hasErrors,
+        toLiteralObject
     }
 }
 
