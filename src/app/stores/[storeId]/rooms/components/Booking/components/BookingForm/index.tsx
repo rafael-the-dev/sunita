@@ -30,7 +30,7 @@ const BookingForm = ({ fetchBookingsFuncRef }: PropsType) => {
             url: `/api/stores/${credentials?.user.stores[0]?.storeId}/rooms/bookings`
         }
     )
-
+    
     const alertProps = useRef({
         description: "",
         severity: "",
