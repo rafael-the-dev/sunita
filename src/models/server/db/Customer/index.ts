@@ -3,7 +3,6 @@ import { CustomerType } from "@/types/guest"
 import { ConfigType, FiltersType } from "@/types/app-config-server"
 import { GuestType, GuestDBType } from "@/types/guest"
 
-import getCustomerProxy from "../../proxy/customer"
 import { getId } from "@/helpers/id"
 import { getCustomers, getCustomerDetails } from "./helpers"
 import { toISOString } from "@/helpers/date"
@@ -11,11 +10,21 @@ import { toISOString } from "@/helpers/date"
 import Error404 from "@/errors/server/404Error"
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
+type TableNameType = "CUSTOMERS" | "GUESTS"
+
+type RetrieveCustomersType = { 
+    filters?: FiltersType, 
+    tableName: TableNameType 
+}
+
+const getFieldName = (tableName: TableNameType) => tableName === "CUSTOMERS" ? "clients" : "guests"
+
 class Customer {
-    static async getAll({ filters }: { filters?: FiltersType }, config: ConfigType) {
+    static async getAll({ filters, tableName }: RetrieveCustomersType, config: ConfigType) {
         const customers = await getCustomers(
             {
-                filters
+                filters,
+                tableName: getFieldName(tableName)
             },
             config
         )
@@ -23,10 +32,11 @@ class Customer {
         return { list: customers }
     }
 
-    static async get({ filters }: { filters?: FiltersType }, config: ConfigType) {
+    static async get({ filters, tableName }: RetrieveCustomersType, config: ConfigType) {
         const customers = await getCustomers(
             {
-                filters
+                filters,
+                tableName: getFieldName(tableName)
             },
             config
         )
@@ -36,9 +46,11 @@ class Customer {
         return customers[0]
     }
 
-    static async register(newCustomer: CustomerType, { mongoDbConfig, user }: ConfigType) {
+    static async register(newCustomer: CustomerType, tableName: TableNameType, { mongoDbConfig, user }: ConfigType) {
         const  { storeId }  = user.stores[0]
         const customerId = getId()
+
+        const fieldName = getFieldName(tableName)
 
         //This is a helper method that appends customer's details to store.clients array
         const pushCustomerToStore = (id: string) => {
@@ -49,7 +61,7 @@ class Customer {
                     { id: storeId },
                     {
                         $push: {
-                            clients: {
+                            [fieldName]: {
                                 id,
                                 createdAt: toISOString(Date.now())
                             }
@@ -63,7 +75,7 @@ class Customer {
         //Retrieve customer's details from CLIENTS table
         const customerDetailsInDB = await mongoDbConfig
             .collections
-            .CUSTOMERS
+            [tableName]
             .findOne(
                 {
                     "document.number": newCustomer.document.number,
@@ -78,7 +90,7 @@ class Customer {
                 .WAREHOUSES
                 .findOne(
                     {
-                        "clients.id": customerDetailsInDB.id,
+                        [`${fieldName}.id`]: customerDetailsInDB.id,
                         id: storeId,
                     }
                 );
@@ -92,44 +104,44 @@ class Customer {
         } else {
             //Register customer, If he is not alredy registered
             try {
-                 await mongoDbConfig
-                     .collections
-                     .CUSTOMERS
-                     .insertOne(customer);
+                await mongoDbConfig
+                    .collections
+                    [tableName]
+                    .insertOne(customer);
      
-                 await pushCustomerToStore(customerId);
+                await pushCustomerToStore(customerId);
                  
             } catch(e) {
                 // delete customer when an error occurs
-                 await mongoDbConfig
-                     .collections
-                     .CUSTOMERS
-                     .deleteOne(
-                         {
-                             id: customerId
-                         }
-                     );
+                await mongoDbConfig
+                    .collections
+                    .CUSTOMERS
+                    .deleteOne(
+                        {
+                            id: customerId
+                        }
+                    );
      
-                 await mongoDbConfig
-                     .collections
-                     .WAREHOUSES
-                     .updateOne(
-                         { id: storeId },
-                         {
-                             $pull: {
-                                 clients: {
+                await mongoDbConfig
+                    .collections
+                    .WAREHOUSES
+                    .updateOne(
+                        { id: storeId },
+                        {
+                            $pull: {
+                                [fieldName]: {
                                     id: customerId
                                 }
-                             }
-                         }
-                     )
-     
-                 throw e;
+                            }
+                        }
+                    )
+    
+                throw e;
             }
         }
     }
 
-    static async update(customerDetails: CustomerType, { mongoDbConfig, user }: ConfigType) {
+    static async update(customerDetails: CustomerType, tableName: TableNameType, { mongoDbConfig, user }: ConfigType) {
         const customer: CustomerType = getCustomerDetails(customerDetails);
 
         const currentCustomerInfo = await this.get(
@@ -138,7 +150,8 @@ class Customer {
                     id: customerDetails.id,
                     "document.number": customerDetails.document.number,
                     "document.type": customerDetails.document.type
-                }
+                },
+                tableName
             },
             {
                 mongoDbConfig,
@@ -152,7 +165,7 @@ class Customer {
 
             return mongoDbConfig
                 .collections
-                .CUSTOMERS
+                [tableName]
                 .updateOne(
                     { id: customerDetails.id },
                     {
