@@ -1,39 +1,33 @@
-import { GuestDBType } from "@/types/guest"
+import { GuestDBType, GuestType } from "@/types/guest"
 
 import { Document } from "@/types/user"
 
 import { validate } from "@/validation"
-import {
-    isValidDocumentExpireDate,
-    isValidDocumentIssueDate,
-    isValidDocumentNumber,
-    isValidDocumentType,
-    isValidName,
-} from "@/validation/user"
+import { isValidName } from "@/validation/user"
+import { validateContact, validateDocument } from "../validation/user"
 
-import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
+import { ContactType } from "@/types/contact"
 
-type PropType = "document" | "firstName" | "lastName"
+type PropType = "contact" | "document" | "firstName" | "lastName"
 
-const getGuestProxy = (target: GuestDBType) => {
+const getGuestProxy = (target: GuestType) => {
 
-    const proxyHandler: ProxyHandler<GuestDBType> = {
-        set(target: GuestDBType, prop: PropType, newValue) {
+    const proxyHandler: ProxyHandler<GuestType> = {
+        set(target: GuestType, prop: PropType, newValue) {
             switch(prop) {
+                case "contact": {
+                    const contact = newValue as ContactType
+
+                    validateContact(contact)
+
+                    return Reflect.set(target, prop, contact);
+                }
                 case "document": {
-                    if(typeof newValue !== "object") throw new InvalidArgumentError("Invalid document");
-                    
-                    const document = newValue as Document;
+                    const document = newValue as Document
 
-                    validate(document.number, "Invalid document number.", isValidDocumentNumber);
-                    validate(document.type, "Invalid document type.", isValidDocumentType);
-                    validate(document.issueDate, "Invalid document issue date.", isValidDocumentIssueDate);
+                    validateDocument(document)
 
-                    if(!isValidDocumentExpireDate(document.expireDate, document.issueDate)) {
-                        throw new InvalidArgumentError("Invalid document expire date");
-                    }
-
-                    return Reflect.set(target, prop, newValue);
+                    return Reflect.set(target, prop, document);
                 }
                 case "firstName": {
                     validate(newValue as string, "Invalid first name.", isValidName);
