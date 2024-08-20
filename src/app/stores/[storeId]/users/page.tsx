@@ -9,6 +9,7 @@ import { FixedTabsContext as StaticTabsContext  } from "@/context/FixedTabsConte
 import { UsersContextProvider } from "@/context/UsersContext"
 
 import { Provider as StaticTabsProvider } from "@/components/shared/FixedTabsContainer"
+import { UsersPageContextProvider } from "./context"
 
 import ClientsView from "./views/Clients"
 import UsersView from "./views/Users"
@@ -52,7 +53,9 @@ const UsersPage = () => {
 const ContextProvider = () => (
     <StaticTabsProvider tabs={tabs}>
         <UsersContextProvider>
-            <UsersPage />
+            <UsersPageContextProvider>
+                <UsersPage />
+            </UsersPageContextProvider>
         </UsersContextProvider>
     </StaticTabsProvider>
 )
