@@ -2,7 +2,7 @@ import { createContext, useCallback, useMemo, useState } from "react";
 import moment from "moment";
 
 import { ContextType, PropsType } from "./types";
-import { BOOKING_TYPE, SimpleBookingType } from "@/types/room";
+import { SimpleBookingType } from "@/types/room";
 
 import useBooking from "./hooks/useBook";
 import useGuest from "./hooks/useGuest";
@@ -21,12 +21,10 @@ export const BookingContextProvider = ({ children }: PropsType) => {
     const hasPaymentErrors = payment.hasErrors;
     
     const hasErrors = useMemo(
-        () => {
-            return hasBookingErrors || hasPaymentErrors || hasGuestErrors
-        },
+        () => hasBookingErrors  || hasPaymentErrors || hasGuestErrors,
         [ hasBookingErrors, hasGuestErrors, hasPaymentErrors ]
     )
-
+    
     const resetBooking = bookingRest.resetBooking;
     const resetGuest = guestRest.reset;
     const resetPayment = payment.reset;
@@ -45,16 +43,7 @@ export const BookingContextProvider = ({ children }: PropsType) => {
             checkIn: booking.checkIn.value,
             checkOut: booking.checkOut.value,
             date: moment(booking.checkIn.value).format(dateFormat),
-            guest: {
-                document: {
-                    expireDate: guest.document.expireDate.value,
-                    issueDate: guest.document.issueDate.value,
-                    number: guest.document.number.value,
-                    type: guest.document.type.value
-                },
-                firstName: guest.firstName.value,
-                lastName: guest.lastName.value
-            },
+            guest: guestRest.toLiteralObject(),
             id: null,
             payment: payment.getPayment(),
             room: booking.room,
@@ -69,10 +58,12 @@ export const BookingContextProvider = ({ children }: PropsType) => {
     return (
         <BookingContext.Provider
             value={{
-                booking, ...bookingRest,
-                guest, ...guestRest,
-                hasErrors,
+                ...bookingRest,
+                ...guestRest,
                 ...payment,
+                booking,
+                guest, 
+                hasErrors,
                 reset,
                 toString
             }}>

@@ -1,9 +1,11 @@
 import { ChangeEvent, ReactNode } from "react"
 
 import { BOOKING_TYPE, RoomType } from "@/types/room"
+import { ContactInputType, ContactMethodsType } from "@/hooks/useContact/types"
 import { DOCUMENT_TYPE } from "@/types/user"
 import { PaymentFunctionsType } from "@/hooks/usePayment/types"
 import { PaymentType } from "@/types/payment-method"
+import { defaultContact } from "@/hooks/useContact/values"
 
 export type PropsType = {
     children: ReactNode
@@ -17,7 +19,7 @@ type InputType = {
 
 type ChangeNameKeyType = "first" | "last"
 
-export type ContextType = PaymentFunctionsType & {
+export type ContextType = PaymentFunctionsType & ContactMethodsType & {
     booking: {
         checkIn: InputType,
         checkOut: InputType,
@@ -27,6 +29,7 @@ export type ContextType = PaymentFunctionsType & {
         totalPrice: number 
     },
     guest: {
+        contact: ContactInputType,
         firstName: InputType,
         lastName: InputType,
         document: {
