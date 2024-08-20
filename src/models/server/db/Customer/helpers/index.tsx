@@ -1,6 +1,8 @@
 
 import { ConfigType, FiltersType } from "@/types/app-config-server"
-import { CustomerInfoType } from "@/types/guest"
+import { CustomerInfoType, CustomerType } from "@/types/guest"
+
+import getCustomerProxy from "../../../proxy/customer"
 
 export const getCustomers = async ({ filters }: { filters?: FiltersType }, { mongoDbConfig, user }: ConfigType) => {
     const id = user.stores[0].storeId
@@ -39,4 +41,23 @@ export const getCustomers = async ({ filters }: { filters?: FiltersType }, { mon
         .toArray() as CustomerInfoType[]
 
     return customers
+}
+
+export const getCustomerDetails = ({ contact, document, firstName, id, lastName }: CustomerType) => {
+    const customer: CustomerType = {
+        contact: null,
+        document: null,
+        firstName: null,
+        id: id,
+        lastName: null
+    }
+
+    const customerProxy  = getCustomerProxy(customer)
+    
+    customerProxy.contact = contact
+    customerProxy.document = document;
+    customerProxy.firstName = firstName;
+    customerProxy.lastName = lastName;
+
+    return customer
 }
