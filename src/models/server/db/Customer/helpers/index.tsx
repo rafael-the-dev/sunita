@@ -4,7 +4,7 @@ import { CustomerInfoType, CustomerType } from "@/types/guest"
 
 import getCustomerProxy from "../../../proxy/customer"
 
-export const getCustomers = async ({ filters }: { filters?: FiltersType }, { mongoDbConfig, user }: ConfigType) => {
+export const getCustomers = async ({ filters, tableName }: { filters?: FiltersType, tableName: "clients" | "guests" }, { mongoDbConfig, user }: ConfigType) => {
     const id = user.stores[0].storeId
 
     const customers = await mongoDbConfig
@@ -17,7 +17,7 @@ export const getCustomers = async ({ filters }: { filters?: FiltersType }, { mon
                 },
                 {
                     $lookup: {
-                        from: "clients",
+                        from: tableName,
                         foreignField: "id",
                         localField: "clients.id",
                         as: "customerInfo"
