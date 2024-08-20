@@ -82,18 +82,8 @@ const useInput = () => {
 
     const toString = () => {
         const customer: CustomerType = {
-            contact: {
-                phone: contact
-                    .getContact()
-                    .phone
-                    .map(contact => ({ number: contact.number.value, type: contact.type.value }))
-            },
-            document: {
-                expireDate: document.document.expireDate.value,
-                issueDate: document.document.issueDate.value,
-                number: document.document.number.value,
-                type: document.document.type.value
-            },
+            contact: contact.toLiteralObject(),
+            document: document.toLiteralObject(),
             firstName: input.firstName.value,
             id: null,
             lastName: input.lastName.value
