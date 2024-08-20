@@ -13,13 +13,7 @@ export type CustomerInfoType = CustomerType & {
     createdAt: string
 }
 
-export type GuestType = {
-    document: Document,
-    email?: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
-}
+export type GuestType = CustomerType
 
 export type GuestDBType = GuestType & {
     stores: {
