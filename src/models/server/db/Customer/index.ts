@@ -1,15 +1,40 @@
 
 import { CustomerType } from "@/types/guest"
-import { ConfigType } from "@/types/app-config-server"
+import { ConfigType, FiltersType } from "@/types/app-config-server"
 import { GuestType, GuestDBType } from "@/types/guest"
 
 import getCustomerProxy from "../../proxy/customer"
 import { getId } from "@/helpers/id"
+import { getCustomers } from "./helpers"
 import { toISOString } from "@/helpers/date"
 
 import Error404 from "@/errors/server/404Error"
 
 class Customer {
+    static async getAll({ filters }: { filters?: FiltersType }, config: ConfigType) {
+        const customers = await getCustomers(
+            {
+                filters
+            },
+            config
+        )
+
+        return { list: customers }
+    }
+
+    static async get({ filters }: { filters?: FiltersType }, config: ConfigType) {
+        const customers = await getCustomers(
+            {
+                filters
+            },
+            config
+        )
+
+        if(customers.length === 0) throw new Error404("Customer not found.")
+
+        return customers[0]
+    }
+
     static async register({ contact, document, firstName, lastName }: CustomerType, { mongoDbConfig, user }: ConfigType) {
         const  { storeId }  = user.stores[0]
         const customerId = getId()
@@ -31,11 +56,27 @@ class Customer {
                 )
         }
 
+        const customer: CustomerType = {
+            contact: null,
+            document: null,
+            firstName: null,
+            id: customerId,
+            lastName: null
+        }
+
+        const customerProxy  = getCustomerProxy(customer)
+        
+        customerProxy.contact = contact
+        customerProxy.document = document;
+        customerProxy.firstName = firstName;
+        customerProxy.lastName = lastName;
+
         /*try {
-            const guest = await this.get(
+            const customer = await this.get(
                 { 
                     filter: {
-                        "document.number": document.number
+                        "document.number": document.number,
+                        "document.type": document.type
                     }
                 },
                 { 
@@ -67,21 +108,6 @@ class Customer {
             //continue with the followind code, if store was not found in the catch block
         }*/
 
-        const customer: CustomerType = {
-            contact: null,
-            document: null,
-            firstName: null,
-            id: customerId,
-            lastName: null
-        }
-
-        const customerProxy  = getCustomerProxy(customer)
-        
-        customerProxy.contact = contact
-        customerProxy.document = document;
-        customerProxy.firstName = firstName;
-        customerProxy.lastName = lastName;
-
        try {
             await mongoDbConfig
                 .collections
@@ -96,7 +122,7 @@ class Customer {
                 .CUSTOMERS
                 .deleteOne(
                     {
-                        "document.number": document.number
+                        id: customerId
                     }
                 );
 
