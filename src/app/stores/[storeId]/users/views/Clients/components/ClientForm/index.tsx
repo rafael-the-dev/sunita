@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useContext, useMemo } from "react"
+import { ChangeEvent, FormEvent, useCallback, useContext, useMemo, useRef } from "react"
 import classNames from "classnames"
 import moment from "moment"
 import Typography from "@mui/material/Typography"
@@ -8,9 +8,13 @@ import styles from "./styles.module.css"
 import { DOCUMENT_TYPE } from "@/types/user"
 
 import { BookingContext } from "@/context/BookingContext"
+import { AppContext } from "@/context/AppContext"
+import { LoginContext } from "@/context/LoginContext"
 
 import useInput from "./hooks/useInput"
+import useFetch from "@/hooks/useFetch"
 
+import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
 import Contact from "@/components/shared/contact"
 import Document from "@/components/shared/Document"
@@ -21,12 +25,22 @@ import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
 
 const GuestContainer = () => {
+
+    const { fetchDataRef } = useContext(AppContext)
+
+    const { 
+        credentials 
+    } = useContext(LoginContext)
+
     const {
         document,
         firstName,
         lastName,
 
         changeName,
+        hasErrors,
+        reset,
+        toString,
 
         addPhoneNumber,
         changePhone,
@@ -40,9 +54,37 @@ const GuestContainer = () => {
         changeDocumentType,
     } = useInput()
 
-    const { 
-        guest 
-    } = useContext(BookingContext)
+    const hasError = hasErrors()
+
+
+    const { loading, fetchData } = useFetch(
+        {
+            autoFetch: false,
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/clients`
+        }
+    )
+
+    const alertProps = useRef(
+        {
+            description: "",
+            severity: "",
+            title: ""
+        }
+    )
+    const onCloseAlertRef = useRef<() => void>(null)
+    const onOpenAlertRef = useRef<() => void>(null)
+
+    const alertMemo = useMemo(
+        () => (
+            <Alert 
+                { ...alertProps.current }
+                className={classNames("mb-6", loading && "")}
+                onClose={onCloseAlertRef}
+                onOpen={onOpenAlertRef}
+            />
+        ),
+        [ loading ]
+    )
 
     const contactList = useMemo(
         () => (
@@ -88,9 +130,49 @@ const GuestContainer = () => {
         [ changeDocumentType ]
     );
 
+    const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if(hasError || loading) return;
+
+        onCloseAlertRef.current?.();
+
+        await fetchData(
+            {
+                options: {
+                    body: toString(),
+                    method: "POST"
+                },
+                onError(e) {
+                    alertProps.current = {
+                        description: e.message,
+                        severity: "error",
+                        title: "Error"
+                    }
+                },
+                onSuccess() {
+                    alertProps.current = {
+                        description: "Client was successfully registered",
+                        severity: "success",
+                        title: "Success"
+                    }
+
+                    fetchDataRef.current?.({})
+
+                    reset()
+                }
+            }
+        );
+
+        onOpenAlertRef.current?.();
+    }
+
     return (
-        <form className={classNames(styles.form, `flex flex-col justify-between items-stretch px-3 pt-4 pb-6 sm:px-4`)}>
+        <form 
+            className={classNames(styles.form, `flex flex-col justify-between items-stretch px-3 pt-4 pb-6 sm:px-4`)}
+            onSubmit={submitHandler}>
             <div className="flex flex-col gap-y-4">
+                { alertMemo }
                 <Row>
                     <Textfield 
                         { ...firstName}
@@ -133,10 +215,11 @@ const GuestContainer = () => {
                     />
                 </fieldset>
             </div>
-            <div className="flex flex-col gap-y-4 items-stretch mt-8 sm:flex-row-reverse sm:gap-y-0 sm:gap-x-4">
+            <div className="flex flex-col gap-y-4 items-stretch mt-10 sm:flex-row-reverse sm:gap-y-0 sm:gap-x-4">
                 <Button
+                    disabled={hasError}
                     type="submit">
-                    Submit
+                    { loading ? "Loading..." : "Submit" }
                 </Button>
                 <Button
                     className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
