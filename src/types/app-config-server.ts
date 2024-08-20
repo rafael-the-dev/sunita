@@ -11,6 +11,7 @@ export type FiltersType = Record<string, any>
 export type URLParamsType = {
     params: {
         categoryId: string,
+        clientId?: string,
         expenseId: string,
         productId?: string;
         username?: string;
