@@ -6,6 +6,8 @@ export type ConfigType = {
     user: UserType
 };
 
+export type FiltersType = Record<string, any>
+
 export type URLParamsType = {
     params: {
         categoryId: string,
