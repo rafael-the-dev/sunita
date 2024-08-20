@@ -95,14 +95,19 @@ class Customer {
                     }
                 );
            
-            //If customer if already registered in current store, throw an error and leave
-            if(customerInStore) throw new InvalidArgumentError("Client already registered, or check document type and number.");
+            //If customer if already registered in current store, throw an error and exit
+            if(customerInStore && tableName === "CUSTOMERS") {
+                throw new InvalidArgumentError("Client already registered, or check document type and number.");
+            }
+
+            //If guest if already registered in current store, exit
+            if(customerInStore && tableName === "GUESTS") return;
             
-            //If customer is not in current store, append his details to store.clients, then leave
+            //If customer is not in current store, append his details to store.clients, then exit
             await pushCustomerToStore(customerDetailsInDB.id);
             return;
         } else {
-            //Register customer, If he is not alredy registered
+            //Register customer, If he is not already registered
             try {
                 await mongoDbConfig
                     .collections
