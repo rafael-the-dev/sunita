@@ -6,26 +6,68 @@ import { DOCUMENT_TYPE } from "@/types/user"
 
 import { BookingContext } from "@/context/BookingContext"
 
+import ContactList from "@/components/shared/ContactList"
+import Document from "@/components/shared/Document"
 import DateInput from "@/components/date"
+import Legend from "@/components/shared/Legend"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
 
 const GuestContainer = () => {
     const { 
+        addPhoneNumber,
+        changePhone,
         changeDocumentExpireDate,
         changeDocumentIssueDate,
         changeDocumentNumber,
         changeDocumentType,
         changeName,
-        guest 
+        guest,
+        getAvailableTypes,
+        removePhoneNumber
 
     } = useContext(BookingContext)
+
+    const contact = guest.contact
 
     const documentsList = useMemo(
         () => Object
             .values(DOCUMENT_TYPE)
             .map(value => ({ label: value, value })),
+        []
+    )
+
+    const contactLegend = useMemo(
+        () => (
+            <Legend>
+                Contact
+            </Legend>
+        ),
+        []
+    )
+
+    const contactList = useMemo(
+        () => (
+            <ContactList
+                addPhoneNumber={addPhoneNumber}
+                contact={contact}
+                changePhone={changePhone}
+                getAvailableTypes={getAvailableTypes}
+                hasErrors={null}
+                removePhoneNumber={removePhoneNumber}
+                resetContact={null}
+            />
+        ),
+        [ addPhoneNumber, contact, changePhone, getAvailableTypes, removePhoneNumber ]
+    )
+
+    const documentLegend = useMemo(
+        () => (
+            <Legend>
+                Document
+            </Legend>
+        ),
         []
     )
 
@@ -51,48 +93,18 @@ const GuestContainer = () => {
                 />
             </Row>
             <fieldset className="flex flex-col gap-y-4">
-                <Typography
-                    component="legend"
-                    className="font-semibold mb-6">
-                    Document
-                </Typography>
-                <Row>
-                    <Select 
-                        { ...guest.document.type }
-                        className="mb-0 w-full sm:w-1/2"
-                        list={documentsList}
-                        label="Type"
-                        onChange={documentTypeChangeHandler}
-                    />
-                    <Textfield 
-                        { ...guest.document.number  }
-                        className="mb-0 w-full sm:w-1/2"
-                        label="Number"
-                        onChange={changeDocumentNumber}
-                        placeholder="Insert document number"
-                        required
-                    />
-                </Row>
-                <Row>
-                    <DateInput 
-                        { ...guest.document.issueDate }
-                        className="mb-0 w-full sm:w-1/2"
-                        date
-                        label="Issue date"
-                        minDate={moment(guest.document.issueDate.value).subtract(5, "years").toISOString()}
-                        maxDate={moment(new Date(Date.now())).toISOString()}
-                        onChange={changeDocumentIssueDate}
-                    />
-                    <DateInput 
-                        { ...guest.document.expireDate }
-                        className="mb-0 w-full sm:w-1/2"
-                        date
-                        label="Expire date"
-                        minDate={guest.document.issueDate.value}
-                        maxDate={moment(guest.document.issueDate.value).add(5, "years").toString()}
-                        onChange={changeDocumentExpireDate}
-                    />
-                </Row>
+                { contactLegend }
+                { contactList }
+            </fieldset>
+            <fieldset className="flex flex-col gap-y-4">
+                { documentLegend }
+                <Document 
+                    document={guest.document}
+                    onChangeExpirationDate={changeDocumentExpireDate}
+                    onChangeIssueDate={changeDocumentIssueDate}
+                    onChangeNumber={changeDocumentNumber}
+                    onChangeType={documentTypeChangeHandler}
+                />
             </fieldset>
         </div>
     )
