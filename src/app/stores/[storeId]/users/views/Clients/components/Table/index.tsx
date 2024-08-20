@@ -1,11 +1,15 @@
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 
 import { CustomerType } from "@/types/guest";
 import { TableHeadersType } from "@/components/table/types";
 
+import { UsersPageContext } from "../../../../context";
+
 import Table from "@/components/shared/table";
 
 const TableContainer = () => {
+    const { customers } = useContext(UsersPageContext)
+
     const headers = useRef<TableHeadersType[]>([
         {
             label: "Name",
@@ -29,7 +33,13 @@ const TableContainer = () => {
 
                 return (
                     <span className="capitalize">
-                        { customer.contact.phone.map(phone => phone.number) }
+                        { 
+                            customer
+                                .contact
+                                .phone
+                                .map(phone => phone.number)
+                                .join(", ") 
+                        }
                     </span>
                 )
             },
@@ -38,18 +48,21 @@ const TableContainer = () => {
             }
         },
         {
-            label: "Debts",
-            getComponent({ item }) {
-                const user = item as CustomerType
-
-                return (
-                    <div>
-                        { 0 } MT
-                    </div>
-                )
-            },
+            label: "Doc type",
             key: {
-                value: "stores"
+                value: "document",
+                subKey: {
+                    value: "type"
+                }
+            }
+        },
+        {
+            label: "Doc number",
+            key: {
+                value: "document",
+                subKey: {
+                    value: "number"
+                }
             }
         }
     ])
@@ -57,7 +70,7 @@ const TableContainer = () => {
     return (
         <Table 
             classes={{ root: "mt-6" }}
-            data={[]} 
+            data={customers.data?.list ?? []} 
             headers={headers}
         />
     )
