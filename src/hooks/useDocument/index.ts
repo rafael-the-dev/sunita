@@ -1,14 +1,29 @@
 import { ChangeEvent, useCallback, useState } from "react"
 
-import { DOCUMENT_TYPE } from "@/types/user"
+import { Document, DOCUMENT_TYPE } from "@/types/user"
 
 import { initial } from "./values"
 
 import { isValidDocumentExpireDate, isValidDocumentIssueDate,isValidDocumentNumber } from "@/validation/user"
-import { defaultInputField } from "@/config/input"
+import { defaultInputField, getInputFieldObject } from "@/config/input"
 
-const useDocument = () => {
-    const [ document, setDocument ] = useState(initial)
+const useDocument = (initialDocument?: Document) => {
+    const [ document, setDocument ] = useState(
+        () => {
+            if(!initialDocument) return initial;
+
+            return {
+                expireDate: getInputFieldObject(initialDocument.expireDate),
+                issueDate: getInputFieldObject(initialDocument.issueDate),
+                number: getInputFieldObject(initialDocument.number),
+                type: {
+                    error: false,
+                    helperText: "",
+                    value: initialDocument.type
+                }
+            }
+        }
+    )
 
     const changeDocumentExpireDate = useCallback((newDate: string) => {
         setDocument(document => {
