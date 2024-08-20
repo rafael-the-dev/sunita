@@ -5,7 +5,7 @@ import { GuestType, GuestDBType } from "@/types/guest"
 
 import getCustomerProxy from "../../proxy/customer"
 import { getId } from "@/helpers/id"
-import { getCustomers } from "./helpers"
+import { getCustomers, getCustomerDetails } from "./helpers"
 import { toISOString } from "@/helpers/date"
 
 import Error404 from "@/errors/server/404Error"
@@ -35,7 +35,7 @@ class Customer {
         return customers[0]
     }
 
-    static async register({ contact, document, firstName, lastName }: CustomerType, { mongoDbConfig, user }: ConfigType) {
+    static async register(newCustomer: CustomerType, { mongoDbConfig, user }: ConfigType) {
         const  { storeId }  = user.stores[0]
         const customerId = getId()
 
@@ -56,20 +56,7 @@ class Customer {
                 )
         }
 
-        const customer: CustomerType = {
-            contact: null,
-            document: null,
-            firstName: null,
-            id: customerId,
-            lastName: null
-        }
-
-        const customerProxy  = getCustomerProxy(customer)
-        
-        customerProxy.contact = contact
-        customerProxy.document = document;
-        customerProxy.firstName = firstName;
-        customerProxy.lastName = lastName;
+        const customer: CustomerType = getCustomerDetails({ ...newCustomer, id: customerId });
 
         /*try {
             const customer = await this.get(
@@ -139,6 +126,47 @@ class Customer {
                         }
                     }
                 )
+
+            throw e;
+       }
+    }
+
+    static async update(customerDetails: CustomerType, { mongoDbConfig, user }: ConfigType) {
+        const customer: CustomerType = getCustomerDetails(customerDetails);
+
+        const currentCustomerInfo = await this.get(
+            {
+                filters: {
+                    id: customerDetails.id,
+                    "document.number": customerDetails.document.number,
+                    "document.type": customerDetails.document.type
+                }
+            },
+            {
+                mongoDbConfig,
+                user
+            }
+        )
+
+        const updateCustomer = (customer: CustomerType) => {
+            //@ts-ignore
+            const { _id, ...customerDetails } = customer
+
+            return mongoDbConfig
+                .collections
+                .CUSTOMERS
+                .updateOne(
+                    { id: customerDetails.id },
+                    {
+                        $set: customerDetails
+                    }
+                )
+        }
+
+        try {
+            await updateCustomer(customer);   
+        } catch(e) {
+            await updateCustomer(currentCustomerInfo)
 
             throw e;
        }
