@@ -1,5 +1,5 @@
 
-import { Document } from "./user"
+import { GuestType } from "./guest";
 import { ProductPayment as PaymentMethod } from "./payment-method"
 import { STATUS } from ".";
 
@@ -16,14 +16,6 @@ export type RoomType = {
     quantity: number,
     status: STATUS;
     type: ROOM_TYPE
-}
-
-export type GuestType = {
-    document: Document,
-    email?: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
 }
 
 export enum BOOKING_TYPE {
