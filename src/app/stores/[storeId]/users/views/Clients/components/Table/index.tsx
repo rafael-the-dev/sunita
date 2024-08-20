@@ -1,4 +1,4 @@
-import { useCallback, useContext, useRef } from "react";
+import { useCallback, useContext, useMemo, useRef } from "react";
 
 import { CustomerInfoType, CustomerType } from "@/types/guest";
 import { TableHeadersType } from "@/components/table/types";
@@ -12,6 +12,8 @@ import useSearchParams from "@/hooks/useSearchParams";
 import ClientForm from "../ClientForm"
 import Table from "@/components/shared/table";
 
+const includesSearchKey = (value: string, searchKey: string) => value.toLowerCase().includes(searchKey) 
+
 const TableContainer = () => {
     const { fetchDataRef } = useContext(AppContext);
     const { setDialog } = useContext(StaticContext);
@@ -20,6 +22,8 @@ const TableContainer = () => {
     const searchParams = useSearchParams();
 
     const dialog = searchParams.get("dialog", "");
+    const searchKey = searchParams.get("search", "").toLowerCase()
+
     const fetchCustomers = customers.fetchData;
 
     const headers = useRef<TableHeadersType[]>([
@@ -96,11 +100,30 @@ const TableContainer = () => {
         [ fetchCustomers, fetchDataRef, setDialog ]
     )
 
+    const list = customers?.data?.list
+
+    const customersList = useMemo(
+        () => {
+            if(!list) return []
+
+            return list
+                .filter(
+                    customer => {
+                        const firstNameIncludesSearchKey = includesSearchKey(customer.firstName, searchKey)
+                        const lasttNameIncludesSearchKey = includesSearchKey(customer.lastName, searchKey)
+
+                        return firstNameIncludesSearchKey || lasttNameIncludesSearchKey
+                    }
+                )
+        },
+        [ list, searchKey ]
+    )
+
 
     return (
         <Table 
             classes={{ root: "mt-6" }}
-            data={customers.data?.list ?? []} 
+            data={customersList} 
             headers={headers}
             onClickRow={rowClickHandler}
         />
