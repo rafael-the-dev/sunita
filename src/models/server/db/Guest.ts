@@ -1,5 +1,5 @@
 
-import { ConfigType } from "@/types/app-config-server"
+/*import { ConfigType } from "@/types/app-config-server"
 import { GuestType, GuestDBType } from "@/types/guest"
 
 import getGuestProxy from "../proxy/guest"
@@ -8,7 +8,7 @@ import Error404 from "@/errors/server/404Error"
 
 class Guest {
     static async get({ filter }: { filter: Object }, { mongoDbConfig, user }: ConfigType) {
-        const guest = await mongoDbConfig
+        /*const guest = await mongoDbConfig
             .collections
             .GUESTS
             .findOne(
@@ -97,4 +97,4 @@ class Guest {
     }
 }
 
-export default Guest
+export default Guest*/
