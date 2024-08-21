@@ -1,0 +1,10 @@
+
+.listItem button {
+    height: 23px;
+    display: none;
+    width: 23px;
+}
+
+.listItem:hover button {
+    display: flex;
+}
