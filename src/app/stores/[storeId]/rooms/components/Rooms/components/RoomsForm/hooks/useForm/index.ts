@@ -6,18 +6,22 @@ import { ROOM_TYPE, RoomType } from "@/types/room"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 import { isInvalidNumber } from "@/helpers/validation"
+import { defaultInputField } from "@/config/input"
+import { PROPERTY_TYPE } from "@/types/property"
 
-const initialInput  = {
-    error: false,
-    helperText: "",
-    value: ""
-}
+const initialInput  = defaultInputField
 
 const initial = {
-    dailyPrice: structuredClone(initialInput), 
-    hourlyPrice: structuredClone(initialInput),
-    quantity: structuredClone(initialInput),
-    type: structuredClone({ ...initialInput, value: ROOM_TYPE.SINGLE })
+    bedRoom: {
+        quantity: structuredClone(initialInput),
+        type: structuredClone({ ...initialInput, value: ROOM_TYPE.SINGLE })
+    },
+    price: {
+        hour: structuredClone(initialInput),
+        day: structuredClone(initialInput),
+        night: structuredClone(initialInput)
+    },
+    propertyType: structuredClone({ ...initialInput, value: PROPERTY_TYPE.BED_ROOM })
 }
 
 const useForm = () => {
@@ -29,10 +33,16 @@ const useForm = () => {
         () => {
             if(room) {
                 return {
-                    dailyPrice: structuredClone({ ...initialInput, value: room.dailyPrice.toString() }), 
-                    hourlyPrice: structuredClone({ ...initialInput, value: room.hourlyPrice.toString() }),
-                    quantity: structuredClone({ ...initialInput, value: room.quantity.toString() }),
-                    type: structuredClone({ ...initialInput, value: room.type })
+                    bedRoom: {
+                        quantity: structuredClone({ ...initialInput, value: room.quantity.toString() }),
+                        type: structuredClone({ ...initialInput, value: room.type })
+                    },
+                    price: {
+                        day: structuredClone({ ...initialInput, value: room.dailyPrice.toString() }), 
+                        hour: structuredClone({ ...initialInput, value: room.hourlyPrice.toString() }),
+                        night: structuredClone({ ...initialInput, value: room.hourlyPrice.toString() }),
+                    },
+                    propertyType: structuredClone({ ...initialInput, value: room.quantity.toString() }),
                 }
             }
 
@@ -53,10 +63,13 @@ const useForm = () => {
             setInput(
                 input => ({
                     ...input,
-                    quantity: {
-                        error: isInvalid,
-                        helperText,
-                        value
+                    bedRoom: {
+                        ...input.bedRoom,
+                        quantity: {
+                            error: isInvalid,
+                            helperText,
+                            value
+                        }
                     }
                 })
             );
@@ -65,7 +78,7 @@ const useForm = () => {
     );
 
     const changePrice = useCallback(
-        (key: "dailyPrice" | "hourlyPrice") => (e: ChangeEvent<HTMLInputElement>) => {
+        (key: "day" | "hour" | "night") => (e: ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
 
             const price = currency(value).value;
@@ -77,10 +90,13 @@ const useForm = () => {
             setInput(
                 input => ({
                     ...input,
-                    [key]: {
-                        error: isInvalid,
-                        helperText,
-                        value
+                    price: {
+                        ...input.price,
+                        [key]: {
+                            error: isInvalid,
+                            helperText,
+                            value
+                        }
                     }
                 })
             );
@@ -95,7 +111,28 @@ const useForm = () => {
             setInput(
                 input => ({
                     ...input,
-                    type: {
+                    bedRoom: {
+                        ...input.bedRoom,
+                        type: {
+                            error: false,
+                            helperText: "",
+                            value
+                        }
+                    }
+                })
+            );
+        },
+        []
+    );
+
+    const changePropertyType = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const value  = e.target.value as PROPERTY_TYPE;
+
+            setInput(
+                input => ({
+                    ...input,
+                    propertyType: {
                         error: false,
                         helperText: "",
                         value
@@ -115,6 +152,7 @@ const useForm = () => {
         input,
 
         changePrice,
+        changePropertyType,
         changeQuantity,
         changeType,
         resetForm
