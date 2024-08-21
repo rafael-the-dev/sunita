@@ -1,5 +1,8 @@
 import { useCallback, useContext, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation"
+import classNames from "classnames"
+
+import styles from "./styles.module.css"
 
 import { AppContext } from "@/context/AppContext";
 import useSearchParams from "@/hooks/useSearchParams";
@@ -65,7 +68,7 @@ const Container = () => {
                     </Dialog.Header>
                 )
             }
-            <Dialog.Body className="p-0">
+            <Dialog.Body className={classNames(styles.dialogBody, "p-0")}>
                 { dialog?.body }
             </Dialog.Body>
             {

@@ -1,5 +1,8 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from "react";
+import classNames from "classnames"
 import { usePathname } from "next/navigation"
+
+import styles from "./styles.module.css"
 
 import { DialogType } from "@/context/FixedTabsContext/types";
 
@@ -95,7 +98,7 @@ const Container = ({ dialog, isLoading, onClose, onOpen, setDialog }: PropsType)
                     </Dialog.Header>
                 )
             }
-            <Dialog.Body className="p-0">
+            <Dialog.Body className={classNames(styles.dialogBody, "p-0")}>
                 { dialog.current?.body }
             </Dialog.Body>
         </Dialog>

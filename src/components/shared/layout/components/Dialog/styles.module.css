@@ -1,0 +1,7 @@
+
+
+.dialogBody > :first-child {
+    box-sizing: border-box;
+    max-height: 80vh;
+    overflow-y: auto;
+}
