@@ -9,8 +9,13 @@ import DeleteIcon from "@mui/icons-material/Close"
 import styles from "./styles.module.css"
 
 
-const ImageContainer = () => {
-    const [ list, setList ] = React.useState<string[]>([])
+type PropsType = {
+    addImage: (image: string) => void;
+    list: string[],
+    removeImage: (image: string) => void;
+}
+
+const ImageContainer = ({ addImage, list, removeImage }: PropsType) => {
 
     const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -19,16 +24,12 @@ const ImageContainer = () => {
 
         if(!value?.trim()) return;
 
-        setList(list => {
-            const hasImage = list.find(image => image === value);
-
-            return hasImage ? list : [ ...list, value ];
-        })
+        addImage(value)
 
         inputRef.current.value = "";
     }
 
-    const removeHandler = (id: string) => () => setList(list => list.filter(image => image !== id));
+    const removeHandler = (id: string) => () => removeImage(id);
 
     return (
         <div>
