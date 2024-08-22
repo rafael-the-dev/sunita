@@ -13,6 +13,7 @@ import { PROPERTY_TYPE } from "@/types/property"
 const initialInput  = defaultInputField
 
 const initial = {
+    amenities: [],
     bedRoom: {
         quantity: structuredClone(initialInput),
         type: structuredClone({ ...initialInput, value: ROOM_TYPE.SINGLE })
@@ -35,11 +36,12 @@ const useForm = () => {
         () => {
             if(property) {
                 return {
+                    amenities: structuredClone(property.amenities),
                     bedRoom: {
                         quantity: structuredClone({ ...initialInput, value: property.bedroom.quantity.toString() }),
                         type: structuredClone({ ...initialInput, value: property.bedroom.type })
                     },
-                    images: property.images,
+                    images: structuredClone(property.images),
                     price: {
                         day: structuredClone({ ...initialInput, value: property.price.daily.toString() }), 
                         hour: structuredClone({ ...initialInput, value: property.price.hourly.toString() }),
@@ -53,17 +55,17 @@ const useForm = () => {
         }
     );
 
-    const addImage = useCallback(
-        (image: string) => {
+    const push = useCallback(
+        (key: "amenities" | "images", value: string) => {
             setInput(input => {
-                if(image && image.trim()) {
-                    const hasImage = Boolean(input.images.find(currentImage => currentImage === image));
+                if(value && value.trim()) {
+                    const hasImage = Boolean(input[key].find(currentValue => currentValue === value));
 
                     if(hasImage) return input;
 
                     return {
                         ...input,
-                        images: [ ...input.images, image ]
+                        [key]: [ ...input[key], value ]
                     }
                 }
 
@@ -73,13 +75,23 @@ const useForm = () => {
         []
     )
 
-    const removeImage = useCallback(
-        (id: string) => {
+    const addImage = useCallback(
+        (image: string) => push("images", image),
+        [ push ]
+    )
+
+    const addAmenity = useCallback(
+        (image: string) => push("amenities", image),
+        [ push ]
+    )
+
+    const pull = useCallback(
+        (key: "amenities" | "images", id: string) => {
             setInput(input => {
                 if(id && id.trim()) {
                     return {
                         ...input,
-                        images: input.images.filter(image => image !== id)
+                        [key]: input[key].filter(value => value !== id)
                     }
                 }
 
@@ -87,6 +99,16 @@ const useForm = () => {
             })
         },
         []
+    )
+
+    const removeImage = useCallback(
+        (id: string) => pull("images", id),
+        [ pull ]
+    )
+
+    const removeAmenity = useCallback(
+        (id: string) => pull("amenities", id),
+        [ pull ]
     )
 
     const changeQuantity = useCallback(
@@ -190,11 +212,13 @@ const useForm = () => {
     return {
         input,
 
+        addAmenity,
         addImage,
         changePrice,
         changePropertyType,
         changeQuantity,
         changeType,
+        removeAmenity,
         removeImage,
         resetForm
     }
