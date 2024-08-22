@@ -64,7 +64,7 @@ const Rooms = () => {
 
     return (
         <div className="flex flex-col justify-between h-full">
-            <div className="mb-8">
+            <div className="flex flex-col items-stretch mb-8">
                 <SearchBox 
                     className="mb-6"
                     filters={<Filters />}
@@ -74,7 +74,7 @@ const Rooms = () => {
                     onClickTableRow={openUpdateRoomDialog}
                 />
             </div>
-            <div className="flex flex-col gap-y-3 items-stretch mt-16 sm:flex-row sm:gap-x-3 sm:gap-y-0 sm:justify-end">
+            <div className="flex flex-col gap-y-3 items-stretch mt-8 sm:flex-row sm:gap-x-3 sm:gap-y-0 sm:justify-end">
                 <Button
                     className="py-2"
                     onClick={openDialogHandler(DIALOG_TYPE.REGISTER_ROOM)}>
