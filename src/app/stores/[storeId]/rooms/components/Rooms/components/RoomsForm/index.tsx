@@ -4,6 +4,7 @@ import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
+import { PROPERTY_TYPE, PropertyType } from "@/types/property"
 import { ROOM_TYPE, RoomType } from "@/types/room"
 
 import { LoginContext } from "@/context/LoginContext"
@@ -13,11 +14,18 @@ import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 import useFetch from "@/hooks/useFetch"
 import useForm from "./hooks/useForm"
 
+import { getList } from "@/helpers"
+
 import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
+import Legend from "@/components/shared/Legend"
+import PropertyImage from "@/components/shared/ImageForm"
 import Select from "@/components/shared/combobox"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import Textfield from "@/components/Textfield"
+
+const propertiesList = getList(PROPERTY_TYPE)
+const bedRoomTypesList = getList(ROOM_TYPE)
 
 const RoomsForm = () => {
     const { credentials } = useContext(LoginContext);
@@ -35,9 +43,12 @@ const RoomsForm = () => {
 
     const {
         input,
-        changePrice,
+
+        addImage,
+        changePrice, changePropertyType,
         changeQuantity,
         changeType,
+        removeImage,
         resetForm
     } = useForm()
 
@@ -64,17 +75,23 @@ const RoomsForm = () => {
         [ loading ]
     );
 
-    const list = useMemo(
-        () => Object
-            .values(ROOM_TYPE)
-            .map(
-                item => ({
-                    label: item.replaceAll("-", ""),
-                    value: item
-                })
-            ),
+    const bedRoomDetailsMemo = useMemo(
+        () => (
+            <Legend>
+                Bed room details
+            </Legend>
+        ),
         []
     );
+
+    const priceLengendMemo = useMemo(
+        () => (
+            <Legend>
+                Price
+            </Legend>
+        ),
+        []
+    )
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -83,13 +100,29 @@ const RoomsForm = () => {
 
         onCloseAlert.current?.();
 
-        const newRoom: RoomType = {
-            dailyPrice: currency(input.dailyPrice.value).value,
-            hourlyPrice: currency(input.hourlyPrice.value).value,
-            id: "",
-            quantity: parseInt(input.quantity.value),
+        const newRoom: PropertyType = {
+            address: null,
+            availability: null,
+            amenities: [],
+            bedroom: {
+                quantity: currency(input.bedRoom.quantity.value).value,
+                status: null,
+                type: input.bedRoom.type.value
+            },
+            description: null,
+            house: null,
+            id: null,
+            images: null,
+            name: null,
+            owner: null,
+            price: {
+                daily: currency(input.price.day.value).value,
+                hourly: currency(input.price.day.value).value,
+                night: currency(input.price.day.value).value
+            },
+            size: parseInt(input.bedRoom.quantity.value),
             status: null,
-            type: input.type.value as ROOM_TYPE
+            type: input.propertyType.value as PROPERTY_TYPE
         };
 
         await fetchData(
@@ -129,45 +162,91 @@ const RoomsForm = () => {
             <div>
                 <div className="flex flex-col gap-y-4">
                     { alert }
+                    <PropertyImage 
+                        addImage={addImage}
+                        list={input.images}
+                        removeImage={removeImage}
+                    />
                     <Row>
-                        <Select
-                            { ...input.type } 
-                            className="mb-0 w-full sm:w-1/2"
-                            label="Type"
-                            list={list}
-                            onChange={changeType}
-                        />
                         <Textfield
-                            { ...input.quantity }
+                            { ...input.bedRoom.quantity }
                             className="mb-0 w-full sm:w-1/2"
-                            label="Quantity"
+                            label="Name"
                             onChange={changeQuantity}
-                            placeholder="Insert number of rooms" 
+                            placeholder="Insert bed room name" 
                             required
-                            type="number"
+                        />
+                        <Select
+                            { ...input.propertyType } 
+                            className="mb-0 w-full sm:w-1/2"
+                            label="Property type"
+                            list={propertiesList}
+                            onChange={changePropertyType}
                         />
                     </Row>
-                    <Row>
-                        <Textfield
-                            { ...input.hourlyPrice }
-                            className="mb-0 w-full sm:w-1/2"
-                            label="Hourly price"
-                            onChange={changePrice("hourlyPrice")}
-                            placeholder="Insert hourly price" 
-                            required
-                        />
-                        <Textfield
-                            { ...input.dailyPrice }
-                            className="mb-0 w-full sm:w-1/2"
-                            label="Daily price"
-                            onChange={changePrice("dailyPrice")}
-                            placeholder="Insert daily price" 
-                            required
-                        />
-                    </Row>
+                    { 
+                        input.propertyType.value === PROPERTY_TYPE.BED_ROOM && (
+                            <fieldset>
+                                { bedRoomDetailsMemo }
+                                <Row>
+                                    <Textfield
+                                        { ...input.bedRoom.quantity }
+                                        className="mb-0 w-full sm:w-1/2"
+                                        label="Quantity"
+                                        onChange={changeQuantity}
+                                        placeholder="Insert number of rooms" 
+                                        required
+                                        type="number"
+                                    />
+                                    <Select
+                                        { ...input.bedRoom.type } 
+                                        className="mb-0 w-full sm:w-1/2"
+                                        label="Type"
+                                        list={bedRoomTypesList}
+                                        onChange={changeType}
+                                    />
+                                </Row>
+                            </fieldset>
+                        )
+                    }
+                    <fieldset>
+                        { priceLengendMemo }
+                        <Row>
+                            <Textfield
+                                { ...input.price.hour }
+                                className="mb-0 w-full sm:w-1/3"
+                                label="Price per hour"
+                                onChange={changePrice("hour")}
+                                placeholder="Insert price per hour" 
+                                required
+                            />
+                            <Textfield
+                                { ...input.price.night }
+                                className="mb-0 w-full sm:w-1/3"
+                                label="Price per night"
+                                onChange={changePrice("night")}
+                                placeholder="Insert price per night" 
+                                required
+                            />
+                            <Textfield
+                                { ...input.price.day }
+                                className="mb-0 w-full sm:w-1/3"
+                                label="Price per day"
+                                onChange={changePrice("day")}
+                                placeholder="Insert price per day" 
+                                required
+                            />
+                        </Row>
+                    </fieldset>
+                    <Textfield 
+                        className="mt-2"
+                        label="Description"
+                        multiline
+                        minRows={4}
+                    />
                 </div>
             </div>
-            <div className="flex flex-col items-stretch justify-end mt-6 sm:flex-row ">
+            <div className="flex flex-col items-stretch justify-end mt-8 sm:flex-row ">
                 { 
                      <Button
                         className="py-2"
