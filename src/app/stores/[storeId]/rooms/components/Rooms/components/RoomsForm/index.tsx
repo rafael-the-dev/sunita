@@ -17,6 +17,7 @@ import useForm from "./hooks/useForm"
 import { getList } from "@/helpers"
 
 import Alert from "@/components/alert"
+import Amenities from "./components/Amenities"
 import Button from "@/components/shared/button"
 import Legend from "@/components/shared/Legend"
 import PropertyImage from "@/components/shared/ImageForm"
@@ -44,11 +45,11 @@ const RoomsForm = () => {
     const {
         input,
 
-        addImage,
+        addAmenity, addImage,
         changePrice, changePropertyType,
         changeQuantity,
         changeType,
-        removeImage,
+        removeAmenity, removeImage,
         resetForm
     } = useForm()
 
@@ -103,7 +104,7 @@ const RoomsForm = () => {
         const newRoom: PropertyType = {
             address: null,
             availability: null,
-            amenities: [],
+            amenities: input.amenities,
             bedroom: {
                 quantity: currency(input.bedRoom.quantity.value).value,
                 status: null,
@@ -209,6 +210,11 @@ const RoomsForm = () => {
                             </fieldset>
                         )
                     }
+                    <Amenities 
+                        list={input.amenities}
+                        onInsert={addAmenity}
+                        onRemove={removeAmenity}
+                    />
                     <fieldset>
                         { priceLengendMemo }
                         <Row>
