@@ -28,20 +28,22 @@ export type HouseType = {
     bathrooms: number,
 }
 
-export type Property = {
+export type PropertyType = {
     availability: AvailabilityType[],
     address: AddressType,
     amenities: string[], // e.g., ['Wi-Fi', 'Air Conditioning', 'Parking', 'Pool']
     description: string,
     house: HouseType,
+    id: string,
     images: string[], // URLs to images of the property
     name: string,
     price: { 
-        daily: string | Date, 
-        hourly: string | Date, 
-        night: string | Date, 
+        daily: number, 
+        hourly: number, 
+        night: number, 
     },
     bedroom: BedroomType,
+    status: STATUS,
     size: number, // e.g., size in square meters
     type: PROPERTY_TYPE,
     owner: string,
