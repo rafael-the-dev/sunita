@@ -3,10 +3,11 @@ import classNames from "classnames"
 import Avatar from "@mui/material/Avatar"
 import IconButton from "@mui/material/IconButton"
 
-import AddIcon from "@mui/icons-material/Add"
 import DeleteIcon from "@mui/icons-material/Close"
 
 import styles from "./styles.module.css"
+
+import InsertInput from "@/components/Input/InsertInput"
 
 
 type PropsType = {
@@ -17,34 +18,11 @@ type PropsType = {
 
 const ImageContainer = ({ addImage, list, removeImage }: PropsType) => {
 
-    const inputRef = React.useRef<HTMLInputElement>(null);
-
-    const clickHandler = () => {
-        const value = inputRef.current?.value;
-
-        if(!value?.trim()) return;
-
-        addImage(value)
-
-        inputRef.current.value = "";
-    }
-
     const removeHandler = (id: string) => () => removeImage(id);
 
     return (
         <div>
-            <div className="border border-solid border-gray-300 flex items-center py-1 pl-2 pr-1">
-                <input 
-                    className="border-0 font-normal grow outline-none text-small"
-                    placeholder="Insert image link"
-                    ref={inputRef}
-                />
-                <IconButton
-                    onClick={clickHandler}
-                    type="button">
-                    <AddIcon />
-                </IconButton>
-            </div>
+            <InsertInput onInsert={addImage} />
             <ul className="flex gap-x-3 flex-wrap mt-3">    
                 {
                     list.map((item) => (
