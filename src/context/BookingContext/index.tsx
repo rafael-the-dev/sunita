@@ -2,7 +2,7 @@ import { createContext, useCallback, useMemo, useState } from "react";
 import moment from "moment";
 
 import { ContextType, PropsType } from "./types";
-import { SimpleBookingType } from "@/types/room";
+import { BookingType } from "@/types/booking";
 
 import useBooking from "./hooks/useBook";
 import useGuest from "./hooks/useGuest";
@@ -39,15 +39,15 @@ export const BookingContextProvider = ({ children }: PropsType) => {
     )
 
     const toString = () => {
-        const book: SimpleBookingType = {
+        const book: BookingType = {
             checkIn: booking.checkIn.value,
             checkOut: booking.checkOut.value,
             date: moment(booking.checkIn.value).format(dateFormat),
             guest: guestRest.toLiteralObject(),
             id: null,
+            owner: null,
             payment: payment.getPayment(),
-            room: booking.room,
-            store: null,
+            property: booking.property.id,
             type: booking.type.value,
             totalPrice: booking.totalPrice
         }
