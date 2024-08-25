@@ -1,8 +1,7 @@
 import moment from "moment"
 
-import { BookingDBType } from "@/types/room"
-import { ConfigType } from "@/types/app-config-server"
-import { SimpleBookingType } from "@/types/room"
+import { BookingType, BookingDBType } from "@/types/booking"
+import { ConfigType, FiltersType } from "@/types/app-config-server"
 
 import { getId } from "@/helpers/id"
 import { toISOString } from "@/helpers/date"
@@ -13,12 +12,11 @@ import Error404 from "@/errors/server/404Error"
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
 import Guest from "./Customer"
+import Property from "./Property"
 import Room from "./Room"
 
 type GetAllPropsType = {
-    filters?: {
-        $match: {[key: string]: string | Object }
-    }[]
+    filters?: FiltersType
 }
 
 class Booking {
@@ -34,7 +32,7 @@ class Booking {
         return bookings[0];
     }
 
-    static async register(clientBooking: SimpleBookingType, config: ConfigType) {
+    static async register(clientBooking: BookingType, config: ConfigType) {
         const { mongoDbConfig, user } = config;
 
         const id = getId();
@@ -44,15 +42,15 @@ class Booking {
             checkIn, checkOut,
             guest,
             payment,
-            room,
+            property,
             type,
             totalPrice
         } = clientBooking;
 
-        const selectedRooom = await Room.get(
+        const selectedProperty = await Property.get(
             {
                 filter: {
-                    "rooms.id": room.id
+                    id: property
                 }
             }, 
             config
@@ -67,15 +65,16 @@ class Booking {
                 checkIn: null,
                 checkOut: null,
                 date: toISOString(moment(checkIn)),
-                guest: guest.document.number,
+                guest: guest.id,
                 id, 
+                owner: storeId,
                 payment: null,
-                room: selectedRooom,
+                property: selectedProperty.id,
                 type: null,
                 totalPrice: 0
             };
             
-            const bookingProxy = getBookingProxy(booking, totalPrice);
+            const bookingProxy = getBookingProxy(booking, totalPrice, selectedProperty);
 
             bookingProxy.checkIn = checkIn;
             booking.checkOut = checkOut;
@@ -86,28 +85,14 @@ class Booking {
 
             await mongoDbConfig
                 .collections
-                .WAREHOUSES
-                .updateOne(
-                    { id: storeId },
-                    {
-                        $push: {
-                            "rooms-booking": booking
-                        }
-                    }
-                );
+                .BOOKINGS
+                .insertOne(booking);
         } catch(e) {
             await mongoDbConfig
                 .collections
-                .WAREHOUSES
-                .updateOne(
-                    { id: storeId },
-                    {
-                        $pull: {
-                            "rooms-booking": {
-                                id
-                            }
-                        }
-                    }
+                .BOOKINGS
+                .deleteOne(
+                    { id: storeId }
                 );
 
             throw e;
