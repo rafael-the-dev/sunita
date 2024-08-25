@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useMemo, useRef } from "react"
+import { FormEvent, useContext, useEffect, useMemo, useRef } from "react"
 import currency from "currency.js"
 import classNames from "classnames"
 
@@ -33,12 +33,15 @@ const RoomsForm = () => {
     const { getDialog } = useContext(FixedTabsContext);
     const { fetchRooms } = useContext(RoomsContext)
     
-    const room = getDialog().current.payload as RoomType;
+    const property = getDialog().current.payload as PropertyType;
+    const hasPayload = Boolean(property)
+
+    const descriptionInputRef = useRef<HTMLTextAreaElement>(null)
 
     const { fetchData, loading  } = useFetch(
         {
             autoFetch: false,
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms${ room ? `/${room.id}` : ""}`
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/properties${ hasPayload ? `/${property.id}` : ""}`
         }
     );
 
@@ -46,6 +49,7 @@ const RoomsForm = () => {
         input,
 
         addAmenity, addImage,
+        changeName,
         changePrice, changePropertyType,
         changeQuantity,
         changeType,
@@ -101,27 +105,26 @@ const RoomsForm = () => {
 
         onCloseAlert.current?.();
 
-        const newRoom: PropertyType = {
+        const newProperty: PropertyType = {
             address: null,
             availability: null,
             amenities: input.amenities,
             bedroom: {
                 quantity: currency(input.bedRoom.quantity.value).value,
-                status: null,
                 type: input.bedRoom.type.value
             },
-            description: null,
+            description: descriptionInputRef.current.value,
             house: null,
             id: null,
-            images: null,
-            name: null,
+            images: input.images,
+            name: input.name.value,
             owner: null,
             price: {
                 daily: currency(input.price.day.value).value,
-                hourly: currency(input.price.day.value).value,
-                night: currency(input.price.day.value).value
+                hourly: currency(input.price.hour.value).value,
+                night: currency(input.price.night.value).value
             },
-            size: parseInt(input.bedRoom.quantity.value),
+            //size: parseInt(input.bedRoom.quantity.value),
             status: null,
             type: input.propertyType.value as PROPERTY_TYPE
         };
@@ -129,8 +132,8 @@ const RoomsForm = () => {
         await fetchData(
             {
                 options: {
-                    body: JSON.stringify(newRoom),
-                    method: room ? "PUT" : "POST"
+                    body: JSON.stringify(newProperty),
+                    method: hasPayload ? "PUT" : "POST"
                 },
                 onError(error) {
                     alertProps.current = {
@@ -156,6 +159,15 @@ const RoomsForm = () => {
        onOpenAlert.current?.();
     }
 
+    useEffect(
+        () => {
+            if(hasPayload) {
+                descriptionInputRef.current.value = property.description
+            }
+        },
+        [ hasPayload, property ]
+    )
+
     return (
         <form 
             className={classNames(styles.form, `flex flex-col justify-between h-full px-3 py-4`)}
@@ -170,11 +182,11 @@ const RoomsForm = () => {
                     />
                     <Row>
                         <Textfield
-                            { ...input.bedRoom.quantity }
+                            { ...input.name }
                             className="mb-0 w-full sm:w-1/2"
                             label="Name"
-                            onChange={changeQuantity}
-                            placeholder="Insert bed room name" 
+                            onChange={changeName}
+                            placeholder="Insert property name" 
                             required
                         />
                         <Select
@@ -246,6 +258,7 @@ const RoomsForm = () => {
                     </fieldset>
                     <Textfield 
                         className="mt-2"
+                        inputRef={descriptionInputRef}  
                         label="Description"
                         multiline
                         minRows={4}
@@ -257,7 +270,7 @@ const RoomsForm = () => {
                      <Button
                         className="py-2"
                         type="submit">
-                        { loading ? "Loading..." : ( room ? "Update" : "Submit" ) }
+                        { loading ? "Loading..." : ( hasPayload ? "Update" : "Submit" ) }
                     </Button>
                 }
             </div>
