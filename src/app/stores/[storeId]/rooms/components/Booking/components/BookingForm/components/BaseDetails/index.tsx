@@ -13,7 +13,7 @@ import Row from "@/components/Form/RegisterUser/components/Row"
 import Select from "@/components/shared/combobox"
 
 const BaseDetails = () => {
-    const { getRooms } = useContext(RoomsContext)
+    const { getProperties } = useContext(RoomsContext)
 
     const { 
         booking,
@@ -22,16 +22,16 @@ const BaseDetails = () => {
 
     const bookingType = booking.type.value
 
-    const roomsList = useMemo(
+    const propertiesList = useMemo(
         () => {
-            return getRooms().map(
-                room => ({
-                    label: `${room.type}     ${ bookingType === BOOKING_TYPE.HOURLY ? `${room.hourlyPrice}MT/h` : `${room.dailyPrice}MT/d`}`,
-                    value: room.id
+            return getProperties().map(
+                property => ({
+                    label: `${property.type}     ${ bookingType === BOOKING_TYPE.HOURLY ? `${property.price.hourly}MT/h` : `${property.price.daily}MT/d`}`,
+                    value: property.id
                 })
             )
         },
-        [ bookingType, getRooms ]
+        [ bookingType, getProperties ]
     )
 
     const bookingTypesList = useMemo(
@@ -66,10 +66,10 @@ const BaseDetails = () => {
                 />
                 <Select 
                     className="mb-0 w-full sm:w-1/2"
-                    label="Select a room"
-                    list={roomsList}
+                    label="Select a property"
+                    list={propertiesList}
                     onChange={roomChangeHandler}
-                    value={ booking?.room?.id }
+                    value={ booking?.property?.id }
                 />
             </Row>
             <Row>
@@ -77,13 +77,13 @@ const BaseDetails = () => {
                     { ...booking.checkIn }
                     className="mb-0 w-full sm:w-1/2"
                     label="Check in"
-                    onChange={booking.room ? changeTime("checkIn") : () => {}}
+                    onChange={booking.property ? changeTime("checkIn") : () => {}}
                 />
                 <DateTime 
                     { ...booking.checkOut }
                     className="mb-0 w-full sm:w-1/2"
                     label="Check out"
-                    onChange={booking.room ? changeTime("checkOut") : () => {}}
+                    onChange={booking.property ? changeTime("checkOut") : () => {}}
                 />
             </Row>
             <div className="flex justify-end"> 
