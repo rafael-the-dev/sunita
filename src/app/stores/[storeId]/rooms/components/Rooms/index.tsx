@@ -19,7 +19,7 @@ enum DIALOG_TYPE {
 
 const Rooms = () => {
     const { setDialog } = useContext(FixedTabsContext)
-    const { getRooms } = useContext(RoomsContext)
+    const { getProperties } = useContext(RoomsContext)
 
     const searchParams = useSearchParams()
 
@@ -70,7 +70,7 @@ const Rooms = () => {
                     filters={<Filters />}
                 />
                 <RoomsTable 
-                    data={getRooms()}
+                    data={getProperties()}
                     onClickTableRow={openUpdateRoomDialog}
                 />
             </div>
