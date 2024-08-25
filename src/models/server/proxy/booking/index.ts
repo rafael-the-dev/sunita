@@ -1,5 +1,6 @@
 
-import { BOOKING_TYPE, BookingDBType } from "@/types/room"
+import { BOOKING_TYPE } from "@/types/room"
+import { BookingDBType } from "@/types/booking"
 import { PaymentType } from "@/types/payment-method"
 
 import { validate } from "@/validation"
@@ -14,10 +15,11 @@ import {
 } from "@/validation/booking"
 
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
+import { PropertyType } from "@/types/property"
 
 type PropType = "checkIn" | "checkOut" | "payment" | "type"
 
-const getBookingProxy = (target: BookingDBType, userTotalPrice: number) => {
+const getBookingProxy = (target: BookingDBType, userTotalPrice: number, property: PropertyType) => {
 
     const proxyHandler: ProxyHandler<BookingDBType> = {
         set(target: BookingDBType, prop: PropType, newValue) {
@@ -69,7 +71,7 @@ const getBookingProxy = (target: BookingDBType, userTotalPrice: number) => {
 
                     validate(bookingType, "Invalid booking type", isValidBookingType);
 
-                    const totalPrice = getTotalPrice(bookingType, target.checkIn, target.checkOut, target.room);
+                    const totalPrice = getTotalPrice(bookingType, target.checkIn, target.checkOut, property);
                     
                     if(totalPrice !== userTotalPrice) throw new InvalidArgumentError("Server total price doesn't match with client total price.");
 
