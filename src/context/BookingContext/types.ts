@@ -6,6 +6,7 @@ import { DOCUMENT_TYPE } from "@/types/user"
 import { PaymentFunctionsType } from "@/hooks/usePayment/types"
 import { PaymentType } from "@/types/payment-method"
 import { defaultContact } from "@/hooks/useContact/values"
+import { PropertyType } from "@/types/property"
 
 export type PropsType = {
     children: ReactNode
@@ -23,7 +24,7 @@ export type ContextType = PaymentFunctionsType & ContactMethodsType & {
     booking: {
         checkIn: InputType,
         checkOut: InputType,
-        room: RoomType,
+        property: PropertyType,
         store: string;
         type: InputType & { value: BOOKING_TYPE }, 
         totalPrice: number 
