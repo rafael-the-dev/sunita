@@ -3,6 +3,15 @@ import { AddressType } from "./user"
 import { ROOM_TYPE } from "./room"
 import { STATUS } from ".";
 
+export enum AMENITIES {
+    BAR = "bar",
+    GYM = "gym",
+    POLL = "poll",
+    PARKING = "parking",
+    TV = "tv",
+    WI_FI = "wi-fi"
+}
+
 export enum PROPERTY_TYPE {
     APARTMENT = "apartment",
     BED_ROOM = "bed-room",
@@ -19,13 +28,18 @@ export type AvailabilityType = {
 
 export type BedroomType = {
     quantity: number,
-    status: STATUS;
     type: ROOM_TYPE
 }
 
 export type HouseType = {
     bedrooms: BedroomType[],
     bathrooms: number,
+}
+
+export type PriceType = { 
+    daily: number, 
+    hourly: number, 
+    night: number, 
 }
 
 export type PropertyType = {
@@ -37,14 +51,10 @@ export type PropertyType = {
     id: string,
     images: string[], // URLs to images of the property
     name: string,
-    price: { 
-        daily: number, 
-        hourly: number, 
-        night: number, 
-    },
+    price: PriceType,
     bedroom: BedroomType,
     status: STATUS,
-    size: number, // e.g., size in square meters
+    //size: number, // e.g., size in square meters
     type: PROPERTY_TYPE,
     owner: string,
 }
