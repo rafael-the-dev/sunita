@@ -16,7 +16,7 @@ export const RoomsContextProvider = ({ children }: PropsType) => {
 
     const bookings = useFetch<BookingInfoType[]>(
         {
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms/bookings`
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/properties/bookings`
         }
     );
 
