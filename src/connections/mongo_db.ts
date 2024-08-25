@@ -7,12 +7,16 @@ import { StoreProductType } from "@/types/product";
 import { WarehouseType } from "@/types/warehouse";
 import { CategoryType } from "@/types/category";
 import { SupplierDBType } from "@/types/Supplier";
+import { PropertyType } from "@/types/property";
+import { BookingDBType } from "@/types/booking";
 
 const initialCollections = {
+    BOOKINGS: null,
     CUSTOMERS: null,
     EXPENSES_CATEGORIES: null,
     GUESTS: null,
     PRODUCTS: null,
+    PROPERTIES: null,
     PRODUCTS_CATEGORIES: null,
     SUPPLIERS: null,
     USERS: null,
@@ -46,10 +50,12 @@ const createMongoDBConnection = async () => {
             clusterDB = mongoDBConnection.db("luis-langa-store");
             
             mongoDBConfig.collections = {
+                BOOKINGS: clusterDB.collection<BookingDBType>("clients"),
                 CUSTOMERS: clusterDB.collection<CustomerType>("clients"),
                 EXPENSES_CATEGORIES: clusterDB.collection<CategoryType>("expenses-categories"),
                 GUESTS: clusterDB.collection<GuestType>("guests"),
                 PRODUCTS: clusterDB.collection<StoreProductType>("products"),
+                PROPERTIES: clusterDB.collection<PropertyType>("properties"),
                 PRODUCTS_CATEGORIES: clusterDB.collection<CategoryType>("products-categories"),
                 SUPPLIERS: clusterDB.collection<SupplierDBType>("suppliers"),
                 USERS: clusterDB.collection<User>("users"),
