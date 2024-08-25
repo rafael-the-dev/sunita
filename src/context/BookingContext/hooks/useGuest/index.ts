@@ -6,7 +6,7 @@ import useDocument from "@/hooks/useDocument"
 import { isValidName } from "@/validation/user"
 import { defaultInputField } from "@/config/input"
 import useContact from "@/hooks/useContact"
-import { GuestType } from "@/types/guest"
+import { CustomerType } from "@/types/guest"
 
 type ChangeNameKeyType = "first" | "last"
 
@@ -70,7 +70,7 @@ const useGuest = () => {
         [ resetContact, resetDocument ]
     );
 
-    const toLiteralObject = (): GuestType => {
+    const toLiteralObject = (): CustomerType => {
         return {
             contact: contactRest.toLiteralObject(),
             document: documentRest.toLiteralObject(),
