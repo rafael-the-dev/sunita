@@ -1,9 +1,11 @@
 import { createContext, useCallback, useContext } from "react"
 
+import { BookingInfoType } from "@/types/booking"
 import { ContextType, PropsType } from "./types"
+import { FetchResponseType } from "@/types"
 
 import { LoginContext } from "@/context/LoginContext"
-import { RoomType } from "@/types/room"
+import { PropertyType } from "@/types/property"
 
 import useFetch from "@/hooks/useFetch"
 
@@ -12,22 +14,31 @@ export const RoomsContext = createContext<ContextType>({} as ContextType)
 export const RoomsContextProvider = ({ children }: PropsType) => {
     const { credentials } = useContext(LoginContext)
 
-    const { data, loading, fetchData } = useFetch<RoomType[]>(
+    const bookings = useFetch<BookingInfoType[]>(
         {
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms`
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms/bookings`
+        }
+    );
+
+    const { data, loading, fetchData } = useFetch<FetchResponseType<PropertyType[]>>(
+        {
+            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/properties`
         }
     )
 
-    const getRooms = useCallback(
-        () => data ?? [], 
-        [ data ]
+    const response = data
+
+    const getProperties = useCallback(
+        () => response ? response.data :  [], 
+        [ response ]
     )
 
     return (
         <RoomsContext.Provider
             value={{
+                bookings,
                 fetchRooms: fetchData,
-                getRooms,
+                getProperties,
                 loading,
             }}>
             { children }
