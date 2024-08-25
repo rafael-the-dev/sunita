@@ -14,6 +14,7 @@ export type URLParamsType = {
         clientId?: string,
         expenseId: string,
         productId?: string;
+        propertyId?: string;
         username?: string;
         roomId?: string;
         storeId?: string;
