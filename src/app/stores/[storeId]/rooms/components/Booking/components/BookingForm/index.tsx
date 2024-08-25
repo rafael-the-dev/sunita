@@ -1,13 +1,13 @@
-import { FormEvent, MutableRefObject, useContext, useEffect, useMemo, useRef } from "react"
+import { FormEvent, useContext, useMemo, useRef } from "react"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
+import { AppContext } from "@/context/AppContext"
 import { BookingContext, BookingContextProvider } from "@/context/BookingContext"
 import { LoginContext } from "@/context/LoginContext"
 
 import useFetch from "@/hooks/useFetch"
-import { FetchDataFuncType } from "@/hooks/useFetch/types"
 
 import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
@@ -16,11 +16,8 @@ import Guest from "./components/Guest"
 import Payment from "./components/Payment"
 import Stepper from "@/components/stepper"
 
-type PropsType = {
-    fetchBookingsFuncRef: MutableRefObject<FetchDataFuncType>
-}
-
-const BookingForm = ({ fetchBookingsFuncRef }: PropsType) => {
+const BookingForm = () => {
+    const { fetchDataRef } = useContext(AppContext)
     const { credentials } = useContext(LoginContext)
     const { hasErrors, reset, toString } = useContext(BookingContext)
 
@@ -31,6 +28,8 @@ const BookingForm = ({ fetchBookingsFuncRef }: PropsType) => {
         }
     )
     
+    const fetchBookingsFuncRef = fetchDataRef
+
     const alertProps = useRef({
         description: "",
         severity: "",
@@ -117,9 +116,9 @@ const BookingForm = ({ fetchBookingsFuncRef }: PropsType) => {
     )
 }
 
-const Provider = ({ fetchBookingsFuncRef }: PropsType) => (
+const Provider = () => (
     <BookingContextProvider>
-        <BookingForm fetchBookingsFuncRef={fetchBookingsFuncRef} />
+        <BookingForm  />
     </BookingContextProvider>
 )
 
