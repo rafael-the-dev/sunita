@@ -9,6 +9,7 @@ import { FixedTabsContext } from "@/context/FixedTabsContext"
 import { isInvalidNumber } from "@/helpers/validation"
 import { defaultInputField } from "@/config/input"
 import { PROPERTY_TYPE } from "@/types/property"
+import { isValidName } from "@/validation/product"
 
 const initialInput  = defaultInputField
 
@@ -19,6 +20,7 @@ const initial = {
         type: structuredClone({ ...initialInput, value: ROOM_TYPE.SINGLE })
     },
     images: [],
+    name: structuredClone(initialInput),
     price: {
         hour: structuredClone(initialInput),
         day: structuredClone(initialInput),
@@ -42,6 +44,7 @@ const useForm = () => {
                         type: structuredClone({ ...initialInput, value: property.bedroom.type })
                     },
                     images: structuredClone(property.images),
+                    name: structuredClone({ ...initialInput, value: property.name }), 
                     price: {
                         day: structuredClone({ ...initialInput, value: property.price.daily.toString() }), 
                         hour: structuredClone({ ...initialInput, value: property.price.hourly.toString() }),
@@ -110,6 +113,26 @@ const useForm = () => {
         (id: string) => pull("amenities", id),
         [ pull ]
     )
+
+    const changeName = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const value  = e.target.value;
+
+            const hasError = !isValidName(value)
+
+            setInput(
+                input => ({
+                    ...input,
+                    name: {
+                        error: hasError,
+                        helperText: hasError ? "Invalid name" : "",
+                        value
+                    }
+                })
+            );
+        },
+        []
+    );
 
     const changeQuantity = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
@@ -214,6 +237,7 @@ const useForm = () => {
 
         addAmenity,
         addImage,
+        changeName,
         changePrice,
         changePropertyType,
         changeQuantity,
