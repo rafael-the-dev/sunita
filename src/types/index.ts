@@ -5,3 +5,7 @@ export enum STATUS {
     SUCCESSFUL = "successful",
     UNSUCCESSFUL = "unsuccessful"
 }
+
+export type FetchResponseType<T> = {
+    data: T
+}
