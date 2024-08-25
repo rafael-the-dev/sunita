@@ -29,6 +29,11 @@ export type StoreAddressType = {
     street: string
 }
 
+type TableMatch = {
+    createdAt: string | Date,
+    id: string
+}
+
 export type BaseStore = {
     amenities: STORE_AMENITIES[],
     address: StoreAddressType,
@@ -36,7 +41,7 @@ export type BaseStore = {
     description: string,
     id: string;
     name: string,
-    rooms: RoomType[];
+    rooms: TableMatch[];
     status: STATUS
 }
 
