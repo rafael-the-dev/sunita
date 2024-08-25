@@ -1,16 +1,14 @@
-import { useCallback, useContext, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect } from "react"
 import classNames from "classnames"
 import { Scheduler } from "devextreme-react/scheduler"
 
 import styles from "./styles.module.css"
 
-import { BookingRoomType } from "@/types/room"
-
+import { AppContext } from "@/context/AppContext"
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
-import { LoginContext } from "@/context/LoginContext"
+import { RoomsContext } from "../../context"
 
 import useSearchParams from "@/hooks/useSearchParams"
-import useFetch from "@/hooks/useFetch"
 
 import Button from "@/components/shared/button"
 import BookingForm from "./components/BookingForm"
@@ -22,19 +20,13 @@ enum DIALOG_TYPE {
 const Booking = () => {
     const searchParams = useSearchParams()
 
-    const { credentials } = useContext(LoginContext)
+    const { fetchDataRef } = useContext(AppContext)
 
+    const { bookings } = useContext(RoomsContext)
     const { setDialog } = useContext(StaticTabsContext)
 
-    const { data, fetchData } = useFetch<BookingRoomType[]>(
-        {
-            url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/rooms/bookings`
-        }
-    );
-
-    const fetchBookingsFuncRef = useRef(fetchData)
-
-    const bookingsList = data ?? [];
+    const bookingsList = bookings?.data ?? [];
+    const fetchBookingsFuncRef = bookings?.fetchData
 
     const dialog = searchParams.get("dialog", "") as DIALOG_TYPE;
 
@@ -45,16 +37,18 @@ const Booking = () => {
 
     const openBookingDialog = useCallback(
         () => {
+            fetchDataRef.current = fetchBookingsFuncRef
+
             setDialog(
                 {
                     header: {
                         title: "Booking"
                     },
-                    body: <BookingForm fetchBookingsFuncRef={fetchBookingsFuncRef} />
+                    body: <BookingForm />
                 }
             )
         }, 
-        [ setDialog ]
+        [ fetchDataRef, fetchBookingsFuncRef, setDialog ]
     )
 
     useEffect(
@@ -78,6 +72,11 @@ const Booking = () => {
                 </Scheduler>
             </div>
             <div className="flex flex-col items-stretch mt-8 px-2 md:px-4 sm:flex-row sm:justify-end">
+                <Button
+                    className="py-2"
+                    onClick={() => bookings?.fetchData({})}>
+                    Fetch bookings
+                </Button>
                 <Button 
                     className="py-2"
                     onClick={openDialog(DIALOG_TYPE.BOOKING)}>
