@@ -17,37 +17,37 @@ const initialInput = {
 const initial = {
     checkIn: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).add(20, 'minutes').toISOString() }),
     checkOut: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).add(2, "hour").toISOString() }),
-    room: null,
+    property: null,
     store: null,
     type: structuredClone({ ...initialInput, value: BOOKING_TYPE.HOURLY }),
     totalPrice: 0
 }
 
 const useBooking = () => {
-    const { getRooms } = useContext(RoomsContext)
+    const { getProperties } = useContext(RoomsContext)
 
     const [ booking, setBooking ] = useState(initial)
 
     const hasErrors = useMemo(
         () => {
-           return !Boolean(booking.room) || booking.totalPrice <= 0 || booking.checkIn.error || booking.checkOut.error
+           return !Boolean(booking.property) || booking.totalPrice <= 0 || booking.checkIn.error || booking.checkOut.error
         },
         [ booking ]
     )
 
     const changeRoom = useCallback(
         (id: string) => {
-            const room = getRooms().find(room => room.id === id)
+            const property = getProperties().find(room => room.id === id)
 
             setBooking(
                 booking => ({
                     ...booking,
-                    room,
-                    totalPrice: getTotalPrice(booking.type.value, booking.checkIn.value, booking.checkOut.value, room)
+                    property,
+                    totalPrice: getTotalPrice(booking.type.value, booking.checkIn.value, booking.checkOut.value, property)
                 })
             )
         },
-        [ getRooms ]
+        [ getProperties ]
     )
 
     const changeType = useCallback(
@@ -57,7 +57,7 @@ const useBooking = () => {
             setBooking(
                 booking => ({
                     ...booking,
-                    totalPrice: getTotalPrice(bookingType, booking.checkIn.value, booking.checkOut.value, booking.room),
+                    totalPrice: getTotalPrice(bookingType, booking.checkIn.value, booking.checkOut.value, booking.property),
                     type: {
                         error: !isValid,
                         helperText: isValid ? "" : "Invalid type",
@@ -86,13 +86,13 @@ const useBooking = () => {
                             error = hasError;
                             helperText = message;
     
-                            bookingClone.totalPrice = getTotalPrice(booking.type.value, newTime, booking.checkOut.value, booking.room);
+                            bookingClone.totalPrice = getTotalPrice(booking.type.value, newTime, booking.checkOut.value, booking.property);
                         } else {
                             const { hasError, message } = validateCheckOut(booking.checkIn.value, newTime);
 
                             error = hasError;
                             helperText = message;
-                            bookingClone.totalPrice = getTotalPrice(booking.type.value, booking.checkIn.value, newTime, booking.room);
+                            bookingClone.totalPrice = getTotalPrice(booking.type.value, booking.checkIn.value, newTime, booking.property);
                             
                             const checkInValidation = validateCheckIn(bookingClone.checkIn.value, newTime);
 
