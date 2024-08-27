@@ -50,7 +50,7 @@ const createMongoDBConnection = async () => {
             clusterDB = mongoDBConnection.db("luis-langa-store");
             
             mongoDBConfig.collections = {
-                BOOKINGS: clusterDB.collection<BookingDBType>("clients"),
+                BOOKINGS: clusterDB.collection<BookingDBType>("bookings"),
                 CUSTOMERS: clusterDB.collection<CustomerType>("clients"),
                 EXPENSES_CATEGORIES: clusterDB.collection<CategoryType>("expenses-categories"),
                 GUESTS: clusterDB.collection<GuestType>("guests"),
