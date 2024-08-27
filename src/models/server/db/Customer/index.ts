@@ -105,7 +105,7 @@ class Customer {
             
             //If customer is not in current store, append his details to store.clients, then exit
             await pushCustomerToStore(customerDetailsInDB.id);
-            return;
+            return customerDetailsInDB.id;
         } else {
             //Register customer, If he is not already registered
             try {
@@ -115,6 +115,8 @@ class Customer {
                     .insertOne(customer);
      
                 await pushCustomerToStore(customerId);
+
+                return customerId
                  
             } catch(e) {
                 // delete customer when an error occurs
