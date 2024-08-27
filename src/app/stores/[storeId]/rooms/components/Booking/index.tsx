@@ -1,8 +1,10 @@
 import { useCallback, useContext, useEffect, useMemo } from "react"
 import classNames from "classnames"
-import { Scheduler, View } from "devextreme-react/scheduler"
+import { SchedulerTypes, Scheduler, View } from "devextreme-react/scheduler"
 
 import styles from "./styles.module.css"
+
+import { BookingInfoType } from "@/types/booking"
 
 import { AppContext } from "@/context/AppContext"
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
@@ -43,7 +45,7 @@ const Booking = () => {
     );
 
     const openBookingDialog = useCallback(
-        () => {
+        (payload?: BookingInfoType) => {
             fetchDataRef.current = fetchBookingsFuncRef
 
             setDialog(
@@ -51,12 +53,21 @@ const Booking = () => {
                     header: {
                         title: "Booking"
                     },
-                    body: <BookingForm />
+                    body: <BookingForm />,
+                    payload
                 }
             )
         }, 
         [ fetchDataRef, fetchBookingsFuncRef, setDialog ]
     )
+    
+    const appointmentClickHandler = useCallback(
+        (e: SchedulerTypes.AppointmentClickEvent) => { 
+            openBookingDialog(e.appointmentData as BookingInfoType)
+        },
+        [ openBookingDialog ]
+    )
+
 
     useEffect(
         () => {
@@ -90,6 +101,7 @@ const Booking = () => {
                     currentView="week"
                     descriptionExpr="price.hour"
                     endDateExpr="checkOut"
+                    onAppointmentClick={appointmentClickHandler}
                     recurrenceRuleExpr="recurrence"
                     startDateExpr="checkIn"
                     textExpr="name">
