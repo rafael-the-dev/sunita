@@ -2,31 +2,48 @@ import { useCallback, useContext, useMemo, useState } from "react"
 import moment from "moment"
 
 import { BOOKING_TYPE } from "@/types/room"
+import { BookingInfoType } from "@/types/booking"
 
 import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
+import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 import { isValidBookingType, validateCheckIn, validateCheckOut } from "@/validation/booking"
 import { getTotalPrice } from "@/helpers/booking"
+import { defaultInputField } from "@/config/input"
 
-const initialInput = {
-    error: false,
-    helperText: "",
-    value: ""
-}
+import usePayload from "@/hooks/usePayload"
 
 const initial = {
-    checkIn: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).add(20, 'minutes').toISOString() }),
-    checkOut: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).add(2, "hour").toISOString() }),
+    checkIn: structuredClone({ ...defaultInputField, value: moment(new Date(Date.now())).add(20, 'minutes').toISOString() }),
+    checkOut: structuredClone({ ...defaultInputField, value: moment(new Date(Date.now())).add(2, "hour").toISOString() }),
     property: null,
     store: null,
-    type: structuredClone({ ...initialInput, value: BOOKING_TYPE.HOURLY }),
+    type: structuredClone({ ...defaultInputField, value: BOOKING_TYPE.HOURLY }),
     totalPrice: 0
 }
 
 const useBooking = () => {
-    const { getProperties } = useContext(RoomsContext)
+    const { getDialog } = useContext(FixedTabsContext);
 
-    const [ booking, setBooking ] = useState(initial)
+    const bookingInfo = getDialog().current?.payload as BookingInfoType
+    const hasPayload = Boolean(bookingInfo)
+
+    const { getProperties } = useContext(RoomsContext);
+
+    const [ booking, setBooking ] = useState(
+        () => {
+            if(!hasPayload) return initial;
+
+            return {
+                checkIn: structuredClone({ ...defaultInputField, value: bookingInfo.checkIn as string }),
+                checkOut: structuredClone({ ...defaultInputField, value: bookingInfo.checkOut as string }),
+                property: bookingInfo.property,
+                store: bookingInfo.owner,
+                type: structuredClone({ ...defaultInputField, value: BOOKING_TYPE.HOURLY }),
+                totalPrice: bookingInfo.totalPrice
+            }
+        }
+    )
 
     const hasErrors = useMemo(
         () => {

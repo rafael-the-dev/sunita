@@ -1,6 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useState } from "react"
 
 import { ChangePaymentMethodValueType } from "@/hooks/usePayment/types";
+import { BookingInfoType } from "@/types/booking";
+
+import { FixedTabsContext } from "@/context/FixedTabsContext";
 
 import usePayment from "@/hooks/usePayment"
 
@@ -20,7 +23,20 @@ const initialState = {
 };
 
 const useBookingPayment = (totalPrice: number) => {
-    const [ payment, setPayment ] = useState(initialState)
+    const { getDialog } = useContext(FixedTabsContext);
+
+    const bookingInfo = getDialog().current?.payload as BookingInfoType
+    const hasPayload = Boolean(bookingInfo)
+
+    const [ payment, setPayment ] = useState(
+        () => {
+            if(!hasPayload) return initialState;
+
+            return {
+                ...bookingInfo.payment
+            }
+        }
+    )
 
     const {
         add,

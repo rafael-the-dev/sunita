@@ -1,12 +1,17 @@
-import { ChangeEvent, useCallback, useMemo, useState } from "react"
+import { ChangeEvent, useCallback, useContext, useMemo, useState } from "react"
 
-import { BaseBookingType, BookingRoomType, SimpleBookingType } from "@/types/room"
+import { CustomerType } from "@/types/guest"
+import { BookingInfoType } from "@/types/booking"
+
+import { AppContext } from "@/context/AppContext"
+
 import useDocument from "@/hooks/useDocument"
+import usePayload from "@/hooks/usePayload"
 
 import { isValidName } from "@/validation/user"
 import { defaultInputField } from "@/config/input"
 import useContact from "@/hooks/useContact"
-import { CustomerType } from "@/types/guest"
+import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 type ChangeNameKeyType = "first" | "last"
 
@@ -16,14 +21,28 @@ const initial = {
 }
 
 const useGuest = () => {
-    const [ name, setName ] = useState(initial)
+    const { getDialog } = useContext(FixedTabsContext);
 
-    const { getContact, ...contactRest } = useContact()
-    const { document, ...documentRest } = useDocument()
+    const bookingInfo = getDialog().current?.payload as BookingInfoType;
+    const hasPayload = Boolean(bookingInfo)
 
-    const contact = getContact()
-    const hasContactErrors = contactRest.hasErrors
-    const hasDocumentErrors = documentRest.hasErrors()
+    const [ name, setName ] = useState(
+        () => {
+            if(!hasPayload) return initial;
+
+            return {
+                first: structuredClone({ ...defaultInputField, value: bookingInfo?.guest?.firstName }),
+                last: structuredClone({ ...defaultInputField, value: bookingInfo?.guest?.lastName })
+            }
+        }
+    )
+
+    const { getContact, ...contactRest } = useContact(bookingInfo?.guest?.contact);
+    const { document, ...documentRest } = useDocument(bookingInfo?.guest?.document);
+
+    const contact = getContact();
+    const hasContactErrors = contactRest.hasErrors;
+    const hasDocumentErrors = documentRest.hasErrors();
 
     const hasErrors = useMemo(
         () => {
