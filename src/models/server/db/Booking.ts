@@ -1,19 +1,20 @@
+import currency from "currency.js"
 import moment from "moment"
 
-import { BookingType, BookingDBType } from "@/types/booking"
+import { BookingType, BookingDBType, BOOKING_STATUS } from "@/types/booking"
 import { ConfigType, FiltersType } from "@/types/app-config-server"
 
 import { getId } from "@/helpers/id"
 import { toISOString } from "@/helpers/date"
 import getBookingProxy from "../proxy/booking"
 import { getBookings, isBookingAvailable } from "@/helpers/booking"
+import { sort } from "@/helpers/sort"
 
 import Error404 from "@/errors/server/404Error"
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
 import Guest from "./Customer"
 import Property from "./Property"
-import Room from "./Room"
 
 type GetAllPropsType = {
     filters?: FiltersType
@@ -21,7 +22,23 @@ type GetAllPropsType = {
 
 class Booking {
     static async getAll({ filters }: GetAllPropsType, config: ConfigType) {
-        return await getBookings({ filters }, config)
+        const bookings = await getBookings({ filters }, config)
+
+        const totalPrice = bookings.reduce(
+            (prevValue, currentBooking) => {
+                return currency(prevValue).add(currentBooking.totalPrice).value
+            }, 
+            0
+        )
+
+        sort(bookings, "checkIn")
+
+        return {
+            data: {
+                list: bookings,
+                total: totalPrice
+            }
+        }
     }
 
     static async get({ filters }: GetAllPropsType, config: ConfigType) {
@@ -59,17 +76,22 @@ class Booking {
         const isAvailable = await isBookingAvailable(clientBooking, config)
         
         if(!isAvailable) throw new InvalidArgumentError("Room not available, It is already booked.");
+        
+        const guestId = await Guest.register(guest, "GUESTS", config);
 
         try {
             const booking: BookingDBType = {
+                code: getId(),
+                createdAt: toISOString(Date.now()),
                 checkIn: null,
                 checkOut: null,
                 date: toISOString(moment(checkIn)),
-                guest: guest.id,
+                guest: guestId,
                 id, 
                 owner: storeId,
                 payment: null,
                 property: selectedProperty.id,
+                status: BOOKING_STATUS.PENDING,
                 type: null,
                 totalPrice: 0
             };
@@ -80,8 +102,6 @@ class Booking {
             booking.checkOut = checkOut;
             bookingProxy.type = type;
             bookingProxy.payment = payment
-            
-            await Guest.register(guest, "GUESTS", config);
 
             await mongoDbConfig
                 .collections
