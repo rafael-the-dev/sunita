@@ -62,20 +62,49 @@ const useSearchParamsHook = () => {
         router.push(`${pathname}?${params.toString()}`);
     }, [ pathname, router, searchParams ])
 
+    const removeSearchParams = React.useCallback((key: string, value: string) => {
+        const params = new URLSearchParams(searchParams.toString())
+
+        params.delete(key, value)
+
+        router.push(`${pathname}?${params.toString()}`);
+    }, [ pathname, router, searchParams ])
+
     const getSearchParams = React.useCallback(
         (key: string, isUnique: boolean = false) => getAll(key), [ getAll ]);
 
     const setSearchParams = React.useCallback(
-        (key: string, value: string) =>  set(key, value), 
-        [ set ]
+        (key: string, value: string) => {
+            const params = new URLSearchParams(searchParams.toString())
+
+            params.append(key, value)
+
+            router.push(`${pathname}?${params.toString()}`);
+        }, 
+        [ pathname, searchParams, router ]
     );
 
     const setSearchParam = React.useCallback(
-        (key: string, value: string) => {
-            removeSearchParam("key")
-            set(key, value)
-        }, 
+        (key: string, value: string) => set(key, value), 
         [ removeSearchParam, set ]
+    );
+
+    const toggleSearchParam = React.useCallback(
+        (key: string, value: string) =>  {
+            if(searchParams.get(key)) removeSearchParam(key)
+            else setSearchParam(key, value)
+        }, 
+        [ removeSearchParam, setSearchParam, searchParams ]
+    );
+
+    const toggleSearchParams = React.useCallback(
+        (key: string, value: string) =>  {
+            const isIncluded = new URLSearchParams(searchParams.toString()).has(key, value)
+
+            if(isIncluded) removeSearchParams(key, value)
+            else setSearchParams(key, value)
+        }, 
+        [ removeSearchParams, setSearchParams, searchParams ]
     );
 
     const changeHandler = React.useCallback(
@@ -88,7 +117,8 @@ const useSearchParamsHook = () => {
         get, getAll,
         isChecked,
         removeSearchParam,
-        setSearchParam, setSearchParams
+        setSearchParam, setSearchParams,
+        toggleSearchParam, toggleSearchParams
     }
 };
 
