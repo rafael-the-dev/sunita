@@ -163,5 +163,5 @@ export const isBookingAvailable = async ({ checkIn, checkOut, property }: Bookin
         config
     )
 
-    return bookings.length === 0
+    return bookings.data.list.length === 0
 }
