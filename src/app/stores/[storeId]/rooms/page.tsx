@@ -5,8 +5,10 @@ import classNames from "classnames"
 
 import { TabType } from "@/context/FixedTabsContext/types"
 
+import { FiltersContextProvider } from "@/context/FiltersContext"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
-import { RoomsContextProvider } from "./context"
+import { LoginContext } from "@/context/LoginContext"
+import { RoomsContext, RoomsContextProvider } from "./context"
 
 import { Container, Provider } from "@/components/shared/FixedTabsContainer"
 import Booking from "./components/Booking"
@@ -34,7 +36,9 @@ const tabs = [
 ]
 
 const RoomsPage = () => {
+    const { credentials } = useContext(LoginContext)
     const { getActiveTab } = useContext(FixedTabsContext)
+    const { bookings } = useContext(RoomsContext)
 
     const activeTab = getActiveTab().id
 
@@ -42,7 +46,15 @@ const RoomsPage = () => {
         <div className={classNames("scrollable overflow-x-auto pt-6", { "px-2 md:px-4": activeTab !== TABS_TYPE.BOOKING })}>
             {
                 {
-                    [TABS_TYPE.BOOKING]: <Booking />,
+                    [TABS_TYPE.BOOKING]: (
+                        <FiltersContextProvider 
+                            autoFetch={false}
+                            list={bookings?.data?.data?.list}
+                            refetchData={bookings.fetchData}
+                            url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/properties/bookings`}>
+                            <Booking />
+                        </FiltersContextProvider>
+                    ),
                     [TABS_TYPE.ROOMS]: <Rooms />,
                     [TABS_TYPE.MORE]: <div></div>
                 }[activeTab]
