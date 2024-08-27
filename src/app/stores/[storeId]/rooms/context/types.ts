@@ -1,12 +1,12 @@
 import { ReactNode } from "react"
 
 import { FetchDataFuncType, FetchResponseType } from "@/hooks/useFetch/types"
-import { RoomType } from "@/types/room";
+import { FetchResponseType as RequestResponseType } from "@/types";
 import { PropertyType } from "@/types/property";
-import { BookingInfoType } from "@/types/booking";
+import { BookingsResponseType } from "@/types/booking";
 
 export type ContextType = {
-    bookings: FetchResponseType<BookingInfoType[]>
+    bookings: FetchResponseType<RequestResponseType<BookingsResponseType>>,
     getProperties: () => PropertyType[];
     fetchRooms: FetchDataFuncType;
     loading: boolean;

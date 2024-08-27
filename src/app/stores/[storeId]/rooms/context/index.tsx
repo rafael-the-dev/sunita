@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext } from "react"
 
-import { BookingInfoType } from "@/types/booking"
+import { BookingsResponseType } from "@/types/booking"
 import { ContextType, PropsType } from "./types"
 import { FetchResponseType } from "@/types"
 
@@ -14,7 +14,7 @@ export const RoomsContext = createContext<ContextType>({} as ContextType)
 export const RoomsContextProvider = ({ children }: PropsType) => {
     const { credentials } = useContext(LoginContext)
 
-    const bookings = useFetch<BookingInfoType[]>(
+    const bookings = useFetch<FetchResponseType<BookingsResponseType>>(
         {
             url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/properties/bookings`
         }
