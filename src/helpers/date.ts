@@ -1,18 +1,28 @@
 import { SaleInfoType } from "@/types/sale";
 import moment from "moment";
 
+type ListType = {
+    createdAt: Date | string ,
+    checkIn?: Date | string ,
+    checkOut?: Date | string 
+}[]
+
 export type DateType = Date | string | number | moment.Moment;
 export const dateFormat = "DD/MM/YYYY";
 export const dateTimeFormat = "DD/MM/YYYY HH:mm A"
 
+export type DATE_TYPE = DateType
+export const DATE_FORMAT = dateFormat
+export const DATE_TIME_FORMAT = dateTimeFormat
+
 export const formatDate = (dateParam: DateType ) => moment(dateParam).format(dateFormat);
 
-export const formatDates = (list: { createdAt: Date | string }[]) => {
+export const formatDates = (list: ListType, key="createdAt") => {
     if(list.length === 0) return formatDate(Date.now());
 
     if(list.length > 1) {
-        const startDate = formatDate(list[list.length - 1].createdAt);
-        const endDate = formatDate(list[0].createdAt);
+        const startDate = formatDate(list[list.length - 1][key]);
+        const endDate = formatDate(list[0][key]);
 
         if(startDate === endDate) {
             if(startDate === formatDate(Date.now())) return `Today  -  ${startDate}`;
@@ -22,7 +32,7 @@ export const formatDates = (list: { createdAt: Date | string }[]) => {
 
         return `${startDate} - ${endDate}`;
     } else {
-        const date = formatDate(new Date(list[0]?.createdAt));
+        const date = formatDate(new Date(list[0]?.[key]));
 
         if(date === formatDate(Date.now())) return `Today  -  ${date}`;
 
