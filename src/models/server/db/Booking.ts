@@ -118,6 +118,79 @@ class Booking {
             throw e;
         }
     }   
+
+    static async update(updatedBooking: BookingType, config: ConfigType) {
+        const { mongoDbConfig, user } = config;
+
+        const [ currentBooking, property ] = await Promise.all(
+            [
+                this.get(
+                    {
+                        filters: {
+                            id:updatedBooking.id,
+                        }
+                    },
+                    config
+                ),
+                Property.get(
+                    { 
+                        filter: { 
+                            id: updatedBooking.property 
+                        }
+                    }, 
+                    config
+                )
+            ]
+        )
+
+        const booking = structuredClone(
+            { 
+                ...currentBooking, 
+                guest: currentBooking.guest.id,
+                property: currentBooking.property.id 
+            }
+        )
+
+        const bookingClone = structuredClone(booking)
+
+        const update = async (booking: BookingDBType) => {
+            //@ts-ignore
+            const { _id, ...bookingRest } = booking
+
+            await mongoDbConfig
+                .collections
+                .BOOKINGS
+                .updateOne(
+                    { id: updatedBooking.id },
+                    {
+                        $set: bookingRest
+                    }
+                );
+        }
+
+        const isAvailable = await isBookingAvailable(updatedBooking, config)
+        
+        if(!isAvailable) throw new InvalidArgumentError("Room not available, It is already booked.");
+        
+        try {
+            bookingClone.checkIn = null
+            bookingClone.checkOut = null
+            
+            const bookingProxy = getBookingProxy(bookingClone, updatedBooking.totalPrice, property);
+
+            bookingProxy.checkOut = updatedBooking.checkOut;
+            bookingProxy.checkIn = updatedBooking.checkIn;
+            bookingProxy.type = updatedBooking.type;
+            bookingProxy.payment = updatedBooking.payment
+            //bookingProxy.status = updatedBooking.status;
+
+            await update(bookingClone);
+        } catch(e) {
+            await update(booking);
+
+            throw e;
+        }
+    }   
 }
 
 export default Booking
