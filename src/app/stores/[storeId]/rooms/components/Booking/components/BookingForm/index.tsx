@@ -3,9 +3,12 @@ import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
+import { BookingInfoType } from "@/types/booking"
+
 import { AppContext } from "@/context/AppContext"
 import { BookingContext, BookingContextProvider } from "@/context/BookingContext"
 import { LoginContext } from "@/context/LoginContext"
+import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
 
 import useFetch from "@/hooks/useFetch"
 
@@ -17,18 +20,23 @@ import Payment from "./components/Payment"
 import Stepper from "@/components/stepper"
 
 const BookingForm = () => {
-    const { fetchDataRef } = useContext(AppContext)
-    const { credentials } = useContext(LoginContext)
-    const { hasErrors, reset, toString } = useContext(BookingContext)
+    const { fetchDataRef } = useContext(AppContext);
+    const { credentials } = useContext(LoginContext);
+    const { hasErrors, reset, toString } = useContext(BookingContext);
+    const { getDialog } = useContext(StaticTabsContext);
+
+    const payload = getDialog().current?.payload;
+    const hasPayload = Boolean(payload);
+    const bookingInfo = payload as BookingInfoType;
 
     const { fetchData, loading } = useFetch(
         {
             autoFetch: false,
-            url: `/api/stores/${credentials?.user.stores[0]?.storeId}/rooms/bookings`
+            url: `/api/stores/${credentials?.user.stores[0]?.storeId}/properties/bookings/${ hasPayload ? bookingInfo.id : ""}`
         }
     )
     
-    const fetchBookingsFuncRef = fetchDataRef
+    const fetchBookingsFuncRef = fetchDataRef;
 
     const alertProps = useRef({
         description: "",
@@ -36,9 +44,9 @@ const BookingForm = () => {
         title: ""
     })
 
-    const onClose = useRef<() => void>(null)
-    const onOpen = useRef<() => void>(null)
-    const resetStepperRef = useRef<() => void>(null)
+    const onClose = useRef<() => void>(null);
+    const onOpen = useRef<() => void>(null);
+    const resetStepperRef = useRef<() => void>(null);
 
     const alert = useMemo(
         () => (
@@ -57,13 +65,13 @@ const BookingForm = () => {
 
         if(loading || hasErrors) return;
 
-        onClose.current?.()
+        onClose.current?.();
 
         await fetchData(
             {
                 options: {
                     body: toString(),
-                    method: "POST"
+                    method: hasPayload ? "PUT" : "POST"
                 },
                 onError(error) {
                     alertProps.current = {
@@ -74,12 +82,12 @@ const BookingForm = () => {
                 },
                 async onSuccess(res, data) {
                     alertProps.current = {
-                        description: "You have successfully booked",
+                        description: `You have successfully ${ hasPayload ? "updated booking" : "booked"}`,
                         severity: "success",
                         title: "Success"
                     };
                     
-                    await fetchBookingsFuncRef.current?.({})
+                    await fetchBookingsFuncRef.current?.({});
 
                     resetStepperRef.current?.()
 
@@ -107,7 +115,7 @@ const BookingForm = () => {
                             className="py-2"
                             disabled={hasErrors}
                             type="submit">
-                            { loading ? "Loading..." : "Submit" }
+                            { loading ? "Loading..." : ( hasPayload ? "Update" : "Submit" ) }
                         </Button>
                     )
                 }
