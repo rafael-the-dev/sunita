@@ -10,6 +10,7 @@ export type FiltersType = Record<string, any>
 
 export type URLParamsType = {
     params: {
+        bookingId?: string,
         categoryId: string,
         clientId?: string,
         expenseId: string,
