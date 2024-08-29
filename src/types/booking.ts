@@ -4,6 +4,7 @@ import { ProductPayment as PaymentMethod } from "./payment-method"
 import { PropertyType } from "./property";
 
 export enum BOOKING_STATUS {
+    CLOSED = "closed",
     CONFIRMED = "confirmed",
     CANCELLED = "cancelled",
     PENDING = "pending"
