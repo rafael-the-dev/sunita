@@ -1,17 +1,29 @@
-import { useContext } from "react"
+import { ChangeEvent, useCallback, useContext, useMemo } from "react"
+
+import { BOOKING_STATUS } from "@/types/booking"
 
 import { BookingContext } from "@/context/BookingContext"
+import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
+
+import { getList } from "@/helpers"
 
 import Button from "@/components/shared/button"
 import PaymentMethod from "@/components/shared/payment-method"
+import Select from "@/components/shared/combobox"
 import Typography from "./components/Typography"
 
+const statusList = getList(BOOKING_STATUS)
+    .filter(status => status.value !== BOOKING_STATUS.CANCELLED)
+
 const PaymentContainer = () => {
+    const { getDialog } = useContext(StaticTabsContext)
+
     const {
         booking,
 
         addPaymentMethod,
         changePaymentMethodId, changePaymentMethodValue,
+        changeStatus,
         getPayment,
         removePaymentMethod
     } = useContext(BookingContext)
@@ -19,9 +31,36 @@ const PaymentContainer = () => {
     const hasChanges = getPayment().changes > 0;
     const showRemainingAmount =  getPayment().remainingAmount > 0 &&  getPayment().remainingAmount < booking.totalPrice;
 
+    const hasPayload = Boolean(getDialog().current?.payload)
+
+    const changeStatusHandler = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => changeStatus(e.target.value as BOOKING_STATUS),
+        [ changeStatus ]
+    )
+
+    const bookingStatus = booking.status
+
+    const statusSelect = useMemo(
+        () => (
+            <div className="flex">
+                 <Select 
+                    className="mb-0 w-full sm:w-1/2"
+                    label="Status"
+                    list={statusList}
+                    onChange={changeStatusHandler}
+                    value={bookingStatus}
+                />
+            </div>
+        ),
+        [ bookingStatus, changeStatusHandler ]
+    )
+
     return (
         <div className="flex flex-col items-stretch justify-between">
-            <div>
+            <div className="flex flex-col gap-y-6 items-stretch">
+                {
+                    hasPayload && statusSelect
+                }
                 <div>
                     {
                         getPayment()

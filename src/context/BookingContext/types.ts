@@ -7,6 +7,7 @@ import { PaymentFunctionsType } from "@/hooks/usePayment/types"
 import { PaymentType } from "@/types/payment-method"
 import { defaultContact } from "@/hooks/useContact/values"
 import { PropertyType } from "@/types/property"
+import { BOOKING_STATUS } from "@/types/booking"
 
 export type PropsType = {
     children: ReactNode
@@ -26,6 +27,7 @@ export type ContextType = PaymentFunctionsType & ContactMethodsType & {
         checkOut: InputType,
         property: PropertyType,
         store: string;
+        status: BOOKING_STATUS,
         type: InputType & { value: BOOKING_TYPE }, 
         totalPrice: number 
     },
@@ -50,6 +52,7 @@ export type ContextType = PaymentFunctionsType & ContactMethodsType & {
     changeDocumentType: (documentType: DOCUMENT_TYPE) => void;
 
     changeRoom: (id: string) => void,
+    changeStatus: (bookingType: BOOKING_STATUS) => void,
     changeType: (bookingType: BOOKING_TYPE) => void,
     changeTime: (prop: "checkIn" | "checkOut") => (newTime: string) => void,
 

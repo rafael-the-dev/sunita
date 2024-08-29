@@ -2,12 +2,12 @@ import { useCallback, useContext, useMemo, useState } from "react"
 import moment from "moment"
 
 import { BOOKING_TYPE } from "@/types/room"
-import { BookingInfoType } from "@/types/booking"
+import { BOOKING_STATUS, BookingInfoType } from "@/types/booking"
 
 import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
 
-import { isValidBookingType, validateCheckIn, validateCheckOut } from "@/validation/booking"
+import { isValidBookingType, validateCheckIn, validateCheckOut, isValidStatus } from "@/validation/booking"
 import { getTotalPrice } from "@/helpers/booking"
 import { defaultInputField } from "@/config/input"
 
@@ -18,6 +18,7 @@ const initial = {
     checkOut: structuredClone({ ...defaultInputField, value: moment(new Date(Date.now())).add(2, "hour").toISOString() }),
     property: null,
     store: null,
+    status: BOOKING_STATUS.PENDING,
     type: structuredClone({ ...defaultInputField, value: BOOKING_TYPE.HOURLY }),
     totalPrice: 0
 }
@@ -39,6 +40,7 @@ const useBooking = () => {
                 checkOut: structuredClone({ ...defaultInputField, value: bookingInfo.checkOut as string }),
                 property: bookingInfo.property,
                 store: bookingInfo.owner,
+                status: bookingInfo.status,
                 type: structuredClone({ ...defaultInputField, value: BOOKING_TYPE.HOURLY }),
                 totalPrice: bookingInfo.totalPrice
             }
@@ -80,6 +82,18 @@ const useBooking = () => {
                         helperText: isValid ? "" : "Invalid type",
                         value: bookingType
                     }
+                })
+            )
+        }, 
+        []
+    )
+
+    const changeStatus = useCallback(
+        (value: BOOKING_STATUS) => {
+            setBooking(
+                booking => ({
+                    ...booking,
+                    status: value
                 })
             )
         }, 
@@ -142,6 +156,7 @@ const useBooking = () => {
         hasErrors,
 
         changeRoom,
+        changeStatus,
         changeType,
         changeTime,
 

@@ -1,16 +1,17 @@
 import { ChangeEvent, useCallback, useContext, useMemo } from "react"
-import moment from "moment"
 
-import { BOOKING_TYPE, ROOM_TYPE } from "@/types/room"
+import { BOOKING_TYPE } from "@/types/room"
 
 import { BookingContext } from "@/context/BookingContext"
 import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 
-import { getMinCheckOutTime } from "@/helpers/booking"
+import { getList } from "@/helpers"
 
 import DateTime from "@/components/date"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import Select from "@/components/shared/combobox"
+
+const bookingTypesList = getList(BOOKING_TYPE)
 
 const BaseDetails = () => {
     const { getProperties } = useContext(RoomsContext)
@@ -32,16 +33,6 @@ const BaseDetails = () => {
             )
         },
         [ bookingType, getProperties ]
-    )
-
-    const bookingTypesList = useMemo(
-        () => Object
-            .values(BOOKING_TYPE)
-            .map(item => ({
-                label: item,
-                value: item
-            })),
-        []
     )
 
     const roomChangeHandler = useCallback(
@@ -86,11 +77,15 @@ const BaseDetails = () => {
                     onChange={booking.property ? changeTime("checkOut") : () => {}}
                 />
             </Row>
-            <div className="flex justify-end"> 
-                <div className="font-semibold text-lg">
-                    { booking.totalPrice } MT
-                </div>
-            </div>
+            {
+                booking.totalPrice > 0 && (
+                    <div className="flex justify-end"> 
+                        <div className="font-semibold text-lg">
+                            { booking.totalPrice } MT
+                        </div>
+                    </div>
+                )
+            }
         </div>
     )
 }
