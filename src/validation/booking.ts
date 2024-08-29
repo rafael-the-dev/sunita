@@ -1,6 +1,7 @@
 import moment from "moment"
 
 import { BOOKING_TYPE } from "@/types/room";
+import { BOOKING_STATUS } from "@/types/booking";
 
 type DateType = string | Date | moment.Moment
 
@@ -49,4 +50,13 @@ export const validateCheckOut = (checkIn: DateType, checkOut: DateType) => {
         hasError: false,
         message: ""
     }
+}
+
+export const isValidStatus = (value: BOOKING_STATUS) => {
+    const list = Object
+        .values(BOOKING_STATUS)
+        .filter(status => status !== BOOKING_STATUS.CANCELLED)
+
+    //@ts-ignore
+    return list.includes(value)
 }
