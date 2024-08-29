@@ -4,10 +4,11 @@ import moment from "moment";
 import { ContextType, PropsType } from "./types";
 import { BookingType } from "@/types/booking";
 
+import { dateFormat } from "@/helpers/date";
+
 import useBooking from "./hooks/useBook";
 import useGuest from "./hooks/useGuest";
 import usePayment from "./hooks/usePayment";
-import { dateFormat } from "@/helpers/date";
 
 export const BookingContext = createContext<ContextType>({} as ContextType)
 
@@ -40,6 +41,8 @@ export const BookingContextProvider = ({ children }: PropsType) => {
 
     const toString = () => {
         const book: BookingType = {
+            code: null,
+            createdAt: null,
             checkIn: booking.checkIn.value,
             checkOut: booking.checkOut.value,
             date: moment(booking.checkIn.value).format(dateFormat),
@@ -48,6 +51,7 @@ export const BookingContextProvider = ({ children }: PropsType) => {
             owner: null,
             payment: payment.getPayment(),
             property: booking.property.id,
+            status: booking.status,
             type: booking.type.value,
             totalPrice: booking.totalPrice
         }
