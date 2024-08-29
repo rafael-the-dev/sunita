@@ -119,6 +119,7 @@ export const getBookings = async ({ filters }: { filters?: FiltersType }, { mong
                 id: { $first: "$id" },
                 property: { $first: "$properties" },
                 payment: { $first: "$payment" },
+                status: { $first: "$status" },
                 type: { $first: "$type" },
                 totalPrice: { $first: "$totalPrice" }
             }
