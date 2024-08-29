@@ -61,6 +61,7 @@ class Booking {
             payment,
             property,
             type,
+            status,
             totalPrice
         } = clientBooking;
 
@@ -91,7 +92,7 @@ class Booking {
                 owner: storeId,
                 payment: null,
                 property: selectedProperty.id,
-                status: BOOKING_STATUS.PENDING,
+                status: status ?? BOOKING_STATUS.PENDING,
                 type: null,
                 totalPrice: 0
             };
@@ -182,7 +183,7 @@ class Booking {
             bookingProxy.checkIn = updatedBooking.checkIn;
             bookingProxy.type = updatedBooking.type;
             bookingProxy.payment = updatedBooking.payment
-            //bookingProxy.status = updatedBooking.status;
+            bookingProxy.status = updatedBooking.status;
 
             await update(bookingClone);
         } catch(e) {

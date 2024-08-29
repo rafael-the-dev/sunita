@@ -1,6 +1,6 @@
 
 import { BOOKING_TYPE } from "@/types/room"
-import { BookingDBType } from "@/types/booking"
+import { BookingDBType, BOOKING_STATUS } from "@/types/booking"
 import { PaymentType } from "@/types/payment-method"
 
 import { validate } from "@/validation"
@@ -10,6 +10,7 @@ import { isInvalidNumber } from "@/helpers/validation"
 
 import { 
     isValidBookingType, 
+    isValidStatus,
     validateCheckIn, 
     validateCheckOut 
 } from "@/validation/booking"
@@ -17,7 +18,7 @@ import {
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 import { PropertyType } from "@/types/property"
 
-type PropType = "checkIn" | "checkOut" | "payment" | "type"
+type PropType = "checkIn" | "checkOut" | "payment" | "status" | "type"
 
 const getBookingProxy = (target: BookingDBType, userTotalPrice: number, property: PropertyType) => {
 
@@ -78,6 +79,13 @@ const getBookingProxy = (target: BookingDBType, userTotalPrice: number, property
                     target.totalPrice = totalPrice;
 
                     return Reflect.set(target, prop, newValue);
+                }
+                case "status": {
+                    const bookingStatus = newValue as BOOKING_STATUS;
+
+                    validate(bookingStatus, "Invalid booking status", isValidStatus)
+
+                    return Reflect.set(target, prop, bookingStatus)
                 }
             }
 
