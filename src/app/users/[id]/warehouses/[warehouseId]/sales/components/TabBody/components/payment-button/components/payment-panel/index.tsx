@@ -4,36 +4,37 @@ import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
+import { getList } from "@/helpers"
+
+import Debt from "./components/Debt"
 import PaymentMethods from "./components/payment-methods";
 import SuccessfulPayment from "./components/successful-payment";//:;
 
-type ButtonProps = {
-    children: React.ReactNode
+enum TABS {
+    PAYMENT = "payment",
+    DEBT = "debt",
+    SUCCESSFULL_PAYMENT = "successfull-payment"
 }
 
-const list = [
-    {
+type PropsType = {
+    closeDialog: () => void
+}
 
-        id: "PAYMENT",
-        label: "Payment"
-    },
-    {
-        id: "DEBT",
-        label: "Debt"
-    }
-];
+const list = getList(TABS)
+    .filter(tab => tab.value !== TABS.SUCCESSFULL_PAYMENT);
 
-const PaymentPanel = ({ closeDialog }: { closeDialog: () => void }) => {
-    const [ tab, setTab ] = React.useState("PAYMENT");
+const PaymentPanel = ({ closeDialog }: PropsType) => {
+    const [ tab, setTab ] = React.useState(TABS.PAYMENT);
 
-    const changeTab = React.useCallback((value: string) => {
+    const changeTab = React.useCallback((value: TABS) => {
         setTab(currentTab => {
-            if(currentTab === "SUCCESS_PAYMENT") return currentTab;
+            if(currentTab === TABS.SUCCESSFULL_PAYMENT) return currentTab;
 
             return value;
         })
     }, []);
-    const setSuccefulPayment = React.useCallback(() => setTab("SUCCESS_PAYMENT"), []);
+
+    const setSuccefulPayment = React.useCallback(() => setTab(TABS.SUCCESSFULL_PAYMENT), []);
 
     return (
         <div className={classNames(styles.root, `flex flex-col h-full`)}>
@@ -41,8 +42,8 @@ const PaymentPanel = ({ closeDialog }: { closeDialog: () => void }) => {
                 {
                     list.map(item => (
                         <Tab 
-                            key={item.id}
-                            id={item.id}
+                            key={item.value}
+                            id={item.value}
                             changeTab={changeTab}
                             tab={tab}>
                             { item.label }
@@ -52,8 +53,9 @@ const PaymentPanel = ({ closeDialog }: { closeDialog: () => void }) => {
             </ul>
             {
                 {
-                    "PAYMENT": <PaymentMethods setSuccefulPayment={setSuccefulPayment} />,
-                    "SUCCESS_PAYMENT": <SuccessfulPayment onClose={closeDialog} />
+                    [TABS.DEBT]: <Debt />,
+                    [TABS.PAYMENT]: <PaymentMethods setSuccefulPayment={setSuccefulPayment} />,
+                    [TABS.SUCCESSFULL_PAYMENT]: <SuccessfulPayment onClose={closeDialog} />
                 }[tab]
             }
         </div>
