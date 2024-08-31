@@ -86,6 +86,11 @@ const Searchfield = ({ addCustomer }: { addCustomer: (customer: CustomerInfoType
         <SearchInput 
             getList={getList}
             headers={headers}
+            input={
+                {
+                    label: "Insert client's name"
+                }
+            }
             onClickRow={addCustomer}
         />
     )
