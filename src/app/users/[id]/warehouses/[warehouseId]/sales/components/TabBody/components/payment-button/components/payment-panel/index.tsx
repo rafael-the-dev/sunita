@@ -34,7 +34,7 @@ const PaymentPanel = ({ closeDialog }: PropsType) => {
         })
     }, []);
 
-    const setSuccefulPayment = React.useCallback(() => setTab(TABS.SUCCESSFULL_PAYMENT), []);
+    const setSuccessfulPayment = React.useCallback(() => setTab(TABS.SUCCESSFULL_PAYMENT), []);
 
     return (
         <div className={classNames(styles.root, `flex flex-col h-full`)}>
@@ -53,8 +53,8 @@ const PaymentPanel = ({ closeDialog }: PropsType) => {
             </ul>
             {
                 {
-                    [TABS.DEBT]: <Debt />,
-                    [TABS.PAYMENT]: <PaymentMethods setSuccefulPayment={setSuccefulPayment} />,
+                    [TABS.DEBT]: <Debt onSuccess={setSuccessfulPayment}  />,
+                    [TABS.PAYMENT]: <PaymentMethods setSuccefulPayment={setSuccessfulPayment} />,
                     [TABS.SUCCESSFULL_PAYMENT]: <SuccessfulPayment onClose={closeDialog} />
                 }[tab]
             }
