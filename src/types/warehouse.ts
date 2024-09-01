@@ -3,7 +3,7 @@ import { ContactType } from "./contact";
 import { ExpenseType } from "./expense";
 import { WarehouseProductType } from "./product"
 import { RoomType, BookingDBType } from "./room"
-import { SaleType } from "./sale";
+import { SaleDebtType, SaleType } from "./sale";
 import { StockReportType } from "./stock";
 import { StoreUserType } from "./user";
 import { STATUS } from ".";
@@ -59,7 +59,8 @@ export type WarehouseType = BaseStore & {
     sales: SaleType[];
     suppliers: Supplier[],
     "stock-reports": StockReportType[];
-    users: StoreUserType[]
+    users: StoreUserType[],
+    "unpaid-sales": SaleDebtType[]
 };
 
 export type StoresResponse<T> = {
