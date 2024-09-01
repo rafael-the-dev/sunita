@@ -1,7 +1,6 @@
 import { PaymentMethodType } from "./payment-method";
 import { ProductInfoType } from "./product";
-
-export type SaleItemType =  {
+type ItemType =  {
     id: string;
     product: {
         id: string;
@@ -10,6 +9,8 @@ export type SaleItemType =  {
     quantity: number;
     total: number;
 };
+
+export type SaleItemType = ItemType
 
 export type SaleType = {
     changes: number;
@@ -38,3 +39,23 @@ export type SaleInfoType = SaleType & {
         username: string;
     }
 };
+
+
+type DebtType = {
+    changes: number;
+    createdAt: Date | string;
+    createdBy: String;
+    dueDate: string;
+    id: string;
+    items: ItemType[];
+    latePaymentFine: boolean;
+    profit: number;
+    paymentMethods: PaymentMethodType[];
+    remainingAmount: number;
+    total: number;
+    totalReceived: number;
+}
+
+export type SaleDebtType = DebtType & {
+    customer: string;
+}
