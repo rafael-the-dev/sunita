@@ -16,6 +16,9 @@ export const getCustomers = async ({ filters, tableName }: { filters?: FiltersTy
                     $match: { id }
                 },
                 {
+                    $match: filters ?? {}
+                },
+                {
                     $lookup: {
                         from: tableName,
                         foreignField: "id",
