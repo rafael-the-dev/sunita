@@ -27,13 +27,13 @@ class Sale {
             .WAREHOUSES
             .aggregate([
                 { $match: { id: storeId } },
-                { $unwind: "$sales" },
+                { $unwind: "$unpaid-sales" },
                 { $match: { ...(filters ?? {} ) } },
-                { $unwind: "$sales.items" },
+                { $unwind: "$unpaid-sales.items" },
                 {
                     $lookup: {
                         from: "products", // Replace with the name of your external product collection
-                        localField: "sales.items.product.id",
+                        localField: "unpaid-sales.items.product.id",
                         foreignField: "id",
                         as: "product_info"
                     }
@@ -41,8 +41,16 @@ class Sale {
                 { $unwind: "$product_info" },
                 {
                     $lookup: {
+                        from: "clients", // Replace with the name of your external product collection
+                        localField: "unpaid-sales.customer",
+                        foreignField: "id",
+                        as: "customer_info"
+                    }
+                },
+                {
+                    $lookup: {
                         from: "users", // Replace with the name of your external product collection
-                        localField: "sales.user",
+                        localField: "unpaid-sales.createdBy",
                         foreignField: "username",
                         as: "user_info"
                     }
@@ -50,7 +58,7 @@ class Sale {
                 { $unwind: "$user_info" },
                 {
                     $addFields: {
-                        "sales.items.product": {
+                        "unpaid-sales.items.product": {
                         item: "$product_info", // Embed product info into sales document
                         // price: 
                         }
@@ -58,56 +66,52 @@ class Sale {
                 },
                 {
                     $group: {
-                        _id: "$sales.id",
-                        createdAt: { $first: "$sales.createdAt" },
-                        changes: { $first: "$sales.changes" },
-                        id: { $first: "$sales.id" },
+                        _id: "$unpaid-sales.id",
+                        createdAt: { $first: "$unpaid-sales.createdAt" },
+                        changes: { $first: "$unpaid-sales.changes" },
+                        customer: { 
+                            $first: {
+                                firstName: "$customer_info.firstName",
+                                lastName: "$customer_info.lastName",
+                                username: "$customer_info.username"
+                            }
+                        },
+                        id: { $first: "$unpaid-sales.id" },
                         items: {
                             $push: {
-                                quantity: "$sales.items.quantity",
-                                total: "$sales.items.total",
+                                quantity: "$unpaid-sales.items.quantity",
+                                total: "$unpaid-sales.items.total",
                                 product: {
                                     barcode: "$product_info.barcode",
                                     category: "$product_info.category",
-                                    id: "$sales.items.product.id",
+                                    id: "$unpaid-sales.items.product.id",
                                     name: "$product_info.name",
-                                    sellPrice: "$sales.items.product.price",
+                                    sellPrice: "$unpaid-sales.items.product.price",
                                 }
                             }
                         },
-                        profit: { $first: "$sales.profit" },
-                        paymentMethods: { $first: "$sales.paymentMethods" },
-                        total: { $first: "$sales.total" },
-                        totalReceived: { $first: "$sales.totalReceived" },
+                        profit: { $first: "$unpaid-sales.profit" },
+                        paymentMethods: { $first: "$unpaid-sales.paymentMethods" },
+                        remainingAmount: { $first: "$unpaid-sales.remainingAmount" },
+                        total: { $first: "$unpaid-sales.total" },
+                        totalReceived: { $first: "$unpaid-sales.totalReceived" },
                         user: { 
                             $first: {
                                 firstName: "$user_info.firstName",
                                 lastName: "$user_info.lastName",
                                 username: "$user_info.username"
                             }
-                         }
+                        }
                     }
                 }
             ])
             .toArray() as SaleInfoType[];
-
-        /*await Promise.all(
-            list.map(sale => {
-                const saleProxy = structuredClone(sale)
-
-                saleProxy.createdAt = sale.createdAt
-
-                //@ts-ignore
-                if(saleProxy.createAt) { //@ts-ignore
-                    saleProxy.createdAt = sale.createAt
-                }
-
-                return updateSale(saleProxy, storeId, mongoDbConfig);
-            })
-        )*/
         
         sort(list);
-        return list;
+        
+        return { 
+            data: list
+        };
     }
 
     static async register(debt: SaleDebtType, { mongoDbConfig, user }: ConfigType) {
@@ -265,7 +269,7 @@ class Sale {
         const salesList = await this.getAll(
             {
                 filters: {
-                    "sales.id": cart.id
+                    "unpaid-sales.id": cart.id
                 },
                 storeId
             },
@@ -275,7 +279,7 @@ class Sale {
             }
         )
 
-        if(salesList.length === 0) throw new Error404("Sale details not found");
+        if(salesList.data.length === 0) throw new Error404("Sale details not found");
 
         const sale = structuredClone(salesList[0])
 
