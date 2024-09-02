@@ -6,6 +6,7 @@ import styles from "./styles.module.css"
 import BedroomIcon from '@mui/icons-material/Hotel';
 import ExpensesIcon from '@mui/icons-material/Forward';
 import HomeIcon from '@mui/icons-material/Home';
+import NewSaleIcon from '@mui/icons-material/AddShoppingCart';
 import SaleIcon from '@mui/icons-material/ShoppingCart';
 import UsersIcon from '@mui/icons-material/PeopleAlt';
 import FinancesIcon from '@mui/icons-material/AttachMoney';
@@ -26,9 +27,14 @@ const Menu = () => {
             path: `/users/${ credentials?.user?.username }`
         },
         {
+            icon: <NewSaleIcon />,
+            label: "New sale",
+            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/sales`
+        },
+        {
             icon: <SaleIcon />,
             label: "Sales",
-            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/sales`
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/sales`
         },
         {
             icon: <ProductsIcon className={classNames(styles.productsIcon, "fill-current h-4 w-4 text-2xl")} />,
