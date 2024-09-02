@@ -13,3 +13,6 @@ export const isPublicRoute = (pathname: string) => {
 export const getList = (enumList: Object) => Object
     .values(enumList)
     .map(item => ({ label: item, value: item }));
+
+
+export const getFullName = ({ firstName, lastName }: {firstName: string, lastName: string }) => `${firstName} ${lastName}` 
