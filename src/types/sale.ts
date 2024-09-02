@@ -43,11 +43,9 @@ export type SaleInfoType = SaleType & {
 
 type DebtType = {
     changes: number;
-    createdAt: Date | string;
     createdBy: String;
     dueDate: string;
     id: string;
-    items: ItemType[];
     latePaymentFine: boolean;
     profit: number;
     paymentMethods: PaymentMethodType[];
@@ -57,5 +55,31 @@ type DebtType = {
 }
 
 export type SaleDebtType = DebtType & {
+    createdAt: Date | string;
     customer: string;
+    items: ItemType[];
+}
+
+export type SaleDebtInfoType = DebtType & {
+    customer: { 
+        firstName: string,
+        lastName: string,
+        username: string
+    },
+    items: {
+        quantity: number,
+        total: number,
+        product: {
+            barcode: string,
+            category: string,
+            id: string,
+            name: string,
+            sellPrice: string,
+        }
+    }[],
+    user: { 
+        firstName: string,
+        lastName: string,
+        username: string
+    }
 }
