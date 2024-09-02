@@ -2,7 +2,7 @@ import * as React from "react"
 
 import { CustomerInfoType } from "@/types/guest"
 import { FetchResponseType } from "@/types"
-import { FetchResponseType as ResponseType } from "@/types"
+import { FetchResponseType as ResponseType } from "@/hooks/useFetch/types"
 import { SaleDebtInfoType } from "@/types/sale"
 
 import { LoginContext } from "@/context/LoginContext"
