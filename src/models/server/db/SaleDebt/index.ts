@@ -176,7 +176,6 @@ class Sale {
         }
 
         try {
-
             let unpaidSale: SaleDebtType = {
                 changes: 0,
                 createdAt: toISOString(Date.now()),
@@ -184,7 +183,7 @@ class Sale {
                 customer: debt.customer,
                 dueDate: debt.dueDate,
                 id: saleId,
-                items: itemsList,
+                items: structuredClone(itemsList),
                 latePaymentFine: debt.latePaymentFine,
                 profit: totalProfit,
                 paymentMethods: debt.paymentMethods ?? [],
