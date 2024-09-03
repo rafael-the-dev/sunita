@@ -29,7 +29,7 @@ const Menu = () => {
         {
             icon: <NewSaleIcon />,
             label: "New sale",
-            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/sales`
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/sales/new-sale`
         },
         {
             icon: <SaleIcon />,

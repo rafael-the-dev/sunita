@@ -10,7 +10,7 @@ import styles from "./styles.module.css"
 import { SaleContext } from "@/context/SalesContext/context/SaleContext"
 import { TableHeadersType, TableKeyType } from "@/components/table/types"
 import { CartItem } from "@/types/cart";
-import { ProductInfoType } from "@/types/product";//:;
+import { ProductInfoType } from "@/types/product";
 
 import PaymentButton from "./components/payment-button"
 import QuantityInput from "@/components/shared/quantity-input"
