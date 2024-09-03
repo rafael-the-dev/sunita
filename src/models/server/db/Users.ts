@@ -47,7 +47,9 @@ class Users {
                     {
                         $group: {
                             _id: "$user_info.username",
+                            category: { $first: "$user_info.category" },
                             firstName: { $first: "$user_info.firstName" },
+                            id: { $first: "$user_info.username" },
                             lastName: { $first: "$user_info.lastName" },
                             stores: {
                                 $push: {
