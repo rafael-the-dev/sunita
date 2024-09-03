@@ -51,7 +51,7 @@ const Login = () => {
 
             setCredentials({ access, user });
 
-            router.push(`/users/${user.username}`);
+            router.push(`/stores/${user?.stores[0]?.storeId}`);
         } catch(e) {
             console.error(e);
 
