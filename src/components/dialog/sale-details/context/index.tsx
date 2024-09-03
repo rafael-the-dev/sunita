@@ -2,13 +2,16 @@ import * as React from "react";
 import { v4 as uuidV4 } from "uuid"
 import currency from "currency.js";
 
-import { SaleInfoItemType, SaleInfoType } from "@/types/sale";
+import { CartResquestType } from "@/types/cart";
+import { FetchDataFuncType } from "@/hooks/useFetch/types";
+import { PaymentMethodType, PaymentType } from "@/types/payment-method";
 import { QuantityFuncType, SaLeDetailsContextType, SetHelperFuncType } from "./types";
+import { SaleInfoItemType, SaleInfoType } from "@/types/sale";
+
+import usePayment from "./hooks/usePayment";
 
 import { isInvalidNumber } from "@/helpers/validation";
 import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/cart";
-import { CartResquestType } from "@/types/cart";
-import { FetchDataFuncType } from "@/hooks/useFetch/types";
 
 export const SaleDetailsContext = React.createContext<SaLeDetailsContextType>(null);
 
@@ -28,6 +31,21 @@ export const SaleDetailsContextProvider = ({ children, initial, url }: PropsType
 
         return map;
     }, [ initial ]);
+
+    const paymentMaethodsMapper = React.useMemo(
+        () => {
+            const mapper = new Map<number | string, number>()
+
+            initial
+                .paymentMethods
+                .forEach(pm => {
+                    mapper.set(pm.id, pm.amount)
+                })
+
+            return mapper
+        },
+        [ initial ]
+    )
     
     const [ saleDetails, setSaleDetails ] = React.useState<SaleInfoType>(() => {
         return {
@@ -35,6 +53,18 @@ export const SaleDetailsContextProvider = ({ children, initial, url }: PropsType
             items: initial.items.map(item => ({ ...item, id: uuidV4() }))
         }
     });
+
+    const paymentHandlers = usePayment(
+        {
+            changes: initial.changes,
+            paymentMethods: initial.paymentMethods,
+            remainingAmount: initial.changes,
+            totalReceived: initial.totalReceived
+        },
+        saleDetails.total
+    )
+
+    const payment = paymentHandlers.getPayment()
 
     const setHelper: SetHelperFuncType = React.useCallback((productId, func) => {
         setSaleDetails(cart => {
@@ -99,10 +129,11 @@ export const SaleDetailsContextProvider = ({ children, initial, url }: PropsType
     const getSaleDetails = React.useCallback(() => structuredClone(saleDetails), [ saleDetails ]);
     
     const toString = React.useCallback(() => {
-        const { changes, items, paymentMethods, total, totalReceived } = getSaleDetails();
+        const { items, total } = getSaleDetails();
+        const { paymentMethods } = payment
 
         const body: CartResquestType = {
-            changes,
+            changes: payment.changes,
             items: items.map(item => ({
                 ...item,
                 product: {
@@ -110,16 +141,16 @@ export const SaleDetailsContextProvider = ({ children, initial, url }: PropsType
                 }
             })),
             paymentMethods: {
-                changes,
+                changes: payment.changes,
                 list: paymentMethods,
-                totalReceived
+                totalReceived: payment.totalReceived,
             },
             total,
-            totalReceived
+            totalReceived: payment.totalReceived,
         };
 
         return JSON.stringify(body)
-    }, [ getSaleDetails ])
+    }, [ getSaleDetails, payment ])
 
     const isModified = React.useMemo(() => {
         let result = false;
@@ -136,9 +167,20 @@ export const SaleDetailsContextProvider = ({ children, initial, url }: PropsType
                 result = true;
             }
         })
+
+        const { paymentMethods } = payment
+
+        for(let i = 0; i < paymentMethods.length; i++) {
+            const amount = paymentMaethodsMapper.get(paymentMethods[i].id);
+
+            if(!amount || paymentMethods[i].amount !== amount) {
+                result = true;
+                break;
+            }
+        }
         
         return result;
-    }, [ getSaleDetails, listItemsMap ]);
+    }, [ getSaleDetails, listItemsMap, payment, paymentMaethodsMapper ]);
 
     return (
         <SaleDetailsContext.Provider
@@ -148,6 +190,8 @@ export const SaleDetailsContextProvider = ({ children, initial, url }: PropsType
                 changeQuantity,
                 getSaleDetails,
                 increment,
+                payment,
+                paymentHandlers,
                 removeItem,
                 toString,
                 url
