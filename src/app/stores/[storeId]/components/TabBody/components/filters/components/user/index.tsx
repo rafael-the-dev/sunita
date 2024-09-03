@@ -1,21 +1,23 @@
 import * as React from "react";
 import MenuItem from "@mui/material/MenuItem"
+import Typography from "@mui/material/Typography";
 
+import { TableHeadersType } from "@/components/table/types";
+import { UserType } from "@/types/user";
+
+import { AnalyticsContext } from "@/context/AnalyticsContext";
 import { AnalyticsFiltersContext } from "@/context/AnalyticsFilters";
 import { LoginContext } from "@/context/LoginContext"
 
-import useFech from "@/hooks/useFetch";
 import useSearchParams from "@/hooks/useSearchParams";
 
 import Input from "@/components/Textfield";
 import Table from "@/components/shared/table";
-import { TableHeadersType } from "@/components/table/types";
-import { Typography } from "@mui/material";
-import { UserType } from "@/types/user";
 import useDataMemo from "@/hooks/useDataMemo";
 
 const UserFilter = () => {
     const { getData, setData } = React.useContext(AnalyticsFiltersContext);
+    const { getUsers } = React.useContext(AnalyticsContext)
     const { user } = React.useContext(LoginContext);
 
     const tableHeaders = React.useRef<TableHeadersType[]>([
@@ -45,17 +47,17 @@ const UserFilter = () => {
         }
     ])
 
-    const searchParams = useSearchParams()//:;
-    const fetchUsersResult = useFech<UserType[]>({ autoFetch: false, url: `/api/users` });
-    const { fetchData, loading } = fetchUsersResult;
+    const searchParams = useSearchParams();
+
+    const usersList = getUsers()
 
     const data = React.useMemo(() => {
         const users = getData<UserType[]>("users");
 
         if(users.length > 0) return users;
 
-        return fetchUsersResult.data;
-    }, [ fetchUsersResult, getData ])
+        return usersList;
+    }, [ getData, usersList ])
 
     const filteredData = React.useMemo(() => {
         let searchKey = searchParams.get("search", "")
@@ -83,14 +85,7 @@ const UserFilter = () => {
         searchParams.setSearchParams("user", row.username);
     }, [ searchParams ]);
 
-    useDataMemo<UserType[]>({
-        data: fetchUsersResult.data,
-        fetchData,
-        getData,
-        key: "users",
-        setData
-    })
-
+   
     return (
         <div>
             <Input 
@@ -100,13 +95,6 @@ const UserFilter = () => {
                 // value={searchParams.get("search", "")}
             />
             <div>
-                {
-                    loading && (
-                        <Typography>
-                            Searching users...
-                        </Typography>
-                    )
-                }
                 {
                     data && (
                         <Table 

@@ -5,6 +5,7 @@ import { LoginContext } from "../LoginContext";
 import { AnalyticsType } from "@/types/analytics";
 import { AnalyticsContextType } from "./types"
 import { ChartSeriesType } from "@/types/chart";
+import { UserType } from "@/types/user";
 
 import useFetch from "@/hooks/useFetch";
 import { getDailySaleStats, getWeeklySaleStats, monthlySalesStats } from "./helpers/sales";
@@ -22,7 +23,14 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
         url: `/api/stores/${credentials?.user.stores[0].storeId}/analytics`
     });
 
+    const usersResponse = useFetch<UserType[]>({ 
+        url: `/api/stores/${credentials?.user.stores[0].storeId}/users`
+    });
+
+    const usersList = usersResponse?.data
+
     const getAnalytics = React.useCallback(() => data, [ data ]);
+    const getUsers = React.useCallback(() => usersList ?? [], [ usersList ])
 
     const saleStats = React.useMemo(() => {
         const analytics = getAnalytics()
@@ -57,6 +65,25 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
         }
     }, [ getAnalytics ]);
 
+    const fetchUsers = usersResponse.fetchData
+
+    React.useEffect(
+        () => {
+            const controller = new AbortController()
+
+            const timeout = setTimeout(
+                () => fetchUsers({ signal: controller.signal }),
+                40000
+            )
+
+            return () => {
+                clearTimeout(timeout)
+                controller.abort()
+            }
+        },
+        [ fetchUsers ]
+    )
+
     return (
         <AnalyticsContext.Provider
             value={{
@@ -65,7 +92,8 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
                 weeklySalesStats,
                 
                 fetchData,
-                getAnalytics
+                getAnalytics,
+                getUsers
             }}>
             { children }
         </AnalyticsContext.Provider>
