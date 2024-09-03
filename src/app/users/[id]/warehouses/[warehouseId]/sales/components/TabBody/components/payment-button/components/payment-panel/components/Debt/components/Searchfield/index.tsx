@@ -5,6 +5,8 @@ import { TableHeadersType } from "@/components/table/types";
 
 import { SalesContext } from "@/context/SalesContext";
 
+import { getFullName } from "@/helpers"
+
 import SearchInput from "@/components/shared/Search/SearchWithOptions"
 
 const Searchfield = ({ addCustomer }: { addCustomer: (customer: CustomerInfoType) => void }) => {
@@ -72,9 +74,9 @@ const Searchfield = ({ addCustomer }: { addCustomer: (customer: CustomerInfoType
     const getList = React.useCallback(
         (value: string) => {
             return clientsList.filter(client => {
-                const includesValue = `${client.firstName} ${client.lastName}`
+                const includesValue = getFullName(client)
                     .toLowerCase()
-                    .includes(value);
+                    .includes(value.toLowerCase());
 
                 return includesValue
             })
