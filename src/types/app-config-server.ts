@@ -13,6 +13,7 @@ export type URLParamsType = {
         bookingId?: string,
         categoryId: string,
         clientId?: string,
+        debtId?: string,
         expenseId: string,
         productId?: string;
         propertyId?: string;
