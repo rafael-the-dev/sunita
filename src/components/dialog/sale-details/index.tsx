@@ -63,7 +63,7 @@ const SelectedSaleContaienr = () => {
     const alertMemo = React.useMemo(() => (
         <Alert 
             { ...alertData.current }
-            className={`mx-4 mt-4 ${loading ? "" : ""}`}
+            className={`mx-4 my-4 ${loading ? "" : ""}`}
             onClose={onCloseFuncRef}
             onOpen={onOpenFuncRef}
         />
@@ -86,9 +86,10 @@ const SelectedSaleContaienr = () => {
                     title: "Error"
                 }
             },
-            async onSuccess(res, data) {
-                await fetchDataRef.current?.({});
+            async onSuccess() {
                 alertData.current = successAlertData;
+
+                await fetchDataRef.current?.({});
             },
         });
 
