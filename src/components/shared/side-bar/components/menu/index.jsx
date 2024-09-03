@@ -24,7 +24,7 @@ const Menu = () => {
         {
             icon: <HomeIcon />,
             label: "Home",
-            path: `/users/${ credentials?.user?.username }`
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }`
         },
         {
             icon: <NewSaleIcon />,
