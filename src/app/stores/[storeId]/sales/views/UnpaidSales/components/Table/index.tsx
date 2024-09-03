@@ -71,8 +71,8 @@ const TableContainer = () => {
             },
         ]
     )
-
-    const fetchUnpaidSales = unpaidSales?.data?.fetchData;
+    //@ts-ignore
+    const fetchUnpaidSales = unpaidSales?.fetchData;
 
     const rowClickHandler = React.useCallback(
         (unpaidSale: SaleDebtInfoType) => () => {
@@ -86,7 +86,7 @@ const TableContainer = () => {
                     body: (
                         <SaleDetails 
                             initial={{ ...unpaidSale, id: unpaidSale.id }}
-                            url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/sales/debts`}
+                            url={`/api/stores/${credentials?.user?.stores[0]?.storeId}/sales/debts/${unpaidSale.id}`}
                         />
                     )
                 }
