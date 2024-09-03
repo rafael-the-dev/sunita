@@ -1,4 +1,6 @@
 import { FetchDataFuncType } from "@/hooks/useFetch/types";
+import { PaymentFunctionsType } from "@/hooks/usePayment/types"
+import { PaymentType } from "@/types/payment-method";
 import { SaleInfoItemType, SaleInfoType } from "@/types/sale"
 
 export type QuantityFuncType = (productId: string, quantity: number | string) => void;
@@ -9,6 +11,8 @@ export type SaLeDetailsContextType = {
     getSaleDetails: () => SaleInfoType;
     isModified: boolean;
     increment: QuantityFuncType;
+    payment: PaymentType,
+    paymentHandlers: PaymentFunctionsType,
     removeItem: (productId: string) => void;
     toString: () => string;
     url: string;
