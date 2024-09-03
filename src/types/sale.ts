@@ -47,7 +47,7 @@ export type SaleInfoType = AbstractSaleType & {
 };
 
 
-type DebtType = AbstractSaleType & {
+export type DebtType = AbstractSaleType & {
     createdBy: String;
     dueDate: string;
     latePaymentFine: boolean;
