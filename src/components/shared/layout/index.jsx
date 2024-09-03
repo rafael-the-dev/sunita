@@ -15,10 +15,8 @@ import 'devextreme/dist/css/dx.light.css';
 import "@/styles/tailwind.css";
 import "@/styles/globals.css";
 
-
 import { theme } from "./mui/theme";
 import { AppContextProvider } from "@/context/AppContext";
-import { LoginContextProvider } from "@/context/LoginContext";
 
 const RootLayout = ({ children }) => {
     return (
@@ -28,9 +26,7 @@ const RootLayout = ({ children }) => {
                     <ThemeProvider theme={theme}>
                         <LocalizationProvider dateAdapter={AdapterMoment}>
                             <AppContextProvider>
-                                <LoginContextProvider>
-                                    { children }
-                                </LoginContextProvider>
+                                { children }
                             </AppContextProvider>
                         </LocalizationProvider>
                     </ThemeProvider>

@@ -1,22 +1,29 @@
-'use client';
+"use client"
 
-import Content from "./components/content"
+import { ReactNode } from "react";
+import { usePathname } from "next/navigation"
+
 import Dialog from "@/components/shared/layout/components/Dialog";
-import ExpiredTokenDialog from '@/components/shared/layout/components/ExpiredTokenDialog';
-import LayoutContainer from "@/components/shared/layout";
+import Layout from "@/components/shared/layout";
+import ProtectedLayout from "@/components/shared/layout/ProtectedLayout";
 
-const RootLayout = ({ children }) => {
+const RootLayout = ({ children }: { children: ReactNode }) => {
+    const pathname = usePathname()
+
+    const isProtectedRoute = pathname.startsWith("/stores/") || pathname.startsWith("/login")
+
+    if(isProtectedRoute) return (
+        <ProtectedLayout>
+            { children }
+        </ProtectedLayout>
+    )
 
     return (
-        <LayoutContainer>
-            <Content>
-                { children }
-            </Content>
+        <Layout>
+            { children }
             <Dialog />
-            <ExpiredTokenDialog />
-        </LayoutContainer>
+        </Layout>
+    )
+}
 
-    );
-};
-
-export default RootLayout;
+export default RootLayout
