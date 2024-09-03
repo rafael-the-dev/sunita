@@ -39,7 +39,7 @@ const Menu = () => {
         {
             icon: <ProductsIcon className={classNames(styles.productsIcon, "fill-current h-4 w-4 text-2xl")} />,
             label: "Products",
-            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/products`
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/products`
         },
         {
             icon: <BedroomIcon />,
@@ -49,7 +49,7 @@ const Menu = () => {
         {
             icon: <ExpensesIcon className={classNames(styles.expensesIcon)} />,
             label: "Expenses",
-            path: `/users/${ credentials?.user?.username }/warehouses/${ credentials?.user?.stores[0]?.storeId }/expenses`
+            path: `/stores/${ credentials?.user?.stores[0]?.storeId }/expenses`
         },
         {
             icon: <UsersIcon />,

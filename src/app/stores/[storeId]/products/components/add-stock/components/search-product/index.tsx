@@ -12,7 +12,7 @@ import { ProductInfoType } from "@/types/product";
 import { TableHeadersType } from "@/components/table/types";
 
 import { LoginContext } from "@/context/LoginContext";
-import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context";
+import { ProductsPageContext } from "@/app/stores/[storeId]/products/context";
 import { StockContext } from "@/context/StockContext";
 
 import { CartItem } from "@/types/cart";

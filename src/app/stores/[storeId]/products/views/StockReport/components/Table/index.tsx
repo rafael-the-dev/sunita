@@ -1,13 +1,13 @@
 import { useContext, useCallback, useMemo, useRef } from "react"
 
 import { AnalyticStockReportInfoType, StockReportInfoType } from "@/types/stock";
-import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
+import { ProductsPageContext } from "@/app/stores/[storeId]/products/context"
 
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext";
 import { StockContextProvider } from "@/context/StockContext";
 import { TableHeadersType } from "@/components/table/types";
 
-import StockForm from "@/app/users/[id]/warehouses/[warehouseId]/products/components/add-stock"
+import StockForm from "@/app/stores/[storeId]/products/components/add-stock"
 import Table from "@/components/shared/table";
 
 const StockReportTable = () => {

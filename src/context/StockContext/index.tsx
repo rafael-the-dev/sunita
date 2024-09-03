@@ -1,7 +1,7 @@
 import * as React from "react";
 import moment from "moment";
 
-import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
+import { ProductsPageContext } from "@/app/stores/[storeId]/products/context"
 import { StockContextProviderPropsType, StockContextType, StockReportInputProps } from "./types";
 import { StockClientRequestBodyType, StockReportInfoType } from "@/types/stock";
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext";

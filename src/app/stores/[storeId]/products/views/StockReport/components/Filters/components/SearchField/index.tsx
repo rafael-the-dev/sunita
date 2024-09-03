@@ -4,7 +4,7 @@ import styles from "./styles.module.css"
 
 import { TableHeadersType } from "@/components/table/types";
 
-import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
+import { ProductsPageContext } from "@/app/stores/[storeId]/products/context"
 
 import useSearchParamsHook from "@/hooks/useSearchParams"
 

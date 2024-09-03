@@ -13,7 +13,7 @@ import useSearchParams from "@/hooks/useSearchParams";
 
 import AddStock from "../../components/add-stock";
 import Button from "@/components/shared/button"
-import Categories from "@/app/users/[id]/warehouses/[warehouseId]/expenses/components/TabBody/components/categories"
+import Categories from "@/app/stores/[storeId]/expenses/components/TabBody/components/categories"
 import RegisterProduct from "../../components/register-product";
 import SearchBox from "@/components/shared/product-search-box";
 import Table from "./components/Table";

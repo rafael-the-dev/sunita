@@ -3,7 +3,7 @@ import { useCallback, useContext, useRef } from "react"
 import { SupplierType } from "@/types/Supplier"
 import { TableHeadersType } from "@/components/table/types"
 
-import { ProductsPageContext } from "@/app/users/[id]/warehouses/[warehouseId]/products/context"
+import { ProductsPageContext } from "@/app/stores/[storeId]/products/context"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
 
 import Form from "../SupplierForm"
