@@ -6,6 +6,7 @@ export type PaymentMethodType = {
 }
 
 export type PaymentType = {
+    createdAt?: string;
     changes: number;
     paymentMethods: PaymentMethodType[];
     remainingAmount: number;
