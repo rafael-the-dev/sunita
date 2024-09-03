@@ -7,7 +7,6 @@ import { CredentialsType } from "@/types/login" ;
 import { UserType } from "@/types/user";
 
 import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
-import { isPublicRoute } from "@/helpers";
 
 type LoginContextType = {
     credentials: CredentialsType,
@@ -24,7 +23,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
     const pathname = usePathname();
     const router = useRouter();
 
-    const isPublicPath = isPublicRoute(pathname)
+    const isPublicPath = pathname === "/login"
 
     const [ credentials, setCredentials ] = React.useState<CredentialsType | null>(null);
     const [ revalidatingToken, setRevalidatingToken ] = React.useState(true)
@@ -80,9 +79,12 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
             if(res.status !== 200) throw new Error("Refresh token error");
 
             const result = (await res.json()) as CredentialsType;
+
+            const params = new URLSearchParams(window.location.search)
             
             setCredentials(result);
-            router.push(pathname)//`/users/${result.user.username}`);
+
+            router.push(`${pathname}?${params.toString()}`)
         } catch(e) {
             console.error(e);
             router.push("/login");
