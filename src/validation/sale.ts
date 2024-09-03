@@ -1,9 +1,10 @@
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
 import { isInvalidNumber } from "@/helpers/validation"
+import { isValidPrice } from "./product";
 
 export const isValidCartTotalPrice = (clientTotalPrice: number, serverTotalPrice: number) => {
-    if(isInvalidNumber(serverTotalPrice) || serverTotalPrice !== clientTotalPrice) {
+    if(!isValidPrice(serverTotalPrice.toString()) || serverTotalPrice !== clientTotalPrice) {
         throw new InvalidArgumentError("Client total price doesn't match with server total price")
     }
 
