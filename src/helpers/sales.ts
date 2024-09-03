@@ -11,6 +11,7 @@ import Error404 from "@/errors/server/404Error";
 import { RequestCartItem } from "@/types/cart";
 import { MongoDbConfigType } from "@/types/mongoDb";
 import { SaleInfoType, SaleType } from "@/types/sale";
+import { isValidPrice } from "@/validation/product";
 
 /**
  * 
@@ -22,7 +23,7 @@ import { SaleInfoType, SaleType } from "@/types/sale";
 export const isValidPaymentMethods = (paymentMethods: PaymentMethodType[], totalReceived: number) => {
     // pm === payment method
     const totalPrice = paymentMethods.reduce((prevValue, currentPM) => {
-        if(isInvalidNumber(currentPM.amount)) throw new InvalidArgumentError("Invalid payment method's amount");
+        if(!isValidPrice(currentPM?.amount?.toString())) throw new InvalidArgumentError("Invalid payment method's amount");
 
         const isValidPM = paymentMethodsList.find(pm => pm.value === currentPM.id);
 
@@ -30,7 +31,7 @@ export const isValidPaymentMethods = (paymentMethods: PaymentMethodType[], total
 
         return currency(prevValue).add(currentPM.amount).value
     }, 0);
-
+    
     if(totalPrice !== totalReceived) throw new InvalidArgumentError("Payment methods total price not matching with products price");
 
     return true;
