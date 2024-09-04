@@ -19,17 +19,12 @@ export const setProperty = (newProperty: PropertyType, property: PropertyType) =
     propertyProxy.type = type;
 }
 
-export const getProperties =  async ({ filter, storeId }: { filter: FiltersType, storeId: string }, { mongoDbConfig }: ConfigType) => {
+export const getProperties =  async ({ filter, storeId }: { filter: FiltersType, storeId?: string }, { mongoDbConfig }: ConfigType) => {
     const result = await mongoDbConfig
         .collections
         .PROPERTIES
         .aggregate(
             [
-                {  
-                    $match: {
-                        owner: storeId
-                    }
-                },
                 //{ $unwind: "$rooms" },
                 {
                     $match: { ...( filter ?? {} ) }
