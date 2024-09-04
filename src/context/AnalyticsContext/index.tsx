@@ -20,11 +20,11 @@ export const AnalyticsContextProvider = ({ children }: { children: React.ReactNo
     const { credentials } = React.useContext(LoginContext)
 
     const { data, fetchData, loading } = useFetch<AnalyticsType>({ 
-        url: `/api/stores/${credentials?.user.stores[0].storeId}/analytics`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/analytics`
     });
 
     const usersResponse = useFetch<UserType[]>({ 
-        url: `/api/stores/${credentials?.user.stores[0].storeId}/users`
+        url: `/api/stores/${credentials?.user?.stores[0]?.storeId}/users`
     });
 
     const usersList = usersResponse?.data
