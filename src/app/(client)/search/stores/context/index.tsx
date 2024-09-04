@@ -1,28 +1,29 @@
 import { createContext, useCallback, useState } from "react";
 
 import { ContextType, PropsType } from "./types"
-import { BaseStore, StoresResponse } from "@/types/warehouse";
+import { FetchResponseType } from "@/types";
+import { PropertyType } from "@/types/property";
 
 import useFetch from "@/hooks/useFetch";
 
 export const StoresContext = createContext<ContextType>({} as ContextType)
 
 export const StoresContextProvider = ({ children }: PropsType) => {
-    const { data, loading } = useFetch<StoresResponse<BaseStore[]>>(
+    const { data, loading } = useFetch<FetchResponseType<PropertyType[]>>(
         {
-            url: `/api/stores`
+            url: `/api/stores/properties`
         }
     )
 
-    const getStores = useCallback(
-        () => !data ? { list: [] } : structuredClone(data),
+    const getProperties = useCallback(
+        () => data?.data ?? [],
         [ data ]
     )
 
     return (
         <StoresContext.Provider
             value={{
-                getStores
+                getProperties
             }}>
             { children }
         </StoresContext.Provider>

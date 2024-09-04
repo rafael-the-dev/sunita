@@ -1,9 +1,9 @@
 import { ReactNode } from "react"
 
-import { BaseStore, StoresResponse } from "@/types/warehouse"
+import {PropertyType} from "@/types/property"
 
 export type ContextType = {
-    getStores: () => StoresResponse<BaseStore[]>
+    getProperties: () => PropertyType[]
 }
 
 export type PropsType = {
