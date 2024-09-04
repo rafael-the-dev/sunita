@@ -1,6 +1,7 @@
 
 import { ConfigType } from "@/types/app-config-server";
 import { FetchResponseType, STATUS } from "@/types";
+import { FiltersType } from "@/types/app-config-server";
 import { PropertyType } from "@/types/property";
 
 import { getId } from "@/helpers/id";
@@ -11,10 +12,8 @@ import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
 class Room {
-    static async get({ filter }: { filter: Object }, { mongoDbConfig, user }: ConfigType) {
-        const storeId = user.stores[0].storeId;
-
-        const list = await getProperties({ filter, storeId }, { mongoDbConfig, user })
+    static async get({ filter }: { filter: FiltersType }, { mongoDbConfig, user }: ConfigType) {
+        const list = await getProperties({ filter }, { mongoDbConfig, user })
 
         if(list.length === 0) throw new Error404("Property not found")
         
@@ -23,10 +22,8 @@ class Room {
         return property
     }
 
-    static async getAll({ filter }: { filter: Object }, { mongoDbConfig, user }: ConfigType): Promise<FetchResponseType<PropertyType[]>> {
-        const storeId = user.stores[0].storeId;
-
-        const properties = await getProperties({ filter, storeId }, { mongoDbConfig, user })
+    static async getAll({ filter }: { filter: FiltersType }, { mongoDbConfig, user }: ConfigType): Promise<FetchResponseType<PropertyType[]>> {
+        const properties = await getProperties({ filter }, { mongoDbConfig, user })
 
         return { data: properties }
     }
