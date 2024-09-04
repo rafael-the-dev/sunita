@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getToken, isAuthenticated } from "./helpers/auth";
+import { isPublicPath } from "./middlewares/api";
 
 export const middleware = async (req: NextRequest) => {
     try {
-        const token = getToken(req);
-        const isLoggedIn = await isAuthenticated(token)
+        if(isPublicPath(req)) return NextResponse.next();
         
-        if(isLoggedIn) return NextResponse.next();
-        else return NextResponse.json("User not authenticated", { status: 401 });
+        const token = getToken(req);
+        const isLoggedIn = await isAuthenticated(token);
+        
+        return isLoggedIn ?  NextResponse.next() : NextResponse.json("User not authenticated", { status: 401 });
     } catch(e) {
         return NextResponse.json("User not authenticated", { status: 401 });
     }
