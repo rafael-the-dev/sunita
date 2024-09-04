@@ -93,7 +93,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         }
     }, [ pathname, router ]);
 
-    const fetchPublicAccess = React.useCallback(
+    /*const fetchPublicAccess = React.useCallback(
         async (controller: AbortController) => {
             try {
                 const res = await fetch("/api/auth/public-access", { signal: controller.signal });
@@ -107,15 +107,10 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
             }
         },
         []
-    )
+    )*/
 
     React.useEffect(() => {
         const controller = new AbortController();
-
-        if(isPublicPath) {
-            fetchPublicAccess(controller)
-            return;
-        }
 
         if(isFirstRender.current) {
             isFirstRender.current = false;
@@ -125,7 +120,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         validateSavedToken({ signal: controller.signal });
 
         return () => controller.abort();
-    }, [ fetchPublicAccess, isPublicPath, validateSavedToken ]);
+    }, [ validateSavedToken ]);
     
     React.useEffect(() => {
         if(!isPublicPath && !credentials && !revalidatingToken) {
