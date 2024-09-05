@@ -1,16 +1,17 @@
 import { useMemo } from "react"
 import classNames from "classnames"
+import Chip from "@mui/material/Chip"
 import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css"
 
-import { BaseStore } from "@/types/warehouse"
+import { PropertyType } from "@/types/property"
 
-import Image from "@/components/Image"
-import Link from "@/components/link"
+import Button from "@/components/shared/button"
+import Image from "./components/Image"
 import Status from "@/components/shared/Status"
 
-const Card = ({ amenities, description, id, name, status }: BaseStore) => {
+const Card = ({ amenities, bedroom, description, id, images, name, price, status }: PropertyType) => {
     const amenitiesList = useMemo(
         () => amenities
             .join(", "),
@@ -18,17 +19,15 @@ const Card = ({ amenities, description, id, name, status }: BaseStore) => {
     )
 
     return (
-        <li className="border-b border-gray-200 border-solid pb-4 last:border-0">
-            <Link
-                className={classNames(styles.container, "flex flex-col gap-y-4 justify-between no-underline text-primary-700")}
-                href={`/${id}`}>
+        <li className="border-b border-gray-200 border-solid pb-6 last:border-0">
+            <div
+                className={classNames(styles.container, "flex flex-col gap-y-4 justify-between no-underline text-primary-700")}>
                 <div className="relative sm:flex items-stretch">
                     <Image 
                         alt={name}
-                        className={styles.imageContainer}
-                        src=""
+                        src={images}
                     />
-                    <div className={classNames(styles.content, "flex flex-col grow gap-y-2")}>
+                    <div className={classNames(styles.content, "flex flex-col grow gap-y-2 justify-between")}>
                         <div className="flex justify-between">
                             <Typography
                                 component="h2"
@@ -40,19 +39,36 @@ const Card = ({ amenities, description, id, name, status }: BaseStore) => {
                                 status={status} 
                             />
                         </div>
-                        <Typography
-                            component="p"
-                            className="text-small">
-                            { description }
-                        </Typography>
-                        <div className="mt-4">
-                            <Typography>
+                        <div className="flex flex-col gap-y-3 mt-2 sm:gap-y-2">
+                            {
+                                Boolean(bedroom) && (
+                                    <Typography
+                                        className="capitalize font-bold"
+                                        component="h3">
+                                        { bedroom.type }
+                                    </Typography>
+                                )
+                            }
+                            <Typography
+                                className="capitalize"
+                                component="p">
                                 { amenitiesList }
                             </Typography>
+                            <div className="flex flex-col gap-y-6 justify-between w-full sm:flex-row sm:gap-y-0 sm:items-end">
+                                <div className='flex items-center gap-x-3'>
+                                    <Chip label={`${price.night}/n`} />
+                                    <Chip className="bg-primary-500 text-white" label={`${price.hourly}/h`} />
+                                    <Chip label={`${price.daily}/d`} />
+                                </div>
+                                <Button
+                                    className="py-2 sm:py-1">
+                                    Book
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </Link>
+            </div>
         </li>
     )
 }

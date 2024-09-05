@@ -3,8 +3,16 @@
     background-color: #ebeaea4f;
 }
 
-@media screen and (width >= 768px) {
+@media screen and (width >= 1024px) {
     .filtersContainer {
-        width: 300px;
+        margin-right: 1.5rem;
+        width: 200px;
+    }
+}
+
+@media screen and (width >= 1100px) {
+    .filtersContainer {
+        margin-right: 0;
+        width: 330px;
     }
 }

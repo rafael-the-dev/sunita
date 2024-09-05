@@ -20,7 +20,7 @@ const FiltersContainer = () => {
     const isBedRoomProperty = propertyType === PROPERTY_TYPE.BED_ROOM
 
     return (
-        <div className={classNames(styles.container, `box-border flex flex-col gap-y-4 items-stretch overflow-y-auto`)}>
+        <div className={classNames(styles.container, `box-border flex flex-col gap-y-4 items-stretch overflow-y-auto w-full`)}>
             <PropertyType />
             { isBedRoomProperty && <RoomType /> }
             <Amenities />

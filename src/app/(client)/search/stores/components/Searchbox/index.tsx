@@ -28,10 +28,10 @@ const SearchBoxContainer = () => {
             <SearchBox
                 classes={{
                     filters: {
-                        button: "lg:hidden",
+                        button: "xl:hidden",
                         popover: {
                             paper: "",
-                            root: "lg:hidden"
+                            root: "xl:hidden"
                         }
                     }
                 }}

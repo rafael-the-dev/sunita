@@ -1,0 +1,30 @@
+
+.sliderContainer, .imageContainer {
+    height: 220px;
+}
+
+.sliderContainer, .imageContainer {
+    width: 100%;
+}
+
+@media screen and (width >= 600px) {
+    .sliderContainer, .imageContainer {
+        height: 188px;
+        width: 190px;
+    }
+}
+
+@media screen and (width >= 768px) {
+    .sliderContainer, .imageContainer {
+        height: 200px;
+        width: 230px;
+    }
+}
+
+
+@media screen and (width >= 1024px) {
+    .sliderContainer, .imageContainer {
+        height: 190px;
+        width: 280px;
+    }
+}
