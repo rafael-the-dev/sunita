@@ -1,20 +1,55 @@
+import * as React from "react"
+import CircularProgress from "@mui/material/CircularProgress"
+
+import { StoresContext } from "../../context"
+
 import Filters from "../Filters"
 import SearchBox from "@/components/shared/Search/Container"
 
 const SearchBoxContainer = () => {
+    const { loading, fetchProperties } = React.useContext(StoresContext)
+
+    const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if(loading) return;
+
+        const params = new URLSearchParams(window.location.search);
+
+        await fetchProperties(
+            {
+                path: `/api/stores/properties?${params.toString()}`
+            }
+        );
+    }
+
     return (
-        <SearchBox
-            classes={{
-                filters: {
-                    button: "lg:hidden",
-                    popover: {
-                        paper: "",
-                        root: "lg:hidden"
+        <form onSubmit={submitHandler}>
+            <SearchBox
+                classes={{
+                    filters: {
+                        button: "lg:hidden",
+                        popover: {
+                            paper: "",
+                            root: "lg:hidden"
+                        }
+                    }
+                }}
+                filters={<Filters />}
+                input={
+                    {
+                        placeholder: "Insert property's name"
                     }
                 }
-            }}
-            filters={<Filters />}
-        />
+                submitButton={
+                    <SearchBox.IconButton
+                        disabled={loading}
+                        type="submit">
+                        { loading ? <CircularProgress size={18} /> : null}
+                    </SearchBox.IconButton>
+                    }
+            />
+        </form>
     )
 }
 
