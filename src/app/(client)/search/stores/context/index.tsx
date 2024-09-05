@@ -9,7 +9,7 @@ import useFetch from "@/hooks/useFetch";
 export const StoresContext = createContext<ContextType>({} as ContextType)
 
 export const StoresContextProvider = ({ children }: PropsType) => {
-    const { data, loading } = useFetch<FetchResponseType<PropertyType[]>>(
+    const { data, fetchData, loading } = useFetch<FetchResponseType<PropertyType[]>>(
         {
             url: `/api/stores/properties`
         }
@@ -23,7 +23,9 @@ export const StoresContextProvider = ({ children }: PropsType) => {
     return (
         <StoresContext.Provider
             value={{
-                getProperties
+                getProperties,
+                fetchProperties: fetchData,
+                loading
             }}>
             { children }
         </StoresContext.Provider>
