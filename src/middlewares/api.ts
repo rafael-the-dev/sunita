@@ -5,7 +5,7 @@ export const isPublicPath = (req: NextRequest) => {
     const pathname = req
         .url
         .replace("http://localhost:3000/api", "")
-        .replace( /\?[A-z0-9.+-=]*/g,"");
+        .replace( /\?[A-Za-z0-9&.+-=]*/g,"");
 
     const publicResources = [
         {
