@@ -18,6 +18,8 @@
     "@mui/material-nextjs": "^5.15.11",
     "@mui/x-date-pickers": "^5.0.7",
     "@svgr/webpack": "^8.1.0",
+    "@types/react-slick": "^0.23.13",
+    "@types/slick-carousel": "^1.6.40",
     "apexcharts": "^3.49.1",
     "bcrypt": "^5.1.1",
     "classnames": "^2.5.1",
