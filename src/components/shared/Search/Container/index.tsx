@@ -1,8 +1,10 @@
 import { ChangeEvent, ReactNode, useEffect, useRef } from "react"
+import classNames from "classnames"
 
 import useSearchParams from "@/hooks/useSearchParams"
 
 import FiltersPopover from "@/components/shared/FiltersPopover"
+import IconButton from "./components/SubmitIconButton"
 import SearchBox from "@/components/shared/product-search-box"
 
 type PropsType = {
@@ -16,10 +18,16 @@ type PropsType = {
         }
     },
     className?: string,
-    filters?: ReactNode
+    filters?: ReactNode,
+    input?: {
+        className?: string,
+        placeholder?: string,
+        onChange?: (e: ChangeEvent<HTMLInputElement>) => void
+    },
+    submitButton?: ReactNode,
 }
 
-const Container = ({ classes, className, filters }: PropsType) => {
+const Container = ({ classes, className, filters, input, submitButton }: PropsType) => {
     const searchParams = useSearchParams()
 
     const isFirstRender = useRef(true)
@@ -42,13 +50,18 @@ const Container = ({ classes, className, filters }: PropsType) => {
             className={className}>
             { filters && <FiltersPopover classes={classes?.filters}>{ filters }</FiltersPopover>}
             <SearchBox.Input 
-                className="grow"
+                { ...( input ?? {})}
+                className={classNames("grow", input?.className)}
                 onChange={searchParams.changeHandler("search", searchParams.setSearchParam)}
-                placeholder="Insert room's name or type"
                 ref={inputRef}
             />
+            {
+                submitButton 
+            }
         </SearchBox>
     )
 }
+
+Container.IconButton = IconButton
 
 export default Container
