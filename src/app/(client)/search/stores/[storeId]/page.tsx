@@ -1,5 +1,79 @@
 "use client"
 
+import { useEffect } from "react"
+import classNames from "classnames"
+import { useParams } from "next/navigation"
+import Typography from "@mui/material/Typography"
+
+import { PropertyType } from "@/types/property"
+
+import useFetch from "@/hooks/useFetch"
+
+import Button from "@/components/shared/button"
+import Images from "./components/Images"
+import Container from "@/components/Container/PublicRoute"
+
+const PropertyContainer = () => {
+    const { storeId } = useParams()
+
+    const { data, loading, fetchData } = useFetch<PropertyType>(
+        {
+            autoFetch: false,
+            url: `/api/stores/properties/${storeId}`
+        }
+    )
+
+    useEffect(
+        () => { 
+            const controller = new AbortController()
+
+            if(storeId) {
+                fetchData(
+                    {
+                        path: `/api/stores/properties/${storeId}`,
+                        signal: controller.signal
+                    }
+                )
+            }
+
+            return () => controller.abort()
+        },
+        [ fetchData, storeId ]
+    )
+
+    if(loading) return <Typography>Loading...</Typography>
+
+    const property = data 
+
+    return (
+        <Container className="">
+            <main className="bg-white box-border flex-col items-stretch px-6 py-4 w-full">
+                <div className="flex items-center justify-between">
+                    <Typography
+                        className={classNames(`font-bold text-xl md:text-2xl xl:text-3xl`)}
+                        component="h1">
+                        { property?.name }
+                    </Typography>
+                    <Button
+                        className="py-1">
+                        Book
+                    </Button>
+                </div>
+                <Images 
+                    alt={property?.name}
+                    src={property?.images}
+                />
+            </main>
+        </Container>
+    )
+}
+
+export default PropertyContainer
+
+
+/**
+ * "use client"
+
 import { useContext } from "react"
 import classNames from "classnames"
 import { useParams } from "next/navigation"
@@ -67,3 +141,5 @@ const ProviderContainer = () => {
 }
 
 export default ProviderContainer;
+ * 
+ */
