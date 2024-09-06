@@ -10,24 +10,35 @@ export const isPublicPath = (req: NextRequest) => {
     const publicResources = [
         {
             methods: [ "POST" ],
-            path: "/auth/login"
+            path: "/auth/login",
+            useRegExp: false,
 
         },
         {
             methods: [ "GET" ],
-            path: "/auth/refresh"
+            path: "/auth/refresh",
+            useRegExp: false,
 
         },
         {
             methods: [ "GET" ],
-            path: "/stores/properties"
+            path: "/stores/properties",
+            useRegExp: false,
+
+        },
+        {
+            methods: [ "GET", "POST" ],
+            path: "^/stores/properties/[A-z0-9\-]*$",
+            useRegExp: true,
 
         }
     ]
-
+    
     const resource = publicResources.find(
-        ({ methods, path }) => {
-            return (path === pathname) && (methods.includes(req.method))
+        ({ methods, path, useRegExp }) => {
+            if(!methods.includes(req.method)) return false
+
+            return useRegExp ? pathname.match(path) : (path === pathname)
         }
     )
     
