@@ -9,6 +9,7 @@ import { PropertyType } from "@/types/property"
 
 import Button from "@/components/shared/button"
 import Image from "./components/Image"
+import Link from "@/components/link"
 import Status from "@/components/shared/Status"
 
 const Card = ({ amenities, bedroom, description, id, images, name, price, status }: PropertyType) => {
@@ -60,10 +61,14 @@ const Card = ({ amenities, bedroom, description, id, images, name, price, status
                                     <Chip className="bg-primary-500 text-white" label={`${price.hourly}/h`} />
                                     <Chip label={`${price.daily}/d`} />
                                 </div>
-                                <Button
-                                    className="py-2 sm:py-1">
-                                    Book
-                                </Button>
+                                <Link
+                                    className="" 
+                                    href={`./stores/${id}`}>
+                                    <Button
+                                        className="py-2 sm:py-1">
+                                        View
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                     </div>
