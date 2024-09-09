@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-import { RoomType, SimpleBookingType } from "@/types/room"
+import { BookingType } from "@/types/booking"
 import { URLParamsType } from "@/types/app-config-server"
 
 import { apiHandler } from "@/middlewares/route-handler"
@@ -8,13 +8,16 @@ import { apiHandler } from "@/middlewares/route-handler"
 import Booking from "@/models/server/db/Booking"
 
 export const GET = (req: NextRequest, { params: { storeId } }: URLParamsType) => {
+    const params = new URLSearchParams(req.nextUrl.search)
+    const property = params.get("property")
+
     return apiHandler(
         req,
         async ({ mongoDbConfig, user }) => {
             const rooms = await Booking.getAll(
                 { 
-                    filter: {
-                        //id: storeId
+                    filters: {
+                        ...( property ? { property} : {})
                     } 
                 },
                 { 
@@ -32,7 +35,7 @@ export const POST = (req: NextRequest, { params }: URLParamsType) => {
     return apiHandler(
         req,
         async ({ mongoDbConfig, user }) => {
-            const booking = await req.json() as SimpleBookingType
+            const booking = await req.json() as BookingType
 
             await Booking.register(booking, { mongoDbConfig, user })
 
