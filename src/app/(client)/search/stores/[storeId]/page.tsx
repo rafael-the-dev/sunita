@@ -5,16 +5,25 @@ import classNames from "classnames"
 import { useParams } from "next/navigation"
 import Typography from "@mui/material/Typography"
 
+import { BookingsResponseType } from "@/types/booking"
 import { PropertyType } from "@/types/property"
+import { TABS } from "./components/Tab/types"
 
 import useFetch from "@/hooks/useFetch"
+import useSearchParams from "@/hooks/useSearchParams"
 
 import Button from "@/components/shared/button"
-import Images from "./components/Images"
+import Bookings from "./components/Bookings"
 import Container from "@/components/Container/PublicRoute"
+import Images from "./components/Images"
+import RelatedProperties from "@/common/section/RelatedProperties"
+import Title from "./components/Title"
+import Tab from "./components/Tab"
 
 const PropertyContainer = () => {
     const { storeId } = useParams()
+    const searchParams = useSearchParams()
+    const tab = searchParams.get("tab", TABS.BOOKINGS)
 
     const { data, loading, fetchData } = useFetch<PropertyType>(
         {
@@ -22,6 +31,13 @@ const PropertyContainer = () => {
             url: `/api/stores/properties/${storeId}`
         }
     )
+
+    const bookingsResponse = useFetch<BookingsResponseType>({
+        autoFetch: true,
+        url: `/api/stores/${storeId}/rooms/bookings`
+    })
+
+    const fetchBookings = bookingsResponse.fetchData
 
     useEffect(
         () => { 
@@ -41,13 +57,30 @@ const PropertyContainer = () => {
         [ fetchData, storeId ]
     )
 
+    useEffect(
+        () => { 
+            const controller = new AbortController()
+
+            if(storeId) {
+                fetchBookings(
+                    {
+                        signal: controller.signal
+                    }
+                )
+            }
+
+            return () => controller.abort()
+        },
+        [ fetchBookings, storeId ]
+    )
+
     if(loading) return <Typography>Loading...</Typography>
 
     const property = data 
 
     return (
-        <Container className="">
-            <main className="bg-white box-border flex-col items-stretch px-6 py-4 w-full">
+        <Container className="!bg-white">
+            <main className="box-border flex-col items-stretch py-4 w-full">
                 <div className="flex items-center justify-between">
                     <Typography
                         className={classNames(`font-bold text-xl md:text-2xl xl:text-3xl`)}
@@ -63,83 +96,56 @@ const PropertyContainer = () => {
                     alt={property?.name}
                     src={property?.images}
                 />
+                <div className="flex items-center mt-8 mb-4">
+                    <Title className="opacity-90">
+                        Amenities:
+                    </Title>
+                    <Typography
+                        className="capitalize ml-3"
+                        component="p">
+                        { 
+                            property
+                                ?.amenities
+                                ?.join(", ")
+                        }
+                    </Typography>
+                </div>
+                <div>
+                    <ul className="flex items-stretch mb-8">
+                        <Tab
+                            id={TABS.BOOKINGS}>
+                            Bookings
+                        </Tab>
+                        <Tab
+                            id={TABS.DETAILS}>
+                            Details
+                        </Tab>
+                    </ul>
+                    {
+                        tab === TABS.BOOKINGS ? <Bookings { ...bookingsResponse } storeId={property?.owner} /> : (
+                        <div>
+                            <div className="flex flex-col gap-y-2 items-stretch my-6">
+                                <div className="flex flex-col">
+                                    <Title className="opacity-90">
+                                        Description
+                                    </Title>
+                                    <Typography
+                                        className="text-small mt-3"
+                                        component="p">
+                                        { 
+                                            Boolean(property?.description?.trim()) ? property.description : "No description"
+                                        }
+                                    </Typography>
+                                </div>
+                            </div>
+                        </div>
+                        )
+                    }
+                </div>
+                <RelatedProperties classes={{ root: "block mt-12"}} />
             </main>
         </Container>
     )
 }
 
 export default PropertyContainer
-
-
-/**
- * "use client"
-
-import { useContext } from "react"
-import classNames from "classnames"
-import { useParams } from "next/navigation"
-
-import { TabType } from "@/context/FixedTabsContext/types"
-
-import { FixedTabsContext } from "@/context/FixedTabsContext"
-import { RoomsContextProvider } from "@/views/Booking/context"
-
-import { Container, Provider } from "@/components/shared/FixedTabsContainer"
-import Booking from "@/app/stores/[storeId]/rooms/components/Booking"
-import Rooms from "@/app/stores/[storeId]/rooms/components/Rooms"
-
-enum TABS_TYPE {
-    BOOKING = "booking",
-    ROOMS = "rooms",
-    MORE = "more"
-}
-
-const tabs = [
-    {
-        id: TABS_TYPE.BOOKING,
-        name: "Booking"
-    },
-    {
-        id: TABS_TYPE.ROOMS,
-        name: "Rooms"
-    },
-    {
-        id: TABS_TYPE.MORE,
-        name: "More"
-    },
-]
-
-const RoomsPage = () => {
-    const { getActiveTab } = useContext(FixedTabsContext)
-
-    const activeTab = getActiveTab().id
-
-    return (
-        <div className={classNames("scrollable overflow-x-auto pt-6", { "px-2 md:px-4": activeTab !== TABS_TYPE.BOOKING })}>
-            {
-                {
-                    [TABS_TYPE.BOOKING]: <Booking />,
-                    [TABS_TYPE.ROOMS]: <Rooms />,
-                    [TABS_TYPE.MORE]: <div></div>
-                }[activeTab]
-            }
-        </div>
-    )
-}
-
-const ProviderContainer = () => {
-    const { storeId } = useParams()
-
-    const url = `/api/stores/${storeId}`
-
-    return (
-        <RoomsContextProvider url={url}>
-            <Provider tabs={tabs}>
-                <RoomsPage />
-            </Provider>
-        </RoomsContextProvider>
-    );
-}
-
-export default ProviderContainer;
- * 
- */
