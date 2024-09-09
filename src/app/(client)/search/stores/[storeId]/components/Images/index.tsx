@@ -1,5 +1,5 @@
 import classNames from "classnames"
-import Carousel from "react-slick"
+import { Swiper as Carousel, SwiperSlide } from "swiper/react"
 
 import styles from "./styles.module.css"
 
@@ -40,23 +40,54 @@ const ImageContainaer = ({ alt, src }: { src: string[], alt: string }) => {
                 }
             }
         ]
-      };
+    };
+
+    const breakpoints = {
+        600: {
+            spaceBetween: 20,
+            slidesPerView: 2
+        },
+        768: {
+            spaceBetween: 20,
+            slidesPerView: 3
+        },
+        1024: {
+            spaceBetween: 20,
+            slidesPerView: 4
+        }
+    }
 
     return (
         <div className={classNames(styles.sliderContainer, "mt-4 slider-container")}>
-            <Carousel { ...settings }>
+            <div className="xl:hidden">
+                <Carousel breakpoints={breakpoints}>
+                    {
+                        imagesList.map((image, index) => (
+                            <SwiperSlide key={index}>
+                                <Image 
+                                    alt={`${alt} ${index}`}
+                                    className={styles.imageContainer}
+                                    loader
+                                    src={image}
+                                />
+                            </SwiperSlide>
+                        ))
+                    }
+                </Carousel>
+            </div>
+            <div className={classNames(styles.imagesWrapper, "hidden xl:grid")}>
                 {
-                    imagesList.map((image, index) => (
-                        <Image 
-                            alt={`${alt} ${index}`}
-                            className={styles.imageContainer}
-                            key={index}
-                            loader
-                            src={image}
-                        />
-                    ))
+                    imagesList
+                        .map((image, index) => (
+                            <Image
+                                alt={`${alt} ${index}`}
+                                key={index}
+                                loader
+                                src={image} 
+                            />
+                        ))
                 }
-            </Carousel>
+            </div>
         </div>
     )
 }
