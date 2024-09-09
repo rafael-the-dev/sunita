@@ -1,0 +1,12 @@
+
+
+.bookingsContainer {
+    height: 450px;
+    width: 100%;
+}
+
+@media screen and (width >= 768px) {
+    .bookingsContainer {
+        height: 75vh;
+    }
+}
