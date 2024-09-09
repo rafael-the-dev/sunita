@@ -28,7 +28,13 @@ export const isPublicPath = (req: NextRequest) => {
         },
         {
             methods: [ "GET", "POST" ],
-            path: "^/stores/properties/[A-z0-9\-]*$",
+            path: "^/stores/properties/[A-z0-9\-]+$",
+            useRegExp: true,
+
+        },
+        {
+            methods: [ "GET", "POST" ],
+            path: "^/stores/[A-z0-9\-]+/rooms/bookings$",
             useRegExp: true,
 
         }
