@@ -27,19 +27,18 @@ export const isPublicPath = (req: NextRequest) => {
 
         },
         {
-            methods: [ "GET", "POST" ],
+            methods: [ "GET" ],
             path: "^/stores/properties/[A-z0-9\-]+$",
             useRegExp: true,
 
         },
         {
             methods: [ "GET", "POST" ],
-            path: "^/stores/[A-z0-9\-]+/rooms/bookings$",
+            path: "^/stores/[A-z0-9\-]+/properties/bookings$",
             useRegExp: true,
-
         }
     ]
-    
+   
     const resource = publicResources.find(
         ({ methods, path, useRegExp }) => {
             if(!methods.includes(req.method)) return false
