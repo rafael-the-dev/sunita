@@ -12,8 +12,8 @@ import usePayment from "./hooks/usePayment";
 
 export const BookingContext = createContext<ContextType>({} as ContextType)
 
-export const BookingContextProvider = ({ children }: PropsType) => {
-    const { booking, ...bookingRest } = useBooking();
+export const BookingContextProvider = ({ children, initialProperty }: PropsType) => {
+    const { booking, ...bookingRest } = useBooking({ initialProperty });
     const { guest, ...guestRest } = useGuest();
     const payment = usePayment(booking.totalPrice);
 

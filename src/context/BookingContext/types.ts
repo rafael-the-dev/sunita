@@ -10,7 +10,8 @@ import { PropertyType } from "@/types/property"
 import { BOOKING_STATUS } from "@/types/booking"
 
 export type PropsType = {
-    children: ReactNode
+    children: ReactNode,
+    initialProperty?: PropertyType
 }
 
 type InputType = {

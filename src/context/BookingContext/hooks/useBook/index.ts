@@ -3,6 +3,7 @@ import moment from "moment"
 
 import { BOOKING_TYPE } from "@/types/room"
 import { BOOKING_STATUS, BookingInfoType } from "@/types/booking"
+import { PropertyType } from "@/types/property"
 
 import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
@@ -12,6 +13,10 @@ import { getTotalPrice } from "@/helpers/booking"
 import { defaultInputField } from "@/config/input"
 
 import usePayload from "@/hooks/usePayload"
+
+type PropsType = {
+    initialProperty?: PropertyType
+}
 
 const initial = {
     checkIn: structuredClone({ ...defaultInputField, value: moment(new Date(Date.now())).add(20, 'minutes').toISOString() }),
@@ -23,7 +28,7 @@ const initial = {
     totalPrice: 0
 }
 
-const useBooking = () => {
+const useBooking = ({ initialProperty }: PropsType) => {
     const { getDialog } = useContext(FixedTabsContext);
 
     const bookingInfo = getDialog().current?.payload as BookingInfoType
@@ -33,7 +38,7 @@ const useBooking = () => {
 
     const [ booking, setBooking ] = useState(
         () => {
-            if(!hasPayload) return initial;
+            if(!hasPayload) return { ...initial, property: initialProperty };
 
             return {
                 checkIn: structuredClone({ ...defaultInputField, value: bookingInfo.checkIn as string }),
