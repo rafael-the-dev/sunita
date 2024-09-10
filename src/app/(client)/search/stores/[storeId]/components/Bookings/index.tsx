@@ -13,8 +13,10 @@ import Scheduler from "@/components/Scheduler"
 type PropsType = FetchResponseType<BookingsResponseType> & { storeId: string }
 
 const Bookings = ({ data, fetchData }: PropsType) => {
+   
 
-    const bookings = data?.list ?? []
+    //@ts-ignore    
+    const bookings = data?.data?.list ?? []
 
     return (
         <div className={classNames(styles.bookingsContainer, "searchPropertyBookings mt-4 mb-6 overflow-y-auto")}>
