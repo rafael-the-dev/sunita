@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useCallback, useContext, useEffect } from "react"
 import classNames from "classnames"
 import { useParams } from "next/navigation"
 import Typography from "@mui/material/Typography"
@@ -9,59 +9,96 @@ import { BookingsResponseType } from "@/types/booking"
 import { PropertyType } from "@/types/property"
 import { TABS } from "./components/Tab/types"
 
+import { AppContext } from "@/context/AppContext"
+
 import useFetch from "@/hooks/useFetch"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import Button from "@/components/shared/button"
 import Bookings from "./components/Bookings"
+import BookingForm from "./components/BookingForm"
 import Container from "@/components/Container/PublicRoute"
 import Images from "./components/Images"
 import RelatedProperties from "@/common/section/RelatedProperties"
 import Title from "./components/Title"
 import Tab from "./components/Tab"
 
+enum DIALOG {
+    BOOKING_FORM = "booking-form"
+}
+
 const PropertyContainer = () => {
-    const { storeId } = useParams()
+    const { fetchDataRef, setDialog } = useContext(AppContext)
+
+    const queryParams = useParams()
     const searchParams = useSearchParams()
+
+    const propertyId = queryParams.storeId
     const tab = searchParams.get("tab", TABS.BOOKINGS)
+    const dialogQueryParam = searchParams.get("dialog", "")
 
     const { data, loading, fetchData } = useFetch<PropertyType>(
         {
             autoFetch: false,
-            url: `/api/stores/properties/${storeId}`
+            url: `/api/stores/properties/${propertyId}`
         }
     )
 
-    const bookingsResponse = useFetch<BookingsResponseType>({
-        autoFetch: true,
-        url: `/api/stores/${storeId}/rooms/bookings`
-    })
+    const storeId = data?.owner
 
-    const fetchBookings = bookingsResponse.fetchData
+    const bookingsResponse = useFetch<BookingsResponseType>({
+        autoFetch: false,
+        url: `/api/stores/${data?.owner}/properties/bookings?property=${propertyId}`
+    })
+    
+    const fetchBookings = bookingsResponse.fetchData;
+
+    const openBookingFormDialog = useCallback(
+        () => {
+            fetchDataRef.current = fetchBookings;
+
+            setDialog(
+                {
+                    header: {
+                        title: "Booking form"
+                    },
+                    body: <BookingForm />,
+                    payload: data
+                }
+            )
+        },
+        [ data, fetchBookings, fetchDataRef, setDialog ]
+    )
+
+    const clickHandler = useCallback(
+        () => searchParams.setSearchParam("dialog", DIALOG.BOOKING_FORM),
+        [ searchParams ]
+    )
 
     useEffect(
         () => { 
             const controller = new AbortController()
 
-            if(storeId) {
+            if(propertyId) {
                 fetchData(
                     {
-                        path: `/api/stores/properties/${storeId}`,
+                        path: `/api/stores/properties/${propertyId}`,
                         signal: controller.signal
                     }
                 )
             }
 
             return () => controller.abort()
+
         },
-        [ fetchData, storeId ]
+        [ fetchData, propertyId ]
     )
 
     useEffect(
         () => { 
             const controller = new AbortController()
 
-            if(storeId) {
+            if(propertyId && storeId) {
                 fetchBookings(
                     {
                         signal: controller.signal
@@ -71,12 +108,19 @@ const PropertyContainer = () => {
 
             return () => controller.abort()
         },
-        [ fetchBookings, storeId ]
+        [ fetchBookings, propertyId, storeId ]
+    )
+
+    useEffect(
+        () => {
+            if(dialogQueryParam === DIALOG.BOOKING_FORM) openBookingFormDialog()
+        },
+        [ dialogQueryParam, openBookingFormDialog ]
     )
 
     if(loading) return <Typography>Loading...</Typography>
 
-    const property = data 
+    const property = data; 
 
     return (
         <Container className="!bg-white">
@@ -88,7 +132,8 @@ const PropertyContainer = () => {
                         { property?.name }
                     </Typography>
                     <Button
-                        className="py-1">
+                        className="py-1"
+                        onClick={clickHandler}>
                         Book
                     </Button>
                 </div>
