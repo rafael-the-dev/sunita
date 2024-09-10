@@ -14,8 +14,6 @@ import Select from "@/components/shared/combobox"
 const bookingTypesList = getList(BOOKING_TYPE)
 
 const BaseDetails = () => {
-    const { getProperties } = useContext(RoomsContext)
-
     const { 
         booking,
         changeRoom, changeType, changeTime
@@ -23,10 +21,10 @@ const BaseDetails = () => {
 
     const bookingType = booking.type.value
 
+    const property = booking.property
+
     const propertiesList = useMemo(
         () => {
-            const property = booking.property
-
             if(!property) return []
 
             return [ property ].map(
@@ -36,7 +34,7 @@ const BaseDetails = () => {
                 })
             )
         },
-        [ bookingType, getProperties ]
+        [ bookingType, property ]
     )
 
     const roomChangeHandler = useCallback(
