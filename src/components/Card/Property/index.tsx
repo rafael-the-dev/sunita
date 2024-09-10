@@ -60,7 +60,7 @@ const PropertyCard = ({ property }: { property: PropertyType }) => {
                         className="block mt-4 no-underline"
                         href={`/search/stores/${property.id}`}>
                         <Button
-                            className="block py-1">
+                            className="block py-2">
                             View details
                         </Button>
                     </Link>
