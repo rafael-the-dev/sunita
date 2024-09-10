@@ -49,11 +49,10 @@ class Booking {
         return bookings[0];
     }
 
-    static async register(clientBooking: BookingType, config: ConfigType) {
+    static async register(clientBooking: BookingType, storeId: string, config: ConfigType) {
         const { mongoDbConfig, user } = config;
 
         const id = getId();
-        const  { storeId }  = user.stores[0];
 
         const {
             checkIn, checkOut,
@@ -113,7 +112,7 @@ class Booking {
                 .collections
                 .BOOKINGS
                 .deleteOne(
-                    { id: storeId }
+                    { id }
                 );
 
             throw e;
