@@ -1,0 +1,46 @@
+
+
+.container {
+    counter-reset: howItWorks;
+}
+
+.container::before {
+    content: "\1F914" !important;
+    font-size: 15rem;
+    opacity: .1;
+    right: -111px;
+    top: 10px;
+    transform: translate(-10px, -10px);
+}
+
+.listItem::before {
+    align-items: center;
+    border-radius: 9999px;
+    counter-increment: howItWorks;
+    content: counter(howItWorks);
+    display: flex;
+    font-size: 1rem;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
+}
+
+.listItemContent {
+    width: calc(100% - 63px);
+}
+
+@media screen and (width >= 600px) {
+    .container::before {
+        right: -93px;
+        top: -17px;
+    }
+
+    .listItem::before {
+        height: 60px;
+        width: 60px;
+    }
+
+    .listItemContent {
+        width: 100%;
+    }
+}
