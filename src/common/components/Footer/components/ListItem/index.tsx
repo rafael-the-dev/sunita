@@ -17,7 +17,7 @@ const ListItem = ({ children, href }: PropsType) =>{
     return  (
         <li className="">
             <Link
-                className={classNames("no-underline py-1 text-white", { "font-bold": isCurrentPathname})}
+                className={classNames("no-underline py-1 text-white", { "font-bold !text-gray-500": isCurrentPathname})}
                 href={href}>
                 { children }
             </Link>
