@@ -1,0 +1,34 @@
+
+
+.imageContainer {
+    height: 270px;
+}
+
+@media screen and (width >= 600px) {
+    .imageContainer {
+        height: 380px;
+    }
+
+    .content {
+        left: 5%;
+        top: 50%;
+        transform: translate(-5%, -50%);
+        width: 60%;
+    }
+}
+
+@media screen and (width >= 768px) {
+    .imageContainer {
+        height: 420px;
+    }
+
+    .content {
+        width: 50%;
+    }
+}
+
+@media screen and (width >= 900px) {
+    .imageContainer {
+        height: 440px;
+    }
+}
