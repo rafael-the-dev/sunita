@@ -24,8 +24,8 @@ const stepsList = [
 
 const Step = ({ description, title }: { description: string, title: string }) => (
     <li className={classNames(styles.listItem, `flex gap-x-4 items-start sm:gap-x-0 relative sm:w-1/3 before:bg-gray-400 before:text-black 
-        before:rounded-fll sm:flex-col sm:items-center sm:gap-y-6`)}>
-        <div className={classNames(styles.listItemContent, "sm:flex flex-col items-center sm:text-center")}>
+        before:rounded-fll sm:flex-col sm:items-cener sm:gap-y-6`)}>
+        <div className={classNames(styles.listItemContent, "sm:flex flex-col")}>
             <Typography
                 className="font-semibold text-xl"
                 component="h3">
@@ -44,7 +44,7 @@ const AboutApp = () => {
 
     return (
         <section className={classNames(styles.container, `bg-primary-800 bg-opacity-80 mt-16 overflow-hidden px-[5%] py-16
-            relative text-white before:absolute sm:flex flex-col items-center`)}>
+            relative text-white before:absolute sm:flex flex-col`)}>
             <Typography
                 component="h2"
                 className="font-bold text-3xl">
