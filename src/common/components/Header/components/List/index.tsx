@@ -24,7 +24,7 @@ const ListItem = ({ children, href }: { children: ReactNode, href: string }) => 
         <li>
             <Link 
                 className={`border-b border-solid border-primary-50 flex items-center justify-center no-underline opacity-90 
-                    py-2 text-white w-full md:opacity-95 md:py-0 md:text-black`}
+                    py-2 text-white w-full md:opacity-95 md:py-0 md:text-black hover:text-gray-600`}
                 href={href}>
                 { children }
             </Link>
