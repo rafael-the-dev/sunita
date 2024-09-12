@@ -69,7 +69,7 @@ const DiscoverProperties  = () => {
     }
 
     return (
-        <section className="px-[5%]">
+        <section className="mt-12 px-[5%]">
             <Title className="mb-6">
                 Discover your new favorite stay
             </Title>
