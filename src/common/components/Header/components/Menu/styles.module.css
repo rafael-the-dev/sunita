@@ -1,0 +1,12 @@
+
+
+.paper {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, .96));
+    width: 70vw;
+}
+
+@media screen and (width >= 500px) {
+    .paper {
+        width: 300px;
+    }
+}
