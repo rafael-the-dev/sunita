@@ -10,6 +10,7 @@ import Hero from "./components/Hero"
 import MostSearchedCities from "./components/MostSearchedCities"
 import RelatedProperties from "@/common/section/RelatedProperties"
 import Testimonials from "./components/Customers/Testimonials"
+import WhyUs from "./components/Customers/WhyUs"
 
 const HomePageContainer = () => {
     //const { data } = useProperties()
@@ -24,6 +25,7 @@ const HomePageContainer = () => {
                 <AboutSunita />
                 <Testimonials />
                 <MostSearchedCities />
+                <WhyUs />
             </main>
             <Footer />
         </div>
