@@ -12,7 +12,7 @@ type PropsType = {
 const ListItem = ({ children, href }: PropsType) =>{
     const pathname = usePathname();
 
-    const isCurrentPathname = pathname === href;
+    const isCurrentPathname = false//pathname === href;
 
     return  (
         <li className="">
