@@ -6,6 +6,7 @@ import styles from "./styles.module.css"
 
 import { PROPERTY_TYPE } from "@/types/property"
 
+import Controllers from "@/common/components/CarouselControllers"
 import Link from "@/components/link"
 import Title from "@/app/(client)/search/stores/[storeId]/components/Title"
 
@@ -70,11 +71,13 @@ const DiscoverProperties  = () => {
 
     return (
         <section className="mt-12 px-[5%]">
-            <Title className="mb-6">
+            <Title className="mb-2">
                 Discover your new favorite stay
             </Title>
-            <div>
-                <Swiper breakpoints={breakpoints}>
+            <div className="">
+                <Swiper 
+                    breakpoints={breakpoints} 
+                    className="flex flex-col-reverse">
                     {
                         list.map(
                             (item, index) => (
@@ -87,6 +90,7 @@ const DiscoverProperties  = () => {
                             )
                         )
                     }
+                    <Controllers className="mb-4" />
                 </Swiper>
             </div>
         </section>
