@@ -30,10 +30,10 @@ enum DIALOG {
 const PropertyContainer = () => {
     const { fetchDataRef, setDialog } = useContext(AppContext)
 
-    const queryParams = useParams()
+    const { propertyId } = useParams()
     const searchParams = useSearchParams()
 
-    const propertyId = queryParams.storeId
+    const storeIdQueryParam = searchParams.get("store", "")
     const tab = searchParams.get("tab", TABS.BOOKINGS)
     const dialogQueryParam = searchParams.get("dialog", "")
 
@@ -98,7 +98,7 @@ const PropertyContainer = () => {
         () => { 
             const controller = new AbortController()
 
-            if(propertyId && storeId) {
+            if(storeIdQueryParam || (propertyId && storeId)) {
                 fetchBookings(
                     {
                         signal: controller.signal
@@ -108,7 +108,7 @@ const PropertyContainer = () => {
 
             return () => controller.abort()
         },
-        [ fetchBookings, propertyId, storeId ]
+        [ fetchBookings, propertyId, storeId, storeIdQueryParam ]
     )
 
     useEffect(

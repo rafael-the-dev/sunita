@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import Typography from "@mui/material/Typography"
 
 import Controllers from "@/common/components/CarouselControllers"
-import Title from "@/app/(client)/search/stores/[storeId]/components/Title"
+import Title from "@/app/(client)/search/properties/[propertyId]/components/Title"
 import Testimonial from "@/common/components/Testimonial"
 
 const testimonialsList = [

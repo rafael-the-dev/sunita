@@ -10,7 +10,7 @@ import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import styles from "./styles.module.css"
 
 import Image from "@/components/Image"
-import Title from "@/app/(client)/search/stores/[storeId]/components/Title"
+import Title from "@/app/(client)/search/properties/[propertyId]/components/Title"
 
 const iconClasses = classNames(styles.listItemIcon, `text-white`)
 

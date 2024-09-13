@@ -9,7 +9,7 @@ import useProperties from "@/hooks/useProperties"
 import Card from "@/components/Card/Property"
 import Controllers from "@/common/components/CarouselControllers"
 import Link from "@/components/link"
-import Title from "@/app/(client)/search/stores/[storeId]/components/Title"
+import Title from "@/app/(client)/search/properties/[propertyId]/components/Title"
 
 type PropsType = { 
     classes?: {
