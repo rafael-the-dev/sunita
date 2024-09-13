@@ -7,6 +7,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import useProperties from "@/hooks/useProperties"
 
 import Card from "@/components/Card/Property"
+import Controllers from "@/common/components/CarouselControllers"
 import Link from "@/components/link"
 import Title from "@/app/(client)/search/stores/[storeId]/components/Title"
 
@@ -38,9 +39,9 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
    
     return (
         <section className={classNames(classes?.root)}>
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Title>
-                    Related properties
+                    Properties Available Near You
                 </Title>
                 <Link
                     className="no-underline"
@@ -52,7 +53,9 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
                     </Button>
                 </Link>
             </div>
-            <Swiper breakpoints={breakpoints} >
+            <Swiper 
+                breakpoints={breakpoints}
+                className="flex flex-col-reverse" >
                 {
                     data
                         .map(property => (
@@ -63,6 +66,7 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
                             </SwiperSlide>
                         ))
                 }
+                { data.length > 1 && <Controllers className="mb-4" /> }
             </Swiper>
         </section>
     )
