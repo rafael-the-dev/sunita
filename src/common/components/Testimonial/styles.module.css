@@ -6,9 +6,9 @@
 
 .container::before {
     content: "\275E" !important;
-    font-size: 12rem;
+    font-size: 9rem;
     opacity: .07;
     right: 0;
-    top: -6%;
+    top: -1%;
     transform: translate(-6px, 0);
 }
