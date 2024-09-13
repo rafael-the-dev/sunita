@@ -1,7 +1,8 @@
-
+import { Autoplay } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Typography from "@mui/material/Typography"
 
+import Controllers from "@/common/components/CarouselControllers"
 import Title from "@/app/(client)/search/stores/[storeId]/components/Title"
 import Testimonial from "@/common/components/Testimonial"
 
@@ -62,11 +63,15 @@ const Testimonials = () => {
             </Title>
             <Typography
                 component="p"
-                className="mt-3 mb-8 opacity-85 text-small">
+                className="mt-3 mb-6 opacity-85 text-small">
                 Do not just take our word for it—see what real users have to say about their booking experience.
             </Typography>
             <div>
-                <Swiper breakpoints={breakpoints}>
+                <Swiper 
+                    autoplay
+                    breakpoints={breakpoints}
+                    className="flex flex-col-reverse"
+                    modules={[ Autoplay ]}>
                     {
                         testimonialsList.map(
                             (item, index) => (
@@ -80,6 +85,7 @@ const Testimonials = () => {
                             )
                         )
                     }
+                    { testimonialsList.length > 1 && <Controllers className="mb-4" /> }
                 </Swiper>
             </div>
         </section>
