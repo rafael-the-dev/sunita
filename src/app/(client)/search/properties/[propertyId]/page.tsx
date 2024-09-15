@@ -17,11 +17,14 @@ import useSearchParams from "@/hooks/useSearchParams"
 import Button from "@/components/shared/button"
 import Bookings from "./components/Bookings"
 import BookingForm from "./components/BookingForm"
-import Container from "@/components/Container/PublicRoute"
+import Footer from "@/common/components/Footer"
+import Header from "@/common/components/Header"
 import Images from "./components/Images"
 import RelatedProperties from "@/common/section/RelatedProperties"
 import Title from "./components/Title"
 import Tab from "./components/Tab"
+import Testimonials from "@/app/components/Customers/Testimonials"
+import WhyUs from "@/app/components/Customers/WhyUs"
 
 enum DIALOG {
     BOOKING_FORM = "booking-form"
@@ -123,19 +126,15 @@ const PropertyContainer = () => {
     const property = data; 
 
     return (
-        <Container className="!bg-white">
-            <main className="box-border flex-col items-stretch py-4 w-full">
+        <div className="bg-white flex flex-col items-stretch">
+            <Header />
+            <main className="box-border flex-col items-stretch px-[5%] pt-4 pb-12 w-full">
                 <div className="flex items-center justify-between">
                     <Typography
                         className={classNames(`font-bold text-xl md:text-2xl xl:text-3xl`)}
                         component="h1">
                         { property?.name }
                     </Typography>
-                    <Button
-                        className="py-1"
-                        onClick={clickHandler}>
-                        Book
-                    </Button>
                 </div>
                 <Images 
                     alt={property?.name}
@@ -167,29 +166,42 @@ const PropertyContainer = () => {
                         </Tab>
                     </ul>
                     {
-                        tab === TABS.BOOKINGS ? <Bookings { ...bookingsResponse } storeId={property?.owner} /> : (
-                        <div>
-                            <div className="flex flex-col gap-y-2 items-stretch my-6">
+                        tab === TABS.BOOKINGS 
+                            ? (
                                 <div className="flex flex-col">
-                                    <Title className="opacity-90">
-                                        Description
-                                    </Title>
-                                    <Typography
-                                        className="text-small mt-3"
-                                        component="p">
-                                        { 
-                                            Boolean(property?.description?.trim()) ? property.description : "No description"
-                                        }
-                                    </Typography>
+                                    <Button
+                                        className="py-2 sm:w-fit sm:px-8"
+                                        onClick={clickHandler}>
+                                        Book now
+                                    </Button>
+                                    <Bookings { ...bookingsResponse } storeId={property?.owner} /> 
+                                </div>
+                            ) : (
+                            <div>
+                                <div className="flex flex-col gap-y-2 items-stretch my-6">
+                                    <div className="flex flex-col">
+                                        <Title className="opacity-90">
+                                            Description
+                                        </Title>
+                                        <Typography
+                                            className="text-small mt-3"
+                                            component="p">
+                                            { 
+                                                Boolean(property?.description?.trim()) ? property.description : "No description"
+                                            }
+                                        </Typography>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
                         )
                     }
                 </div>
+                <Testimonials className="!px-0" />
                 <RelatedProperties classes={{ root: "block mt-12"}} />
+                <WhyUs className="!mt-12 !px-0" />
             </main>
-        </Container>
+            <Footer />
+        </div>
     )
 }
 
