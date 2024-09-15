@@ -63,10 +63,10 @@ const Card = ({ amenities, bedroom, description, id, images, name, price, status
                                 </div>
                                 <Link
                                     className="" 
-                                    href={`./stores/${id}`}>
+                                    href={`./properties/${id}`}>
                                     <Button
                                         className="py-2 sm:py-1">
-                                        View
+                                        View details
                                     </Button>
                                 </Link>
                             </div>
