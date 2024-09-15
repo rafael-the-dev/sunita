@@ -1,8 +1,16 @@
-
+export enum PAYMENT_METHODS {
+    CASH = 100,
+    M_PESA = 200,
+    E_MOLA = 300,
+    M_KESH = 400,
+    P24 = 500,
+    POS = 600
+}
 
 export type PaymentMethodType = {
-    id: string | number;
     amount: number;
+    id: string | number;
+    trasanctionId: string;
 }
 
 export type PaymentType = {
