@@ -1,6 +1,7 @@
 
 .container {
     background-color: #ebeaea4f;
+    min-height: 80vh;
 }
 
 @media screen and (width >= 1024px) {
