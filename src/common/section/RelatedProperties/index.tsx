@@ -45,7 +45,7 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
                 </Title>
                 <Link
                     className="no-underline"
-                    href={`/search/stores?${queryParams ?? ""}`}>
+                    href={`/search/properties?${queryParams ?? ""}`}>
                     <Button
                         className="capitalize text-black hover:!bg-black hover:border-black hover:text-white"
                         endIcon={<ArrowRightIcon />}>
