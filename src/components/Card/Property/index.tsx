@@ -46,7 +46,7 @@ const PropertyCard = ({ property }: { property: PropertyType }) => {
                     { property.name }
                 </Typography>
                 <Typography
-                    className="capitalize flex items-center"
+                    className="capitalize flex flex-col"
                     component="p">
                         <span className="font-medium mr-2 opacity-90">Amenities:</span>
                     {
@@ -58,7 +58,7 @@ const PropertyCard = ({ property }: { property: PropertyType }) => {
                 <div className="flex items-end justify-between">
                     <Link 
                         className="block mt-4 no-underline"
-                        href={`/search/stores/${property.id}`}>
+                        href={`/search/properties/${property.id}`}>
                         <Button
                             className="block py-2">
                             View details
