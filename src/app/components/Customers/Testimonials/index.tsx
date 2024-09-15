@@ -1,4 +1,5 @@
 import { Autoplay } from "swiper/modules"
+import classNames from "classnames"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Typography from "@mui/material/Typography"
 
@@ -40,7 +41,7 @@ const testimonialsList = [
 ];
   
 
-const Testimonials = () => {
+const Testimonials = ({ className }: { className?: string }) => {
     const breakpoints = {
         600: {
             spaceBetween: 20,
@@ -57,7 +58,7 @@ const Testimonials = () => {
     }
 
     return (
-        <section className="px-[5%] pt-16">
+        <section className={classNames(className, "px-[5%] pt-16")}>
             <Title>
                 What Our Happy Customers Say
             </Title>

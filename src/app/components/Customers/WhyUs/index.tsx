@@ -57,9 +57,9 @@ const ListItem = ({ description, icon, title }: typeof list[0]) => (
     </li>
 )
 
-const WhyUs = () => {
+const WhyUs = ({ className }: { className?: string }) => {
     return (
-        <section className="mt-8 mb-24 px-[5%] relative">
+        <section className={classNames(className, "mt-8 mb-24 px-[5%] relative")}>
             <div className={classNames(styles.container, "py-8 px-4 sm:px-6 sm:py-12")}>
                 <Title>
                     Why Thousands of Travelers Trust Us
