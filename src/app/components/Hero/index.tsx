@@ -60,7 +60,7 @@ const Hero = () => {
                 </Typography>
                 <Link 
                     className="mt-6 no-underline"
-                    href="/search/stores">
+                    href="/search/properties">
                     <Button>
                         Search Nearby Properties
                     </Button>

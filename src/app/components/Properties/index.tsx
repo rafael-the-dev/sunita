@@ -39,7 +39,7 @@ const ListItem = ({ image, title, type }: typeof list[0]) => (
     <>
         <Link
             className="block box-border no-underline w-full h-full"
-            href={`/search/stores?property=${type}`}>
+            href={`/search/properties?type=${type}`}>
             <div 
                 style={{ backgroundImage: `${backgroundGradient}, url(${image})`}}
                 className={classNames(styles.listItemContent, `box-border bg-center bg-cover bg-no-repeat flex items-end px-2 py-3 w-full`)}>
