@@ -1,5 +1,6 @@
 import classNames from "classnames"
 import { Swiper as Carousel, SwiperSlide } from "swiper/react"
+import { Autoplay } from "swiper/modules"
 
 import styles from "./styles.module.css"
 
@@ -60,7 +61,10 @@ const ImageContainaer = ({ alt, src }: { src: string[], alt: string }) => {
     return (
         <div className={classNames(styles.sliderContainer, "mt-4 slider-container")}>
             <div className="xl:hidden">
-                <Carousel breakpoints={breakpoints}>
+                <Carousel 
+                    autoplay
+                    breakpoints={breakpoints}
+                    modules={[ Autoplay ]}>
                     {
                         imagesList.map((image, index) => (
                             <SwiperSlide key={index}>
