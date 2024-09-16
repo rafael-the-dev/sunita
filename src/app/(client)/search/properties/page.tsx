@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
@@ -35,9 +36,11 @@ const StoresPage = () => {
 }
 
 const Provider = () => (
-    <StoresContextProvider>
-        <StoresPage />
-    </StoresContextProvider>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[70vh] w-screen">Loading...</div>}>
+        <StoresContextProvider>
+            <StoresPage />
+        </StoresContextProvider>
+    </Suspense>
 )
 
 export default Provider
