@@ -7,6 +7,7 @@ import { validate } from "@/validation"
 
 import { getTotalPrice, calculatePayment } from "@/helpers/booking"
 import { isInvalidNumber } from "@/helpers/validation"
+import { hasInvalidAmount, isInvalidTransactionId } from "@/validation/payment"
 
 import { 
     isValidBookingType, 
@@ -46,6 +47,10 @@ const getBookingProxy = (target: BookingDBType, userTotalPrice: number, property
                 case "payment": {
                     const payment = newValue as PaymentType
                     const paymentClone = structuredClone(payment)
+
+                    if(isInvalidTransactionId(paymentClone.paymentMethods)) throw new InvalidArgumentError('Invalid transaction ID')
+
+                    if(hasInvalidAmount(paymentClone.paymentMethods)) throw new InvalidArgumentError('Amount must be greater than zero')
 
                     if(isInvalidNumber(payment.totalReceived, target.totalPrice)) throw new InvalidArgumentError("Invalid total reveived amount");
                     if(isInvalidNumber(payment.changes, 0)) throw new InvalidArgumentError("Invalid payment changes");

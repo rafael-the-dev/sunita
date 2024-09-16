@@ -1,13 +1,15 @@
 import currency from "currency.js";
 
-import { CartResquestType } from "@/types/cart";
 import { PaymentMethodType } from "@/types/payment-method";
-import { DebtType, SaleDebtType, SaleItemType, SaleType } from "@/types/sale"
+import { DebtType, SaleItemType, SaleType } from "@/types/sale"
 
-import { isValidCartTotalPrice, isValidReceivedAmount } from "@/validation/sale";
+import { isValidCartTotalPrice } from "@/validation/sale";
 import { isValidPrice } from "@/validation/product";
 import { isValidPaymentMethods } from "@/helpers/sales";
+import { isInvalidTransactionId, hasInvalidAmount } from "@/validation/payment";
+
 import { validate } from "@/validation";
+
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
 const getUnpaidSaleProxy = (target: DebtType, cartTotalPrice: number) => {
@@ -42,6 +44,10 @@ const getUnpaidSaleProxy = (target: DebtType, cartTotalPrice: number) => {
                 }
                 case "paymentMethods": {
                     const paymentMethods = newValue.list as PaymentMethodType[]
+
+                    if(isInvalidTransactionId(paymentMethods)) throw new InvalidArgumentError('Invalid transaction ID')
+
+                    if(hasInvalidAmount(paymentMethods)) throw new InvalidArgumentError('Amount must be greater than zero')
                    
                     //check if server total price match with the client total price, then throw an error if not
                     isValidPaymentMethods(paymentMethods, obj.totalReceived);
