@@ -8,7 +8,7 @@ import styles from "./styles.module.css";
 
 import { PaymentFunctionsType } from "@/hooks/usePayment/types";
 
-import { PaymentMethodListItemType, PaymentType } from "@/types/payment-method";
+import { PaymentMethodListItemType, PaymentType, PAYMENT_METHODS } from "@/types/payment-method";
 import { paymentMethodsList } from "@/config/payment-methods";
 
 import Input from "@/components/Textfield";
@@ -17,7 +17,8 @@ import Select from "@/components/shared/combobox"
 type PropsType = PaymentFunctionsType & {
     amount: number,
     getPayment: () => PaymentType;
-    id: string | number
+    id: string | number,
+    transactionId: string;
 }
 
 const PaymentMethodContainer = (props: PropsType) => {
@@ -25,8 +26,8 @@ const PaymentMethodContainer = (props: PropsType) => {
     const {
         amount, 
         id,
-
-        changePaymentMethodId, changePaymentMethodValue,
+        transactionId,
+        changePaymentMethodId, changePaymentMethodValue, changePaymentMethodTransactionIdValue,
         getPayment, 
         removePaymentMethod 
     } = props;
@@ -55,27 +56,39 @@ const PaymentMethodContainer = (props: PropsType) => {
 
     const removeHandler = React.useCallback(() => removePaymentMethod(id), [ id, removePaymentMethod ]);
     
-    const receivedAmountChangeHandler = React.useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodValue("receivedAmount", id, e.target.value.trim())
-    , [ changePaymentMethodValue, id ]);
+    const transactionIdChangeHandler = React.useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodTransactionIdValue(id, e.target.value)
+    , [ changePaymentMethodTransactionIdValue, id ]);
 
     return (
-        <div className="border-b border-primary-300 border-solid flex flex-col pb-3 pt-8 first:pt-0 md:pb-8 md:flex-row md:items-center">
-            <Select
-                className={classNames(styles.select)}
-                label="Payment method"
-                list={paymentMethods}
-                onChange={changeMethodHandler}
-                value={id}
-            />
-            <div className="flex items-center justify-between w-full md:justify-normal">
+        <div className="border-b border-primary-300 border-solid flex flex-col pb-3 pt-8 first:pt-0 
+            md:pb-8 md:flex-row md:items-center md:gap-x-6">
+            <div className="flex flex-col items-stretch grow md:flex-row md:items-center">
+                <Select
+                    className={classNames(styles.select, `w-full md:w-1/3`)}
+                    label="Payment method"
+                    list={paymentMethods}
+                    onChange={changeMethodHandler}
+                    value={id}
+                />
                 <Input 
-                    className={styles.input}
+                    className={classNames(styles.input, `w-full md:w-1/3`)}
                     label="Insert amount"
                     onChange={changeHandler}
                     value={amount}
                     variant="outlined"
                 />
+                {
+                    id != PAYMENT_METHODS.CASH && (
+                        <Input 
+                            className={classNames(styles.input, `w-full md:w-1/3`)}
+                            label="Insert transaction ID"
+                            onChange={transactionIdChangeHandler}
+                            value={transactionId}
+                            variant="outlined"
+                        />
+                    )
+                }
             </div>
             <div className="flex">
                 <IconButton 
