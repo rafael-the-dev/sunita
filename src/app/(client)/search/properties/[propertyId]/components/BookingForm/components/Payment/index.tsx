@@ -7,8 +7,7 @@ import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContex
 
 import { getList } from "@/helpers"
 
-import Button from "@/components/shared/button"
-import PaymentMethod from "@/components/shared/payment-method"
+import Payment from "@/components/Container/Payment"
 import Select from "@/components/shared/combobox"
 import Typography from "./components/Typography"
 
@@ -22,7 +21,7 @@ const PaymentContainer = () => {
         booking,
 
         addPaymentMethod,
-        changePaymentMethodId, changePaymentMethodValue,
+        changePaymentMethodId, changePaymentMethodValue, changePaymentMethodTransactionIdValue,
         changeStatus,
         getPayment,
         removePaymentMethod
@@ -62,27 +61,15 @@ const PaymentContainer = () => {
                     hasPayload && statusSelect
                 }
                 <div>
-                    {
-                        getPayment()
-                            .paymentMethods
-                            .map(paymentMethod => (
-                                <PaymentMethod
-                                    { ...paymentMethod } 
-                                    key={paymentMethod.id}
-                                    addPaymentMethod={addPaymentMethod}
-                                    changePaymentMethodId={changePaymentMethodId}
-                                    changePaymentMethodValue={changePaymentMethodValue}
-                                    getPayment={getPayment}
-                                    removePaymentMethod={removePaymentMethod}
-                                />
-                            ))
-                    }
+                    <Payment 
+                        addPaymentMethod={addPaymentMethod}
+                        changePaymentMethodId={changePaymentMethodId}
+                        changePaymentMethodValue={changePaymentMethodValue}
+                        changePaymentMethodTransactionIdValue={changePaymentMethodTransactionIdValue}
+                        payment={getPayment()}
+                        removePaymentMethod={removePaymentMethod}
+                    />
                 </div>
-                <Button
-                    className="block mt-4 mx-auto py-2"
-                    onClick={addPaymentMethod}>
-                    Add payment method
-                </Button>
             </div>
             <div className="flex flex-col items-end mt-16 mb-3">
                 <Typography 
