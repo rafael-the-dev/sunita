@@ -3,6 +3,7 @@
 import { useCallback, useContext, useEffect } from "react"
 import classNames from "classnames"
 import { useParams } from "next/navigation"
+import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Typography from "@mui/material/Typography"
 
 import { BookingsResponseType } from "@/types/booking"
@@ -20,6 +21,7 @@ import BookingForm from "./components/BookingForm"
 import Footer from "@/common/components/Footer"
 import Header from "@/common/components/Header"
 import Images from "./components/Images"
+import Link from "@/components/link"
 import RelatedProperties from "@/common/section/RelatedProperties"
 import Title from "./components/Title"
 import Tab from "./components/Tab"
@@ -129,7 +131,19 @@ const PropertyContainer = () => {
         <div className="bg-white flex flex-col items-stretch">
             <Header />
             <main className="box-border flex-col items-stretch px-[5%] pt-4 pb-12 w-full">
-                <div className="flex items-center justify-between">
+                <Breadcrumbs>
+                    <Link 
+                        className="no-underline text-black"
+                        href="/">
+                        Home
+                    </Link>
+                    <Link 
+                        className="no-underline text-black"
+                        href="/search/properties">
+                        Properties
+                    </Link>
+                </Breadcrumbs>
+                <div className="flex items-center justify-between mt-4">
                     <Typography
                         className={classNames(`font-bold text-xl md:text-2xl xl:text-3xl`)}
                         component="h1">
