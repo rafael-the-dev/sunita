@@ -1,22 +1,21 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 
 import { ChangePaymentMethodValueType } from "@/hooks/usePayment/types";
-import { BookingInfoType } from "@/types/booking";
-import { PaymentType } from "@/types/payment-method";
-
-import { FixedTabsContext } from "@/context/FixedTabsContext";
+import { PaymentType, PAYMENT_METHODS } from "@/types/payment-method";
 
 import usePayment from "@/hooks/usePayment"
 
 import { paymentMethodsList } from "@/config/payment-methods";
 import { calculatePayment } from "@/helpers/booking";
+import { isValidPayment } from "@/validation/payment"
 
 const initialState = {
     changes: 0,
     paymentMethods: [
         {
             amount: 0, 
-            id: paymentMethodsList[0].value
+            id: paymentMethodsList[0].value,
+            transactionId: ""
         }
     ],
     remainingAmount: 0,
@@ -33,11 +32,12 @@ const useBookingPayment = (initial: PaymentType, totalPrice: number) => {
         add,
         abstractChangePaymentMethodValue,
         abstractRemovePaymentMethod,
-        changePaymentMethodId
+        changePaymentMethodId,
+        changePaymentMethodTransactionIdValue
     } = usePayment({ setPayment })
 
     const hasErrors = useMemo(
-        () => payment.totalReceived < totalPrice || totalPrice <= 0,
+        () => !isValidPayment(payment, totalPrice),
         [ payment, totalPrice ]
     )
 
@@ -45,13 +45,13 @@ const useBookingPayment = (initial: PaymentType, totalPrice: number) => {
 
     const changePaymentMethodValue = useCallback(
         (key: ChangePaymentMethodValueType, id: number | string, amount: number | string ) => {
-            abstractChangePaymentMethodValue(key, id, amount, (payment) => calculatePayment(payment, totalPrice))
+            abstractChangePaymentMethodValue(key, id as PAYMENT_METHODS, amount, (payment) => calculatePayment(payment, totalPrice))
         }, 
         [ abstractChangePaymentMethodValue, totalPrice ]
     )
 
     const removePaymentMethod = useCallback(
-        (id: string | number) => abstractRemovePaymentMethod(id, (payment) => calculatePayment(payment, totalPrice)), 
+        (id: string | number) => abstractRemovePaymentMethod(id as PAYMENT_METHODS, (payment) => calculatePayment(payment, totalPrice)), 
         [ abstractRemovePaymentMethod, totalPrice ]
     );
 
@@ -77,7 +77,7 @@ const useBookingPayment = (initial: PaymentType, totalPrice: number) => {
         hasErrors, 
 
         addPaymentMethod: add,
-        changePaymentMethodId, changePaymentMethodValue,
+        changePaymentMethodId, changePaymentMethodValue, changePaymentMethodTransactionIdValue,
         getPayment,
         removePaymentMethod,
         reset
