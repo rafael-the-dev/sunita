@@ -2,17 +2,22 @@ import * as React from "react"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
+
+import { CartResquestType } from "@/types/cart"
+
+import { AppContext } from "@/context/AppContext"
 import { LoginContext } from "@/context/LoginContext"
 import { SaleContext } from "@/context/SalesContext/context/SaleContext"
+import { SalesContext } from "@/context/SalesContext"
+
+import useFetch from "@/hooks/useFetch"
+
+import { isValidPayment } from "@/validation/payment"
 
 import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
-import PaymentMethod from "./components/payment-method"
+import PaymentMethodsContainer from "@/components/Container/Payment"
 import Typography from "./components/Typography"
-import { AppContext } from "@/context/AppContext"
-import { CartResquestType } from "@/types/cart"
-import { SalesContext } from "@/context/SalesContext"
-import useFetch from "@/hooks/useFetch"
 
 type ProsType = {
     setSuccefulPayment: () => void;
@@ -21,8 +26,15 @@ type ProsType = {
 const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
     const { credentials } = React.useContext(LoginContext)
     const { isLoading } = React.useContext(AppContext)
-    const { addPaymentMethod, getCart, getPaymentMethods, resetCart } = React.useContext(SaleContext)
     const { fetchProducts } = React.useContext(SalesContext);
+
+    const { 
+        addPaymentMethod,
+        changePaymentMethodId, changePaymentMethodValue, changePaymentMethodTransactionIdValue,
+        getCart, getPaymentMethods, 
+        removePaymentMethod,
+        resetCart
+    } = React.useContext(SaleContext);
 
     const { fetchData, loading } = useFetch({
         autoFetch: false,
@@ -31,7 +43,7 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
 
     const hasChanges = getPaymentMethods().changes > 0;
     const showRemainingAmount =  getPaymentMethods().remainingAmount > 0 &&  getPaymentMethods().remainingAmount < getCart().total;
-    const disableButton = showRemainingAmount || getPaymentMethods().totalReceived <= 0 || loading;
+    const disableButton = showRemainingAmount || !isValidPayment(getPaymentMethods(), getCart().total) || loading;
 
     const errorMessage = React.useRef("");
     const onCloseFuncRef = React.useRef<() => void | null>(null);
@@ -92,19 +104,14 @@ const PaymentMethodsPanel = ({ setSuccefulPayment }: ProsType) => {
         <form className="flex flex-col grow justify-between">
             { alertMemo }
             <div className={classNames("overflow-y-auto px-2 pt-6 md:pt-8", styles.paymentMethods)}>
-                <div>
-                    {
-                        getPaymentMethods().paymentMethods.map(paymentMethod => (
-                            <PaymentMethod 
-                                key={paymentMethod.id}
-                                { ...paymentMethod }
-                            />
-                        ))
-                    }
-                </div>
-                <div className="flex justify-end py-4 md:py-6">
-                    <Button onClick={addPaymentMethod}>Add payment method</Button>
-                </div>
+                <PaymentMethodsContainer 
+                    addPaymentMethod={addPaymentMethod}
+                    changePaymentMethodId={changePaymentMethodId}
+                    changePaymentMethodValue={changePaymentMethodValue}
+                    changePaymentMethodTransactionIdValue={changePaymentMethodTransactionIdValue}
+                    payment={getPaymentMethods()}
+                    removePaymentMethod={removePaymentMethod}
+                />
             </div>
             <div className="flex flex-col items-end px-3 pb-3 text-right">
                 <div className="mb-3">
