@@ -31,14 +31,18 @@ const initial = {
 const useBooking = ({ initialProperty }: PropsType) => {
     const { getDialog } = useContext(FixedTabsContext);
 
-    const bookingInfo = getDialog().current?.payload as BookingInfoType
-    const hasPayload = Boolean(bookingInfo)
+    const bookingInfo = getDialog().current?.payload as BookingInfoType;
+    const hasPayload = Boolean(bookingInfo);
 
     const { getProperties } = useContext(RoomsContext);
 
     const [ booking, setBooking ] = useState(
         () => {
-            if(!hasPayload) return { ...initial, property: initialProperty };
+            if(!hasPayload) return { 
+                ...initial, 
+                property: initialProperty, 
+                totalPrice: initialProperty ? getTotalPrice(initial.type.value, initial.checkIn.value, initial.checkOut.value, initialProperty) : 0 
+            };
 
             return {
                 checkIn: structuredClone({ ...defaultInputField, value: bookingInfo.checkIn as string }),
