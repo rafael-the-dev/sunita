@@ -1,8 +1,8 @@
 import * as React from "react"
 import currency from "currency.js"
 
-import { ChangePaymentMethodValueType, PropsType } from "./types"
-import { PaymentType } from "@/types/payment-method"
+import { ChangePaymentMethodValueType, IdType, PropsType } from "./types"
+import { PaymentType, PAYMENT_METHODS } from "@/types/payment-method"
 
 import { paymentMethodsList } from "@/config/payment-methods"
 
@@ -19,7 +19,8 @@ const usePayment = ({ setPayment }: PropsType) => {
                 if(!Boolean(paymentTemp.paymentMethods.find(item =>  item.id === paymentMethodsList[i].value))) {
                     paymentTemp.paymentMethods.push({ 
                         amount: 0, 
-                        id: paymentMethodsList[i].value
+                        id: paymentMethodsList[i].value,
+                        transactionId: (paymentMethodsList[i].value as PAYMENT_METHODS) === PAYMENT_METHODS.CASH ? null : ""
                     });
                     break;
                 }
@@ -29,7 +30,7 @@ const usePayment = ({ setPayment }: PropsType) => {
         })
     }, [ setPayment ])
 
-    const changePaymentMethodId = React.useCallback((id: number | number, newMethodId: number | string ) => {
+    const changePaymentMethodId = React.useCallback((id: PAYMENT_METHODS, newMethodId: PAYMENT_METHODS ) => {
         setPayment(payment => {
             const paymentTemp = structuredClone({ ...payment });
 
@@ -46,7 +47,22 @@ const usePayment = ({ setPayment }: PropsType) => {
         })
     }, [ setPayment ])
 
-    const abstractRemovePaymentMethod = React.useCallback((id: string | number, func: (payment: PaymentType) => void) => {
+    const changePaymentMethodTransactionIdValue = React.useCallback(
+        (id: IdType, value: string ) => {
+            setPayment(payment => {
+                const paymentTemp = structuredClone({ ...payment });
+    
+                const paymentMethod = paymentTemp.paymentMethods.find(item => item.id === id);
+    
+                paymentMethod.transactionId = value;
+
+                return paymentTemp;
+            })
+        },
+        [ setPayment ]
+    )
+
+    const abstractRemovePaymentMethod = React.useCallback((id: PAYMENT_METHODS, func: (payment: PaymentType) => void) => {
         setPayment(payment => {
             const paymentTemp = structuredClone({ ...payment });
             paymentTemp.paymentMethods = paymentTemp.paymentMethods.filter(paymentMethod => paymentMethod.id !== id);
@@ -57,7 +73,7 @@ const usePayment = ({ setPayment }: PropsType) => {
         })
     }, [ setPayment ]);
 
-    const abstractChangePaymentMethodValue = React.useCallback((key: ChangePaymentMethodValueType, id: number | string, amount: number | string, func: (payment: PaymentType) => void ) => {
+    const abstractChangePaymentMethodValue = React.useCallback((key: ChangePaymentMethodValueType, id: PAYMENT_METHODS, amount: number | string, func: (payment: PaymentType) => void ) => {
         setPayment(payment => {
             const paymentTemp = structuredClone({ ...payment });
 
@@ -79,7 +95,8 @@ const usePayment = ({ setPayment }: PropsType) => {
         add,
         abstractChangePaymentMethodValue, 
         abstractRemovePaymentMethod,
-        changePaymentMethodId
+        changePaymentMethodId,
+        changePaymentMethodTransactionIdValue
     }
 
 }
