@@ -1,4 +1,4 @@
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 
 import { ContextType, PropsType } from "./types"
 import { FetchResponseType } from "@/types";
@@ -11,6 +11,7 @@ export const StoresContext = createContext<ContextType>({} as ContextType)
 export const StoresContextProvider = ({ children }: PropsType) => {
     const { data, fetchData, loading } = useFetch<FetchResponseType<PropertyType[]>>(
         {
+            autoFetch: false,
             url: `/api/stores/properties`
         }
     )
@@ -18,6 +19,24 @@ export const StoresContextProvider = ({ children }: PropsType) => {
     const getProperties = useCallback(
         () => data?.data ?? [],
         [ data ]
+    )
+
+    useEffect(
+        () => {
+            const params = new URLSearchParams(window.location.search);
+            
+            const controller = new AbortController();
+
+            fetchData(
+                {
+                    path: `/api/stores/properties?${params.toString()}`,
+                    signal: controller.signal
+                }
+            )
+
+            return () => controller.abort()
+        },
+        [ fetchData ]
     )
 
     return (
