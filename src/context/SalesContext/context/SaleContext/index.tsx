@@ -8,6 +8,7 @@ import { SalesContext } from "../..";
 import { ProductInfoType } from "@/types/product";
 import { ProductPayment } from "@/types/payment-method";
 import { CartType  } from "@/types/cart";
+import { PaymentFunctionsType } from "@/hooks/usePayment/types"
 
 import usePaymentMethods from "./hooks/usePaymentMethods";
 import { useLocalStorage } from "./hooks/useLocalStorage";
@@ -16,7 +17,7 @@ import { calculaCartTotalPrice, calculateProductTotalPrice } from "@/helpers/car
 import { getId } from "@/helpers/id";
 import { isInvalidNumber } from "@/helpers/validation";
 
-type SaleContextType = {
+type SaleContextType = PaymentFunctionsType & {
     addItem: (product: ProductInfoType, quantity: number) => void;
     changeQuantity: (productId: string, quantity: number) => void;
     getCart: () => CartType<ProductInfoType>;
@@ -26,11 +27,11 @@ type SaleContextType = {
     resetCart: () => void;
 
     // payment method
-    addPaymentMethod: () => void;
+    getPaymentMethods: () => ProductPayment;
+    /*addPaymentMethod: () => void;
     changePaymentMethodId: (id: number, newMethodId: number) => void;
     changePaymentMethodValue: (key: string, id: number | number, amount: number | string ) => void;
-    getPaymentMethods: () => ProductPayment;
-    removePaymentMethod: (id: string | number) => void;
+    removePaymentMethod: (id: string | number) => void;*/
 
 }
 
