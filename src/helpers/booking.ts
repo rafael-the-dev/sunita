@@ -15,7 +15,7 @@ type DateType = string | Date
 
 export const getMinCheckOutTime = (bookingType: BOOKING_TYPE, checkIn: string) => {
     const checkInTime = moment(checkIn)
-    console.log(bookingType)
+    
     if(bookingType === BOOKING_TYPE.HOURLY) {
         console.log(checkInTime.format(dateTimeFormat), checkInTime.add(1, "hour").format(dateTimeFormat))
         return checkInTime.add(1, "hour").toISOString()
