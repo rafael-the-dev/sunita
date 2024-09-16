@@ -10,7 +10,7 @@ export enum PAYMENT_METHODS {
 export type PaymentMethodType = {
     amount: number;
     id: string | number;
-    trasanctionId: string;
+    transactionId: string;
 }
 
 export type PaymentType = {
