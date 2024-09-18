@@ -10,6 +10,7 @@ import NewSaleIcon from '@mui/icons-material/AddShoppingCart';
 import SaleIcon from '@mui/icons-material/ShoppingCart';
 import UsersIcon from '@mui/icons-material/PeopleAlt';
 import FinancesIcon from '@mui/icons-material/AttachMoney';
+import SystemIcon from '@mui/icons-material/AdminPanelSettings';
 
 import ProductsIcon from "../../../../../../public/images/icons/milk-svgrepo-com.svg"
 
@@ -60,6 +61,11 @@ const Menu = () => {
             icon: <FinancesIcon />,
             label: "Finances",
             path: `/stores/${ credentials?.user?.stores[0]?.storeId }/finances`
+        },
+        {
+            icon: <SystemIcon />,
+            label: "System",
+            path: `/system/stores`
         },
     ];
 
