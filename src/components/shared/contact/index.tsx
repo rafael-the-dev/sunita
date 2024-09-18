@@ -49,6 +49,7 @@ const Contact = ({ list, number, onChange, onRemove, type }: PropsType) => {
                 />
             </div>
             <IconButton
+                className="w-fit"
                 onClick={onRemove(type.value)}>
                 <DeleteIcon />
             </IconButton>
