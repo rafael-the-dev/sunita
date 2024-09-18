@@ -10,7 +10,15 @@ import ProtectedLayout from "@/components/shared/layout/ProtectedLayout";
 const RootLayout = ({ children }: { children: ReactNode }) => {
     const pathname = usePathname()
 
-    const isProtectedRoute = pathname.startsWith("/stores/") || pathname.startsWith("/login")
+    const isProtectedRoute = (
+        () => {
+            const protectedRoutes = [ "/stores", "/system", "/login" ]
+
+            const isProtected = Boolean(protectedRoutes.find(route => pathname.startsWith(route)))
+
+            return isProtected
+        }
+    )()
 
     if(isProtectedRoute) return (
         <ProtectedLayout>
