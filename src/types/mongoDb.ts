@@ -3,6 +3,7 @@ import { MongoClient, Collection, Db } from "mongodb";
 import { BookingDBType } from "@/types/booking"
 import { CategoryType } from "@/types/category"
 import { CustomerType, GuestType } from "@/types/guest"
+import { FeeType } from "./fees";
 import { SupplierDBType } from "./Supplier";
 import { User } from "./user";
 import { StoreProductType } from "./product";
@@ -14,6 +15,7 @@ export type CollectionType = {
     CUSTOMERS: Collection<CustomerType>,
     EXPENSES_CATEGORIES: Collection<CategoryType>,
     GUESTS: Collection<GuestType>,
+    FEES: Collection<FeeType>,
     PRODUCTS: Collection<StoreProductType>;
     PROPERTIES: Collection<PropertyType>,
     PRODUCTS_CATEGORIES: Collection<CategoryType>,
