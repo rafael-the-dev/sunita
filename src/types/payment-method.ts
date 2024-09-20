@@ -7,6 +7,12 @@ export enum PAYMENT_METHODS {
     POS = 600
 }
 
+export enum PAYMENT_STATUS {
+    PAID = "paid",
+    PENDING = "pending",
+    UNPAID = "unpaid"
+}
+
 export type PaymentMethodType = {
     amount: number;
     id: string | number;
