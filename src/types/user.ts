@@ -1,10 +1,14 @@
+import { AddressType } from "./address"
 import { STATUS } from ".";
+import { ContactType } from "./contact";
 
 export enum USER_CATEGORY {
     ADMIN = "admin",
     CLIENT = "client",
     EMPLOYEE = "employee",
     MANAGER = "manager",
+    SYSTEM_ADMIN = "system-admin",
+    SYSTEM_MANAGER = "system-manager"
 }
 
 export enum DOCUMENT_TYPE {
@@ -46,14 +50,6 @@ export type DecodedUserType = UserType &  {
     iat: number
 }
 
-export type AddressType = {
-    block: string
-    country: string,
-    city: string,
-    house: number,
-    province: string
-}
-
 export type Document = {
     expireDate: string;
     issueDate: string;
@@ -63,6 +59,7 @@ export type Document = {
 
 export type User = BaseUserType & {
     address: AddressType,
+    contact: ContactType;
     document: Document;
     password: string;
     stores: string[]
