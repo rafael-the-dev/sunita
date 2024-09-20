@@ -1,3 +1,4 @@
+import { AddressType } from "@/types/address"
 import { ContactType } from "@/types/contact";
 import { Document } from "@/types/user";
 
