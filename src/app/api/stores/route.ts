@@ -1,151 +1,30 @@
 import { NextRequest, NextResponse } from "next/server"
 
-import { PHONE_TYPE } from "@/types/contact"
-import { BaseStore, STORE_AMENITIES, StoresResponse } from "@/types/warehouse"
-import { STATUS } from "@/types"
+import { BaseStore, StoresResponse } from "@/types/warehouse"
+import { EnrollStoreType } from "@/types/warehouse"
 
-import { getId } from "@/helpers/id"
+import { apiHandler } from "@/middlewares/route-handler"
+
+import StoreModel from "@/models/server/db/Store"
 
 export const GET = (req: NextRequest) => {
     const response: StoresResponse<BaseStore[]> = {
-        list: [
-            {
-                address: {
-                    country: "Mozambique",
-                    city: "Matola",
-                    cords: {
-                        lat: 223,
-                        long: 12
-                    },
-                    province: "Maputo",
-                    street: "Rua do complexo, 224"
-                },
-                amenities: [ STORE_AMENITIES.BAR, STORE_AMENITIES.WI_FI ],
-                contact: {
-                    email: "",
-                    phone: [
-                        {
-                            number: "861646933",
-                           type: PHONE_TYPE.MAIN
-                        }
-                    ]
-                },
-                description: "Lorem ispusm lor sid lorem orem efvan dsi",
-                id: getId(),
-                name: "Complexo Mutumbela",
-                rooms: [],
-                status: STATUS.ACTIVE
-            },
-            {
-                address: {
-                    country: "Mozambique",
-                    city: "Matola",
-                    cords: {
-                        lat: 223,
-                        long: 12
-                    },
-                    province: "Maputo",
-                    street: "Rua do complexo, 224"
-                },
-                amenities: [ STORE_AMENITIES.BAR, STORE_AMENITIES.WI_FI ],
-                contact: {
-                    email: "",
-                    phone: [
-                        {
-                            number: "861646933",
-                           type: PHONE_TYPE.MAIN
-                        }
-                    ]
-                },
-                description: "Lorem ispusm lor sid lorem orem efvan dsi",
-                id: getId(),
-                name: "Complexo Mutumbela",
-                rooms: [],
-                status: STATUS.ACTIVE
-            },
-            {
-                address: {
-                    country: "Mozambique",
-                    city: "Matola",
-                    cords: {
-                        lat: 223,
-                        long: 12
-                    },
-                    province: "Maputo",
-                    street: "Rua do complexo, 224"
-                },
-                amenities: [ STORE_AMENITIES.BAR, STORE_AMENITIES.WI_FI ],
-                contact: {
-                    email: "",
-                    phone: [
-                        {
-                            number: "861646933",
-                           type: PHONE_TYPE.MAIN
-                        }
-                    ]
-                },
-                description: "Lorem ispusm lor sid lorem orem efvan dsi",
-                id: getId(),
-                name: "Complexo Mutumbela",
-                rooms: [],
-                status: STATUS.ACTIVE
-            },
-            {
-                address: {
-                    country: "Mozambique",
-                    city: "Matola",
-                    cords: {
-                        lat: 223,
-                        long: 12
-                    },
-                    province: "Maputo",
-                    street: "Rua do complexo, 224"
-                },
-                amenities: [ STORE_AMENITIES.BAR, STORE_AMENITIES.WI_FI ],
-                contact: {
-                    email: "",
-                    phone: [
-                        {
-                            number: "861646933",
-                           type: PHONE_TYPE.MAIN
-                        }
-                    ]
-                },
-                description: "Lorem ispusm lor sid lorem orem efvan dsi",
-                id: getId(),
-                name: "Complexo Mutumbela",
-                rooms: [],
-                status: STATUS.ACTIVE
-            },
-            {
-                address: {
-                    country: "Mozambique",
-                    city: "Matola",
-                    cords: {
-                        lat: 223,
-                        long: 12
-                    },
-                    province: "Maputo",
-                    street: "Rua do complexo, 224"
-                },
-                amenities: [ STORE_AMENITIES.BAR, STORE_AMENITIES.WI_FI ],
-                contact: {
-                    email: "",
-                    phone: [
-                        {
-                            number: "861646933",
-                           type: PHONE_TYPE.MAIN
-                        }
-                    ]
-                },
-                description: "Lorem ispusm lor sid lorem orem efvan dsi",
-                id: getId(),
-                name: "Complexo Mutumbela",
-                rooms: [],
-                status: STATUS.ACTIVE
-            }
-        ],
+        list: [],
     }
 
     return NextResponse.json(response)
+}
+
+
+export const POST = async (req: NextRequest) => {
+    const storeEnrollment = await req.json() as EnrollStoreType
+
+    return apiHandler(
+        req,
+        async (config) => {
+            await StoreModel.register(storeEnrollment, config)
+
+            return NextResponse.json({ message: "Store was successfully registered" }, { status: 201})
+        }
+    )
 }
