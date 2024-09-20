@@ -6,6 +6,7 @@ import { User } from "@/types/user";
 import { StoreProductType } from "@/types/product";
 import { WarehouseType } from "@/types/warehouse";
 import { CategoryType } from "@/types/category";
+import { FeeType } from "@/types/fees";
 import { SupplierDBType } from "@/types/Supplier";
 import { PropertyType } from "@/types/property";
 import { BookingDBType } from "@/types/booking";
@@ -14,6 +15,7 @@ const initialCollections = {
     BOOKINGS: null,
     CUSTOMERS: null,
     EXPENSES_CATEGORIES: null,
+    FEES: null,
     GUESTS: null,
     PRODUCTS: null,
     PROPERTIES: null,
@@ -53,6 +55,7 @@ const createMongoDBConnection = async () => {
                 BOOKINGS: clusterDB.collection<BookingDBType>("bookings"),
                 CUSTOMERS: clusterDB.collection<CustomerType>("clients"),
                 EXPENSES_CATEGORIES: clusterDB.collection<CategoryType>("expenses-categories"),
+                FEES: clusterDB.collection<FeeType>("fees"),
                 GUESTS: clusterDB.collection<GuestType>("guests"),
                 PRODUCTS: clusterDB.collection<StoreProductType>("products"),
                 PROPERTIES: clusterDB.collection<PropertyType>("properties"),
