@@ -6,5 +6,5 @@ export const validateArray = (key: string, list: Object) => {
 }
 
 export const validateObject = (key: string, obj: Object) => {
-    if(!obj || typeof obj !== "object") throw new InvalidArgumentError(`nvalid ${key}`)
+    if(!obj || typeof obj !== "object") throw new InvalidArgumentError(`Invalid ${key}`)
 }
