@@ -25,6 +25,11 @@ const useDocument = (initialDocument?: Document) => {
         }
     )
 
+    const getDocument = useCallback(
+        () => ({ ...document }),
+        [ document ]
+    )
+
     const changeDocumentExpireDate = useCallback((newDate: string) => {
         setDocument(document => {
             const hasError = !isValidDocumentExpireDate(newDate, document.issueDate.value)
@@ -116,6 +121,7 @@ const useDocument = (initialDocument?: Document) => {
         changeDocumentIssueDate,
         changeDocumentNumber,
         changeDocumentType,
+        getDocument,
         resetDocument,
         hasErrors,
         toLiteralObject
