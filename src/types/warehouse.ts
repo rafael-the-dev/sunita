@@ -1,6 +1,8 @@
+import { AddressType } from "./address"
 import { CategoryType as ExpenseCategory } from "./category"
 import { ContactType } from "./contact";
 import { ExpenseType } from "./expense";
+import { PaymentType } from "./payment-method";
 import { WarehouseProductType } from "./product"
 import { RoomType, BookingDBType } from "./room"
 import { SaleDebtType, SaleType } from "./sale";
@@ -8,6 +10,7 @@ import { StockReportType } from "./stock";
 import { StoreUserType } from "./user";
 import { STATUS } from ".";
 import { StoreCustomerType } from "./guest";
+import { User as UserType } from "./user";
 
 export enum STORE_AMENITIES {
     BAR = "bar",
@@ -16,33 +19,28 @@ export enum STORE_AMENITIES {
     PARKING = "parking",
     TV = "televesion",
     WI_FI = "wi-fi"
-}
-
-export type StoreAddressType = {
-    country: string,
-    city: string,
-    cords: {
-        lat: number,
-        long: number
-    },
-    province: string,
-    street: string
-}
+} 
 
 type TableMatch = {
     createdAt: string | Date,
     id: string
 }
 
-export type BaseStore = {
-    amenities: STORE_AMENITIES[],
-    address: StoreAddressType,
+export type AbstractStoreType = {
+    address: AddressType,
     contact: ContactType;
-    description: string,
     id: string;
     name: string,
-    rooms: TableMatch[];
     status: STATUS
+}
+
+export type EnrollStoreType = AbstractStoreType & {
+    payment: PaymentType,
+    users: UserType[],
+}
+
+export type BaseStore = AbstractStoreType & {
+    rooms: TableMatch[];
 }
 
 type Supplier = {
@@ -62,6 +60,8 @@ export type WarehouseType = BaseStore & {
     users: StoreUserType[],
     "unpaid-sales": SaleDebtType[]
 };
+
+export type StoreType = WarehouseType
 
 export type StoresResponse<T> = {
     list: T
