@@ -89,7 +89,7 @@ class Users {
             .deleteOne({ username });
     }
 
-    static async register({ address, document, category, firstName, lastName, username }: User, { mongoDbConfig, user }: SettingsType) {
+    static async register({ address, document, category, contact, firstName, lastName, username }: User, { mongoDbConfig, user }: SettingsType) {
         try {
             await this.get({ username }, { mongoDbConfig })
 
@@ -106,20 +106,10 @@ class Users {
             const hashedPassword = await bcrypt.hash("123456", 10);
 
             const newUser: User = {
-                address: {
-                    block: "",
-                    city: "",
-                    country: "",
-                    house: 0,
-                    province: "",
-                },
+                address: null,
+                contact: null,
                 category: USER_CATEGORY.EMPLOYEE,
-                document: {
-                    expireDate: "",
-                    issueDate: "",
-                    number: "",
-                    type: DOCUMENT_TYPE.DRIVING_LICENCE,
-                },
+                document: null,
                 firstName: "",
                 id: getId(),
                 lastName: "",
@@ -131,6 +121,7 @@ class Users {
             const userProxy = getUserProxy(newUser);
 
             userProxy.address = address;
+            userProxy.contact = contact
             userProxy.document = document;
             userProxy.category = category;
             userProxy.firstName = firstName;
