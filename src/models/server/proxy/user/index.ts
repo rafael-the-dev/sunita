@@ -1,20 +1,13 @@
 
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
-import { AddressType, BaseUserType, Document, USER_CATEGORY, User } from "@/types/user"
+import { BaseUserType, USER_CATEGORY, User } from "@/types/user"
 
-import { 
-    isValidAddress, 
-    isValidDocumentExpireDate, isValidDocumentIssueDate, isValidDocumentNumber, isValidDocumentType, 
-    isValidHouseNumber, isValidName, isValidUsername 
-} from "@/validation/user"
+import { validateAddress } from "@/models/server/proxy/validation";
+import { validateContact, validateDocument } from "../validation/user";
+import { isValidName, isValidUsername } from "@/validation/user"
+import { validate } from "@/validation";
 
-type PropType = "address" | "category" | "document" | "firstName" | "lastName" | "password" | "username"
-
-const validate = (value: string, errorMessage: string, fn: (value: string | Date) => boolean) => {
-    if(!fn(value)) {
-        throw new InvalidArgumentError(errorMessage)
-    }
-}
+type PropType = "address" | "category" | "contact" | "document" | "firstName" | "lastName" | "password" | "username"
 
 export const getUserProxy = (target: User) => {
 
@@ -22,15 +15,8 @@ export const getUserProxy = (target: User) => {
         set(target: BaseUserType, prop: PropType, newValue) {
             switch(prop) {
                 case "address": {
-                    if(typeof newValue !== "object") throw new InvalidArgumentError("Invalid address");
-
-                    const address = newValue as AddressType
-
-                    validate(address.block, "Invalid block name", isValidAddress)
-                    validate(address.city, "Invalid city name", isValidAddress)
-                    validate(address.country, "Invalid country name", isValidAddress)
-                    validate(address.province, "Invalid province name", isValidAddress)
-                    validate(address.house.toString(), "Invalid house number", isValidHouseNumber)
+                    //throw an error, If address is not a valid object
+                    validateAddress(newValue)
 
                     return Reflect.set(target, prop, newValue)
                 }
@@ -43,20 +29,17 @@ export const getUserProxy = (target: User) => {
 
                     return Reflect.set(target, prop, newValue)
                 }
+                case "contact": {
+                    //throw an error, If contact is invalid
+                    validateContact(newValue)
+
+                    return Reflect.set(target, prop, newValue)
+                }
                 case "document": {
-                    if(typeof newValue !== "object") throw new InvalidArgumentError("Invalid first name");
+                    //throw an error, If document is invalid
+                    validateDocument(newValue)
 
-                    const document = newValue as Document;
-
-                    validate(document.type, "Invalid document type", isValidDocumentType)
-                    validate(document.issueDate, "Invalid document issue date", isValidDocumentIssueDate)
-                    validate(document.number, "Invalid document number", isValidDocumentNumber)
-
-                    if(!isValidDocumentExpireDate(document.expireDate, document.issueDate)) {
-                        throw new InvalidArgumentError("Invalid document expire date")
-                    }
-
-                    return Reflect.set(target, prop, document)
+                    return Reflect.set(target, prop, newValue)
                 }
                 case "firstName": {
                    validate(newValue as string, "Invalid first name", isValidName)
