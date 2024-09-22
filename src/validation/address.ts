@@ -1,4 +1,6 @@
 
+import { COUNTRIES } from "@/types/address"
+
 //The house or building number must start with one digit in the range 1-9, and be follwed by zero or more digits
 export const isValidAddressNumber = (value: string) => {
     const pattern = /^[1-9][0-9]*$/
@@ -16,7 +18,9 @@ export const isValidAddressStreet = (value: string) => {
 }
 
 export const isValidCountry = (country: string) => {
-    return !country && [].includes(country);
+    const countriesList = Object.values(COUNTRIES)
+
+    return country && countriesList.includes(country as COUNTRIES);
 }
 
 
