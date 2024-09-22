@@ -1,3 +1,4 @@
+import { defaultInputField } from "@/config/input";
 
 export const isPublicRoute = (pathname: string) => {
     const publicPaths = [
@@ -16,3 +17,5 @@ export const getList = (enumList: Object) => Object
 
 
 export const getFullName = ({ firstName, lastName }: {firstName: string, lastName: string }) => `${firstName} ${lastName}` 
+
+export const isInvalidInput = (input: typeof defaultInputField) => input.error || !Boolean(input.value.trim()) 
