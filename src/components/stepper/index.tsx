@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 type PropsType = {
+    alert?: React.ReactNode;
     components: React.ReactNode[];
     className?: string;
     steps: string[];
@@ -16,7 +17,7 @@ type PropsType = {
     resetStepperRef?: React.MutableRefObject<() => void>
 }
 
-const HorizontalLinearStepper = ({ components, className, steps, FinishButton , resetStepperRef}: PropsType) => {
+const HorizontalLinearStepper = ({ alert, components, className, steps, FinishButton , resetStepperRef}: PropsType) => {
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set<number>());
 
@@ -117,6 +118,9 @@ const HorizontalLinearStepper = ({ components, className, steps, FinishButton , 
         ) : (
         <React.Fragment>
             <div className="grow mt-6">
+                {
+                    alert
+                }
                 {
                     components[activeStep]
                 }
