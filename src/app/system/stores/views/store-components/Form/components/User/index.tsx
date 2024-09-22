@@ -16,9 +16,10 @@ const UsersContainer = () => {
         user: {
             address,
             contact,
-            changeName,
+            changeName, changeUsername,
             document,
             firstName,
+            getUserInput,
             lastName
         } 
     } = useContext(FormContext)
@@ -44,6 +45,14 @@ const UsersContainer = () => {
                     className="mb-0 w-full sm:w-1/2"
                     label="Last name"
                     onChange={changeName("lastName")}
+                />
+            </Row>
+            <Row>
+                <Textfield 
+                    { ...getUserInput().username }
+                    className="mt-4 mb-0 w-full sm:w-1/2"
+                    label="Username"
+                    onChange={changeUsername}
                 />
             </Row>
             <fieldset className="flex flex-col gap-y-4 mt-6">
