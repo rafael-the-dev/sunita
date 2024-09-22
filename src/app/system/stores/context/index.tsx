@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { FetchResponseType } from "@/types"
+import { FeesResponseType } from "@/types/fees"
 import { PropsType, StoresContextType } from "./types"
 import { Store } from "@/types/warehouse"
 
@@ -16,9 +17,36 @@ export const StoresContextProvider = ({ children }: PropsType) => {
         }
     )
 
+    const fees = useFetch<FetchResponseType<FeesResponseType>>(
+        {
+            autoFetch: false,
+            url: `/api/stores/fees`
+        }
+    )
+
+    const fetchFees = fees.fetchData
+
+    React.useEffect(
+        () => {
+            const controller = new AbortController()
+
+            const timeout = setTimeout(
+                () => fetchFees({ signal: controller.signal }), 
+                30000
+            )
+
+            return () => {
+                controller.abort()
+                clearTimeout(timeout)
+            }
+        },
+        [ fetchFees ]
+    )
+
     return (
         <StoresContext.Provider
             value={{
+                fees,
                 stores
             }}>
             { children }
