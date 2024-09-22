@@ -9,6 +9,7 @@ type ChangeEventHandler = (e: React.ChangeEvent<HTMLInputElement>) => void
 export type AddressEventHandlers = {
     countryChangeHandler: ChangeEventHandler;
     cityChangeHandler: ChangeEventHandler;
+    hasErrors: () => boolean;
     numberChangeHandler: ChangeEventHandler;
     statetChangeHandler: ChangeEventHandler;
     streetChangeHandler: ChangeEventHandler;
