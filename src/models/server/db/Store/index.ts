@@ -45,6 +45,8 @@ class Store {
         await FeesModel.register(newFee, config)
 
         if(!store.users || !Array.isArray(store.users) || store.users.length !== 1) throw new InvalidArgumentError("Admin details not provided.")
+        
+        config.user.stores[0].storeId = id
 
         await UsersModel.register(store.users[0], config)
 
