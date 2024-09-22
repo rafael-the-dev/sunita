@@ -1,8 +1,10 @@
 
+import {COUNTRIES} from "@/types/address"
+
 import { defaultInputField } from "@/config/input"
 
 export const initialAddress = { 
-    country: structuredClone(defaultInputField),
+    country: { ...defaultInputField, value: COUNTRIES.MOZAMBIQUE },
     province: structuredClone(defaultInputField),
     city: structuredClone(defaultInputField), 
     cords: {
