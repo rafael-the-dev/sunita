@@ -5,6 +5,8 @@ import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContex
 
 import useSearchParams from "@/hooks/useSearchParams"
 
+import { StoresContext } from "../context"
+
 import Button from "@/components/shared/button"
 import StoresForm from "./store-components/Form"
 import Table from "./store-components/Table"
@@ -16,13 +18,18 @@ enum DIALOG_TYPES {
 const StoresView = () => {
     const { fetchDataRef } = React.useContext(AppContext)
     const { setDialog } = React.useContext(StaticTabsContext)
+    const { stores } = React.useContext(StoresContext)
 
     const searchParams = useSearchParams()
 
     const dialogQueryParam = searchParams.get("dialog", "")
 
+    const fetchStores = stores.fetchData
+
     const openFormDialog = React.useCallback(
         () => {
+            fetchDataRef.current = fetchStores
+
             setDialog(
                 {
                     header: {
@@ -32,7 +39,7 @@ const StoresView = () => {
                 }
             )
         },
-        [ setDialog ]
+        [ fetchDataRef, fetchStores, setDialog ]
     )
 
     const clickHandler = React.useCallback(
