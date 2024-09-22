@@ -1,9 +1,15 @@
 import { useContext } from "react"
 
 import { AddressInputType, AddressEventHandlers } from "@/hooks/useAddress/types"
+import {COUNTRIES} from "@/types/address"
+
+import { getList } from "@/helpers"
 
 import Row from "@/components/Form/RegisterUser/components/Row"
+import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
+
+const countriesList = getList(COUNTRIES)
 
 type PropsType = AddressEventHandlers & {
     getAddress: () => AddressInputType
@@ -15,16 +21,15 @@ const Address = ({ getAddress, countryChangeHandler, cityChangeHandler, numberCh
     return (
         <div className="flex flex-col gap-y-4">
             <Row>
-                <Textfield 
+                <Select 
                     { ...address.country }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Counry"
+                    label="Country"
+                    list={countriesList}
                     onChange={countryChangeHandler}
-                    placeholder="Insert country name"
-                    required
                 />
                 <Textfield 
-                    { ...address.province }
+                    { ...address.state }
                     className="mb-0 w-full sm:w-1/2"
                     label="State/Province"
                     onChange={statetChangeHandler}
