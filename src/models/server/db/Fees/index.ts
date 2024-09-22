@@ -1,19 +1,26 @@
 
-import { ConfigType } from "@/types/app-config-server"
+import { ConfigType, FiltersType } from "@/types/app-config-server"
 import { BaseFeeType, FeeType, FEES_TYPE } from "@/types/fees"
 
 import getFeeProxy from "./proxy"
 import { getId } from "@/helpers/id"
+import { getFees } from "./helpers/db"
 import { toISOString } from "@/helpers/date"
 
 class Fees {
+    static async getAll(filters: FiltersType, config: ConfigType) {
+        const data = await getFees(filters, config)
+       
+        return { data }
+    }
+
     static async register(newFee: BaseFeeType, config: ConfigType) {
         const { storeId } = config.user.stores[0]
 
         const id = getId()
 
         const fee: FeeType = {
-            date: toISOString(new Date(Date.now())),
+            createdAt: toISOString(new Date(Date.now())),
             id,
             latePaymentFine: false,
             price: 0,
