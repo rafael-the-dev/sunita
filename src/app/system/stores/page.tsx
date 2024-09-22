@@ -9,6 +9,7 @@ import { LoginContext } from "@/context/LoginContext"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import { Provider } from "@/components/shared/FixedTabsContainer"
+import { StoresContextProvider } from "./context"
 
 import StoresView from "./views"
 
@@ -40,9 +41,11 @@ const StoresPage = () => {
 }
 
 const ProviderContainer = () => (
-    <Provider tabs={tabs}>
-        <StoresPage />
-    </Provider>
+    <StoresContextProvider>
+        <Provider tabs={tabs}>
+            <StoresPage />
+        </Provider>
+    </StoresContextProvider>
 );
 
 export default ProviderContainer;
