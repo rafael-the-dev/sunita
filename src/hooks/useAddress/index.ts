@@ -7,22 +7,21 @@ import { defaultInputField } from "@/config/input";
 import { initialAddress } from "./values";
 
 import { isValidCountry, isValidCity, isValidNumber, isValidState, isValidStreet } from "@/validation/address";
+import { isInvalidInput } from "@/helpers";
 
 type KeysType = "country" | "city" | "number" | "state" | "street";
-
-const hasError = (input: typeof defaultInputField) => input.error || !(input.value.trim() )
 
 const useAddress = () => {
     const [ address, setAddress ] = React.useState(initialAddress)
 
     const hasErrors = () => {
         return [
-            hasError(address.city),
-            hasError(address.country),
-            hasError(address.province),
-            hasError(address.state),
-            hasError(address.street),
-            hasError(address.number),
+            isInvalidInput(address.city),
+            isInvalidInput(address.country),
+            isInvalidInput(address.province),
+            isInvalidInput(address.state),
+            isInvalidInput(address.street),
+            isInvalidInput(address.number),
         ].find(error => error)
     }
 
@@ -35,11 +34,11 @@ const useAddress = () => {
         (e: React.ChangeEvent<HTMLInputElement>, key: KeysType, errorMessage: string, validator: (value: string) => boolean) => {
             const { value } = e.target
 
-            const hasError = validator(value)
+            const hasError = !validator(value)
 
             setAddress(address => ({
                 ...address,
-                country: {
+                [key]: {
                     error: hasError as boolean,
                     helperText: hasError ? errorMessage : "",
                     value
@@ -48,7 +47,6 @@ const useAddress = () => {
         },
         []
     )
-
 
     const countryChangeHandler = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => changeHandlerHelper(e, "country", "Invalid country name", isValidCountry),
@@ -66,7 +64,7 @@ const useAddress = () => {
     )
 
     const statetChangeHandler = React.useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => changeHandlerHelper(e, "state", "Invalid state", isValidStreet),
+        (e: React.ChangeEvent<HTMLInputElement>) => changeHandlerHelper(e, "state", "Invalid state", isValidState),
         [ changeHandlerHelper ]
     )
 
