@@ -1,11 +1,13 @@
 
-import { ConfigType } from "@/types/app-config-server"
+import { ConfigType, FiltersType } from "@/types/app-config-server"
 import { EnrollStoreType, StoreType } from "@/types/warehouse"
 import { BaseFeeType, FEES_TYPE } from "@/types/fees"
 import { STATUS } from "@/types"
 
+import { FetchResponseType } from "@/types"
 import { getId } from "@/helpers/id"
 import getStoreProxy from "./proxy"
+import { getStores } from "./helpers/db"
 
 import FeesModel from "../Fees"
 import UsersModel from "../Users"
@@ -14,6 +16,14 @@ import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
 
 class Store {
+    static async getAll(filters: FiltersType, config: ConfigType) {
+        const stores = await getStores(filters, config)
+
+        return {
+            data: stores
+        }
+    }
+
     static async register(store: EnrollStoreType, config: ConfigType) {
         if(!store || typeof store !== "object") throw new InvalidArgumentError("Invalid store details")
 
@@ -31,6 +41,7 @@ class Store {
 
         const storeProxy = getStoreProxy(enrollStore)
 
+        storeProxy.address = store.address
         storeProxy.contact = store.contact
         storeProxy.name = store.name
 
@@ -52,7 +63,7 @@ class Store {
 
         try {
             const newStore: StoreType = {
-                address: null,
+                address: storeProxy.address,
                 contact: storeProxy.contact,
                 clients: [],
                 expenses: [],
