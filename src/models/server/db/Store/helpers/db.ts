@@ -25,7 +25,5 @@ export const getStores = async (filters: FiltersType, config: ConfigType) => {
         )
         .toArray()
     
-    stores.forEach(store => console.log(store))
-    
     return stores
 }
