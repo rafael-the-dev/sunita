@@ -1,6 +1,10 @@
 
+export enum COUNTRIES {
+    MOZAMBIQUE = 'mozambique'
+}
+
 export type AddressType = {
-    country: string,
+    country: COUNTRIES,
     cords: {
         lat: number,
         long: number
