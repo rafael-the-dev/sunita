@@ -7,12 +7,15 @@ import { apiHandler } from "@/middlewares/route-handler"
 
 import StoreModel from "@/models/server/db/Store"
 
-export const GET = (req: NextRequest) => {
-    const response: StoresResponse<BaseStore[]> = {
-        list: [],
-    }
+export const GET = async (req: NextRequest) => {
+    return apiHandler(
+        req, 
+        async (config) => {
+            const response = await StoreModel.getAll({}, config)
 
-    return NextResponse.json(response)
+            return NextResponse.json(response)
+        }
+    )
 }
 
 
