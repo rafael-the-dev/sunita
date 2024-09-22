@@ -61,6 +61,10 @@ export type WarehouseType = BaseStore & {
     "unpaid-sales": SaleDebtType[]
 };
 
+export type Store = AbstractStoreType & {
+    users: UserType[]
+}
+
 export type StoreType = WarehouseType
 
 export type StoresResponse<T> = {
