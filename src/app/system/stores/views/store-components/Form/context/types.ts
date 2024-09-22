@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode } from "react"
+import { ReactNode } from "react"
 
 import { AddressEventHandlers, AddressInputType } from "@/hooks/useAddress/types"
 import { ContactInputType, ContactMethodsType } from "@/hooks/useContact/types"
@@ -6,6 +6,7 @@ import { DocumentInputFunctions } from "@/hooks/useDocument/types"
 import { EnrollStoreType } from "@/types/warehouse"
 import { PaymentType } from "@/types/payment-method"
 import { PaymentFunctionsType } from "@/hooks/usePayment/types"
+import { UserInputHandlers } from "@/hooks/useUser/types"
 
 import { defaultInputField } from "@/config/input"
 
@@ -26,9 +27,8 @@ export type FormContextType = {
     payment: PaymentFunctionsType & {
         getPayment: () => PaymentType
     },
-    user: {
-        address: AddressType,
-        changeName: (key: "firstName" | "lastName") => (e: ChangeEvent<HTMLInputElement>) => void,
+    user: UserInputHandlers & {
+        address: AddressType
         contact: ContactType,
         document: DocumentInputFunctions,
         firstName: InputType,
