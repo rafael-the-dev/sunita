@@ -1,26 +1,28 @@
-import { FormEvent, useContext, useMemo, useRef } from "react"
-import classNames from "classnames"
+import { FormEvent, useContext, useMemo, useRef } from "react";
+import classNames from "classnames";
 
-import styles from "./styles.module.css"
+import styles from "./styles.module.css";
 
-import { AppContext } from "@/context/AppContext"
-import { FormContext, FormContextProvider } from "./context"
+import { AppContext } from "@/context/AppContext";
+import { FormContext, FormContextProvider } from "./context";
 
-import useFetch from "@/hooks/useFetch"
+import useFetch from "@/hooks/useFetch";
 
-import Alert from "@/components/alert"
-import Button from "@/components/shared/button"
-import BaseDetailsStep from "./components/BaseDetails"
-import PaymentStep from "./components/Payment"
-import Stepper from "@/components/stepper"
-import UsersStep from "./components/User"
+import { isInvalidInput } from "@/helpers";
+
+import Alert from "@/components/alert";
+import Button from "@/components/shared/button";
+import BaseDetailsStep from "./components/BaseDetails";
+import PaymentStep from "./components/Payment";
+import Stepper from "@/components/stepper";
+import UsersStep from "./components/User";
 
 const Form = () => {
-    const { fetchDataRef } = useContext(AppContext)
-    const { hasErrors, toLiteralObject } = useContext(FormContext)
+    const { fetchDataRef } = useContext(AppContext);
+    const { hasErrors, reset, toLiteralObject, user } = useContext(FormContext);
 
-    const hasPayload = false
-    const hasError = hasErrors()
+    const hasPayload = false;
+    const hasError = hasErrors() || isInvalidInput(user.getUserInput().username) || user.address.hasErrors();
     
     const { fetchData, loading } = useFetch(
         {
@@ -81,11 +83,13 @@ const Form = () => {
                     }
 
                     await fetchStoresFuncRef.current?.({})
+
+                    reset()
                 }
             }
-        )
+        );
 
-        onOpen.current?.()
+        onOpen.current?.();
     }
 
 
@@ -93,8 +97,8 @@ const Form = () => {
         <form 
             className={classNames(styles.stepper, "!overflow-hidden")}
             onSubmit={submitHandler}>
-            { alert }
             <Stepper 
+                alert={alert}
                 className={classNames(styles.stepper, "box-border flex flex-col items-stretch justify-between overflow-y-auto px-2 py-4 sm:pt-6 sm:px-4")}
                 components={[ <BaseDetailsStep key={0} />, <UsersStep key={1} />, <PaymentStep key={2} /> ]}
                 resetStepperRef={resetStepperRef}
