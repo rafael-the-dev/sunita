@@ -25,7 +25,7 @@ class Fees {
             registeredBy: config.user.username,
         }
 
-        const feeProxy = getFeeProxy(fee, 2500)
+        const feeProxy = getFeeProxy(fee, 8500)
 
         if(newFee.type === FEES_TYPE.ENROLLMENT) feeProxy.latePaymentFine = false;
         else feeProxy.latePaymentFine = true;
