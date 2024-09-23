@@ -18,9 +18,18 @@ const TableView = () => {
     const headers = React.useRef<TableHeadersType[]>(
         [
             {
-                label: "ID",
+                label: "Store",
                 key: {
-                    value: "id"
+                    value: "store",
+                    subKey: {
+                        value: "name"
+                    }
+                }
+            },
+            {
+                label: "Created at",
+                key: {
+                    value: "createdAt"
                 }
             },
             {
