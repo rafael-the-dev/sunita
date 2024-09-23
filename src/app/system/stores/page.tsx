@@ -38,11 +38,13 @@ const StoresPage = () => {
 
     const tab = searchParams.get("tab", TABS.STORES)
 
+    const feesList = fees?.data?.data?.list ?? []
+
     return (
         <div className={classNames("scrollable overflow-x-auto px-4 pt-6")}>
             {
                 {
-                    [TABS.FEES]: <FiltersContextProvider autoFetch={false} refetchData={fees.fetchData} url="/api/stores/fees"><FeesView /></FiltersContextProvider>,
+                    [TABS.FEES]: <FiltersContextProvider autoFetch={false} list={feesList} refetchData={fees.fetchData} url="/api/stores/fees"><FeesView /></FiltersContextProvider>,
                     [TABS.STORES]: <StoresView />
                 }[tab]
             }
