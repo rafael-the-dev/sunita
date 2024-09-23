@@ -4,7 +4,7 @@ import { ConfigType, FiltersType } from "@/types/app-config-server"
 import { FeeDetailsType } from "@/types/fees"
 
 export const getFees = async (filters: FiltersType, config: ConfigType) => {
-    //
+    
     const fees = await config
         .mongoDbConfig
         .collections
