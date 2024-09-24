@@ -1,14 +1,15 @@
+import Head from "next/head"
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
+import "@/styles/reset.css";
+
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css'; 
 import '@fontsource/roboto/700.css';
-
-import "@/styles/reset.css";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,6 +17,8 @@ import "slick-carousel/slick/slick-theme.css";
 import 'devextreme/dist/css/dx.light.css';
 import 'swiper/css';
 import 'swiper/css/autoplay';
+
+import 'leaflet/dist/leaflet.css';
 
 import "@/styles/tailwind.css";
 import "@/styles/globals.css";
