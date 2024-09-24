@@ -2,7 +2,9 @@
 
 import { useCallback, useContext, useEffect } from "react"
 import classNames from "classnames"
+import dynamic from "next/dynamic"
 import { useParams } from "next/navigation"
+
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Typography from "@mui/material/Typography"
 
@@ -27,6 +29,11 @@ import Title from "./components/Title"
 import Tab from "./components/Tab"
 import Testimonials from "@/app/components/Customers/Testimonials"
 import WhyUs from "@/app/components/Customers/WhyUs"
+
+const MapContainer = dynamic(
+    () => import("./components/Map"),
+    { ssr: false }
+)
 
 enum DIALOG {
     BOOKING_FORM = "booking-form"
@@ -150,10 +157,13 @@ const PropertyContainer = () => {
                         { property?.name }
                     </Typography>
                 </div>
-                <Images 
-                    alt={property?.name}
-                    src={property?.images}
-                />
+                <div className="items-stretch lg:flex">
+                    <Images 
+                        alt={property?.name}
+                        src={property?.images}
+                    />
+                    <MapContainer />
+                </div>
                 <div className="flex items-center mt-8 mb-4">
                     <Title className="opacity-90">
                         Amenities:
