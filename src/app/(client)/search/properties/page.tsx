@@ -1,6 +1,7 @@
 "use client"
 
 import { Suspense } from "react"
+import dynamic from "next/dynamic"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
@@ -14,6 +15,11 @@ import List from "./components/List"
 import SearchBox from "./components/Searchbox"
 import Tabs from "./components/Tabs"
 
+const MapContainer = dynamic(
+    () => import("./components/Map"),
+    { ssr: false }
+)
+
 const StoresPage = () => {
     return (
         <div>
@@ -25,8 +31,9 @@ const StoresPage = () => {
                 <div className="bg-white grow py-6 px-4">
                     <SearchBox />
                     <Tabs />
-                    <div className="mt-10 md:flex">
+                    <div className="mt-10">
                         <List />
+                        <MapContainer />
                     </div>
                 </div>
             </main>
