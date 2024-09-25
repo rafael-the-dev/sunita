@@ -2,21 +2,33 @@ import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
-import { StoreProductType, WarehouseProductType } from "@/types/product";
+import { StoreProductType } from "@/types/product";
 import { SaleType, SaleInfoType, SaleItemType } from "@/types/sale";
 
 import { toISOString } from "@/helpers/date";
 import { getId } from "@/helpers/id";
-import { isInvalidNumber } from "@/helpers/validation";
-import { getProduct, isValidCartItemTotalPrice, updateSale } from "@/helpers/sales";
+import { updateSale } from "@/helpers/sales";
 import { sort } from "@/helpers/sort";
 import { getProducts, updateProduct } from "@/helpers/products";
+import { getAndSetTotalValues } from "./SaleDebt/helpers"
 import getProductProxy from "../proxy/product";
 import getSaleProxy from "../proxy/sale";
 
 import Error404 from "@/errors/server/404Error";
-import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
+const toSaleType = (sale: SaleInfoType) => (
+    {
+        ...sale,
+        items: sale.items.map(item => ({
+            ...item,
+            product: {
+                id: item.product.id,
+                price: item.product.sellPrice
+            }
+        })),
+        user: sale.user.username
+    }
+)
 
 class Sale {
     static async getAll({ filters,  storeId }: { filters?: Object, storeId: string }, { mongoDbConfig, user }: ConfigType) {
@@ -137,40 +149,16 @@ class Sale {
         
         const itemsList: SaleItemType[] = [];
         const cartItemssMapper = new Map<string, RequestCartItem>();
-        let totalProfit = 0;
 
         // sum all quantity values, then throws an InvalidArgumentError if quantity is invalid
-        const totalPrice =  cart.items.reduce((prevValue, currentItem) => {
-            //check if current item quantity value is valid, then throws an error if not
-            if(isInvalidNumber(currentItem.quantity)) {
-                throw new InvalidArgumentError("Quantity must not be less than or equal to zero");
+        const { totalPrice, totalProfit } = getAndSetTotalValues(
+            {
+                cartItems: cart.items,
+                itemsList,
+                itemsMapper: cartItemssMapper,
+                productsMapper: productsMapper
             }
-
-            const currentProduct = getProduct(productsMapper, currentItem.product.id);
-
-            if(currentItem.quantity > currentProduct.stock.quantity) {
-                throw new InvalidArgumentError(`Quantity is greater than available stock`);
-            }
-
-            isValidCartItemTotalPrice(currentItem, currentProduct);
-
-            const item = {
-                ...currentItem,
-                id: currentItem.product.id,
-                product: {
-                    id: currentItem.product.id,
-                    price: currentProduct.sellPrice
-                }
-            };
-
-            //sum profit
-            totalProfit = currency(totalProfit).add(currency(currentProduct.profit).multiply(currentItem.quantity).value).value;
-            itemsList.push(item);
-            cartItemssMapper.set(currentProduct.id, currentItem);
-
-            const price = currency(currentProduct.sellPrice).multiply(currentItem.quantity);
-            return currency(prevValue).add(price).value;
-        }, 0);
+        )
 
         try {
 
@@ -273,50 +261,25 @@ class Sale {
             }
         )
 
-        //const store = await Store.get({ id: storeId }, { mongoDbConfig, user })
-        //const { sales } = store;
-
-        //const salesClone = structuredClone(sales);
         const productsClone = structuredClone(productsList);
-
-        //const selectedProducts = productsClone.filter(product => productsIds.includes(product.id));
         
         const itemsList: SaleItemType[] = [];
         const cartItemssMapper = new Map<string, RequestCartItem>();
-        let totalProfit = 0;
+        const productsMapper = new Map<string, StoreProductType>();
 
-        //const saleItemsMapper = new Map<string, SaleInfoItemType>()
-
-        // sum all quantity values, then throws an InvalidArgumentError if quantity is invalid
-        const totalPrice =  cart.items.reduce((prevValue, currentItem) => {
-            //check if current item quantity value is valid, then throws an error if not
-            if(isInvalidNumber(currentItem.quantity)) {
-                throw new InvalidArgumentError("Quantity must not be less than or equal to zero");
+         // sum all quantity values, then throws an InvalidArgumentError if quantity is invalid
+         const { totalPrice, totalProfit } = getAndSetTotalValues(
+            {
+                cartItems: cart.items,
+                itemsList,
+                itemsMapper: cartItemssMapper,
+                productsMapper: productsMapper
             }
+        )
 
-            const currentProduct = productsClone.find(product => currentItem.product.id === product.id);
+        const asSaleType: SaleType = toSaleType(sale)
 
-            if(!currentProduct) throw new Error404(`Product with '${currentItem.product.id}' id not found`);
-
-            const item = {
-                ...currentItem,
-                id: currentItem.product.id,
-                product: {
-                    id: currentItem.product.id,
-                    price: currentProduct.sellPrice
-                }
-            };
-
-            //sum profit
-            totalProfit = currency(totalProfit).add(currency(currentProduct.profit).multiply(currentItem.quantity)).value;
-            itemsList.push(item);
-            cartItemssMapper.set(currentProduct.id, currentItem);
-
-            const price = currency(currentProduct.sellPrice).multiply(currentItem.quantity);
-            return currency(prevValue).add(price).value;
-        }, 0);
-
-        const saleProxy = getSaleProxy(sale, cart)
+        const saleProxy = getSaleProxy(asSaleType, cart)
 
         try {
 
@@ -333,7 +296,7 @@ class Sale {
 
                 const difference = currency(saleItem.quantity).subtract(mappedCartItem.quantity).value;
                 saleItem.quantity = currency(saleItem.quantity).subtract(difference).value;
-                saleItem.total = currency(saleItem.quantity).multiply(saleItem.product.price).value;
+                saleItem.total = currency(saleItem.quantity).multiply(saleItem.product.sellPrice).value;
 
                 productProxy.stock.quantity = currency(product.stock.quantity).add(difference).value
             })
@@ -348,7 +311,7 @@ class Sale {
         } catch(e) {
             await Promise.all(
                 [ 
-                    updateSale(salesList[0], storeId, mongoDbConfig),
+                    updateSale(toSaleType(salesList[0]), storeId, mongoDbConfig),
                     ...structuredClone(productsList).map(product => {
                         return updateProduct(getProductProxy(product), storeId, { mongoDbConfig, user })
                     })
