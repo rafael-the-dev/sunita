@@ -21,7 +21,7 @@ const initialBaseDetails = {
 export const FormContextProvider = ({ children }: PropsType) => {
     const [ baseDetails, setBaseDetails ] = React.useState(initialBaseDetails)
 
-    const address = useAddress()
+    const address = useAddress({ hasCords: true })
     const contact = useContact()
     const payment = usePayment(8500)
     const user = useUser()
