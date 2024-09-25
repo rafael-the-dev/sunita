@@ -2,8 +2,8 @@ import * as React from "react"
 import currency from "currency.js"
 
 import { AddressType } from "@/types/address";
+import { PropsType} from "./types"
 
-import { defaultInputField } from "@/config/input";
 import { initialAddress } from "./values";
 
 import { isValidCountry, isValidCity, isValidNumber, isValidState, isValidStreet } from "@/validation/address";
@@ -11,8 +11,16 @@ import { isInvalidInput } from "@/helpers";
 
 type KeysType = "country" | "city" | "number" | "state" | "street";
 
-const useAddress = () => {
+const useAddress = (props?: PropsType) => {
     const [ address, setAddress ] = React.useState(initialAddress)
+
+    const hasCords = Boolean(props?.hasCords)
+
+    const hasCordsErrors = () => {
+        if(!hasCords) return false
+
+        return !(address.cords.lat && address.cords.long)
+    }
 
     const hasErrors = () => {
         return [
@@ -22,6 +30,7 @@ const useAddress = () => {
             isInvalidInput(address.state),
             isInvalidInput(address.street),
             isInvalidInput(address.number),
+            hasCordsErrors()
         ].find(error => error)
     }
 
@@ -73,6 +82,13 @@ const useAddress = () => {
         [ changeHandlerHelper ]
     )
 
+    const setCords = React.useCallback(
+        (lat: number, long: number) => {
+            setAddress(address => ({ ...address, cords: { lat, long }}))
+        },
+        []
+    )
+
     const toLiteralObject = () => {
         const newAddress: AddressType = {
             country: address.country.value,
@@ -94,7 +110,8 @@ const useAddress = () => {
         numberChangeHandler,
         statetChangeHandler,
         streetChangeHandler,
-        toLiteralObject
+        toLiteralObject,
+        setCords
     }
 
 }

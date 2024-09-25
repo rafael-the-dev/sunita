@@ -13,5 +13,9 @@ export type AddressEventHandlers = {
     numberChangeHandler: ChangeEventHandler;
     statetChangeHandler: ChangeEventHandler;
     streetChangeHandler: ChangeEventHandler;
+    setCords: (lat: number, long: number) => void
 }
 
+export type PropsType = {
+    hasCords: boolean
+}
