@@ -43,7 +43,7 @@ const BaseDetails = () => {
                     className="mb-6">
                     Address
                 </Legend>
-                <Address { ...address } />
+                <Address { ...address } hasCords onLocationFound={address.setCords} />
             </fieldset>
         </div>
     )
