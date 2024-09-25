@@ -4,13 +4,13 @@ import { RequestCartItem } from "@/types/cart";
 import { SaleItemType } from "@/types/sale";
 import { StoreProductType } from "@/types/product";
 
-import { getProduct, isValidCartItemTotalPrice, updateSale } from "@/helpers/sales";
+import { getProduct, isValidCartItemTotalPrice } from "@/helpers/sales";
 import { isInvalidNumber } from "@/helpers/validation";
 
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
 type PropsType = {
-    cartItems: SaleItemType[],
+    cartItems: RequestCartItem[],
     itemsList: SaleItemType[],
     itemsMapper: Map<string, RequestCartItem>,
     productsMapper: Map<string, StoreProductType>
