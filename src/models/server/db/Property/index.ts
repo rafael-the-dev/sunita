@@ -11,6 +11,8 @@ import { toISOString } from "@/helpers/date";
 import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 
+import StoreModel from "../Store"
+
 class Room {
     static async get({ filter }: { filter: FiltersType }, { mongoDbConfig, user }: ConfigType) {
         const list = await getProperties({ filter }, { mongoDbConfig, user })
@@ -23,20 +25,22 @@ class Room {
     }
 
     static async getAll({ filter }: { filter: FiltersType }, { mongoDbConfig, user }: ConfigType): Promise<FetchResponseType<PropertyType[]>> {
-        const properties = await getProperties({ filter }, { mongoDbConfig, user })
+        const properties = await getProperties({ filter }, { mongoDbConfig, user });
 
         return { data: properties }
     }
 
     static async register(property: PropertyType, { mongoDbConfig, user }: ConfigType) {
-        if(!property) throw new InvalidArgumentError("Invalid properrty")
+        if(!property) throw new InvalidArgumentError("Invalid properrty");
 
         const id = getId();
         const storeId = user.stores[0].storeId;
 
+        const store = await StoreModel.get(storeId, { mongoDbConfig, user });
+
         try {
             const newProperty: PropertyType = {
-                address: null,
+                address: store.data.address,
                 availability: null,
                 description: property.description,
                 amenities: [],
@@ -49,9 +53,9 @@ class Room {
                 price: null,
                 status: STATUS.ACTIVE,
                 type: null
-            }
+            };
 
-            setProperty(newProperty, property)
+            setProperty(newProperty, property);
 
             await mongoDbConfig
                 .collections
