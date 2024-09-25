@@ -55,7 +55,8 @@ const Card = ({ amenities, bedroom, description, id, images, name, price, status
                                 component="p">
                                 { amenitiesList }
                             </Typography>
-                            <div className="flex flex-col gap-y-6 justify-between w-full sm:flex-row sm:gap-y-0 sm:items-end">
+                            <div className={classNames(styles.footer, `flex flex-col gap-y-6 justify-between w-full sm:flex-row sm:gap-y-0 sm:items-end xl:flex-col
+                                xl:gap-y-6 xl:items-start xl:mt-0`)}>
                                 <div className='flex items-center gap-x-3'>
                                     <Chip label={`${price.night}/n`} />
                                     <Chip className="bg-primary-500 text-white" label={`${price.hourly}/h`} />
