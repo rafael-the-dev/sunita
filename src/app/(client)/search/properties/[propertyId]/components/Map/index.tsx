@@ -42,7 +42,7 @@ const PropertyMap = () => {
     )
 
     return (
-        <div className={classNames(styles.mapContainer, `mt-8`)}>
+        <div className={classNames(styles.mapContainer, `mt-8 xl:mt-0`)}>
             <MapContainer 
                 center={[ -25.8998272, 32.5615616 ]} 
                 zoom={13} 
