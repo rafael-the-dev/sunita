@@ -17,7 +17,7 @@ const List = () => {
     const { isActive } = useTab()
 
     return (
-        <ul className={classNames(styles.list, "flex flex-col gap-y-6", { "hidden md:flex": !isActive(TABS.LIST)})}>
+        <ul className={classNames(styles.list, "flex flex-col gap-y-6", { "hidden": !isActive(TABS.LIST)})}>
             {
                 getProperties()
                     .map(property => (
