@@ -1,4 +1,5 @@
 import { useContext } from "react"
+import dynamic from "next/dynamic"
 
 import { AddressInputType, AddressEventHandlers } from "@/hooks/useAddress/types"
 import {COUNTRIES} from "@/types/address"
@@ -9,13 +10,29 @@ import Row from "@/components/Form/RegisterUser/components/Row"
 import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
 
+const MapContainer = dynamic(
+    () => import("./components/Map"),
+    { ssr: false }
+)
+
 const countriesList = getList(COUNTRIES)
 
 type PropsType = AddressEventHandlers & {
-    getAddress: () => AddressInputType
+    getAddress: () => AddressInputType,
+    hasCords?: boolean,
+    onLocationFound?: (lat: number, long: number) => void
 }
 
-const Address = ({ getAddress, countryChangeHandler, cityChangeHandler, numberChangeHandler, statetChangeHandler, streetChangeHandler }: PropsType) => {
+const Address = (props: PropsType) => {
+    const { 
+        getAddress, 
+        hasCords, 
+        countryChangeHandler, cityChangeHandler, 
+        numberChangeHandler, 
+        onLocationFound,
+        statetChangeHandler, streetChangeHandler 
+    } = props
+
     const address = getAddress()
 
     return (
@@ -66,6 +83,7 @@ const Address = ({ getAddress, countryChangeHandler, cityChangeHandler, numberCh
                 placeholder="Insert street address"
                 required
             />
+            { hasCords && onLocationFound && <MapContainer onLocationFound={onLocationFound}/> }
         </div>
     )
 }
