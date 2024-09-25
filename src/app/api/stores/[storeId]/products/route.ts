@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { ProductType } from "@/types/product";
+import { StoreProductType } from "@/types/product";
 import { URLParamsType } from "@/types/app-config-server";
 
 import { apiHandler } from "@/middlewares/route-handler";
@@ -16,7 +16,7 @@ export const GET = async (req: NextRequest, { params: { storeId }}: URLParamsTyp
 };
 
 export const POST = async (req: NextRequest, { params: { storeId }}: URLParamsType) => {
-    const product = await req.json() as ProductType;
+    const product = await req.json() as StoreProductType;
 
     return await apiHandler(req, async ({ mongoDbConfig, user }) => {
         await ProductModel.register({ product, storeId }, { mongoDbConfig, user });
