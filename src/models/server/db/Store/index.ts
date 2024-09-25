@@ -12,10 +12,20 @@ import { getStores } from "./helpers/db"
 import FeesModel from "../Fees"
 import UsersModel from "../Users"
 
+import Error404 from "@/errors/server/404Error"
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError"
 
-
 class Store {
+    static async get(id: string, config: ConfigType) {
+        const stores = await getStores({ id }, config)
+
+        if(stores.length === 0) throw new Error404("Store not found")
+
+        return {
+            data: stores[0]
+        }
+    }
+
     static async getAll(filters: FiltersType, config: ConfigType) {
         const stores = await getStores(filters, config)
 
