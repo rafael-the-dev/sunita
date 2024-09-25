@@ -2,3 +2,21 @@
 .mapContainer {
     height: 220px;
 }
+
+
+@media screen and (width >= 600px) {
+    .mapContainer {
+        height: 250px;
+    }
+}
+
+@media screen and (width >= 1024px) {
+    .container {
+        width: 68%;
+    }
+
+    .mapContainer {
+        height: 460px;
+        width: 30%;
+    }
+}
