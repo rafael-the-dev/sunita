@@ -1,0 +1,10 @@
+
+.mapContainer {
+    height: 80vh;
+}
+
+@media screen and (width >= 900px) {
+    .mapContainer {
+        height: 85vh;
+    }
+}
