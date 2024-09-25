@@ -11,12 +11,16 @@
 
 
 @media screen and (width >= 1024px) {
+    .container {
+        width: calc(70% - 20px);
+    }
+
     .imageContainer {
         height: 210px;
     }
 
     .imagesWrapper {
-        grid-template-columns: 25% 25% 25%;
+        grid-template-columns: calc((100% / 3) - 20px) calc((100% / 3) - 20px) calc((100% / 3));
         column-gap: 20px;
         grid-template-rows: 220px 220px;
         row-gap: 20px;

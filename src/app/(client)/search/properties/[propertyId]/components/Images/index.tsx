@@ -59,7 +59,7 @@ const ImageContainaer = ({ alt, src }: { src: string[], alt: string }) => {
     }
 
     return (
-        <div className={classNames(styles.sliderContainer, "mt-4 slider-container")}>
+        <div className={classNames(styles.container, "mt-4 slider-container xl:mt-0")}>
             <div className="xl:hidden">
                 <Carousel 
                     autoplay
