@@ -157,7 +157,7 @@ const PropertyContainer = () => {
                         { property?.name }
                     </Typography>
                 </div>
-                <div className="items-stretch lg:flex">
+                <div className="items-stretch justify-between mt-8 xl:flex">
                     <Images 
                         alt={property?.name}
                         src={property?.images}
