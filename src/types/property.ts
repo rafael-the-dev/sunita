@@ -1,5 +1,5 @@
 
-import { AddressType } from "./user"
+import { AddressType } from "./address"
 import { ROOM_TYPE } from "./room"
 import { STATUS } from ".";
 
