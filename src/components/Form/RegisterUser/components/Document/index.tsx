@@ -17,8 +17,10 @@ const Document = () => {
         changeDocumentIssueDate,
         changeDocumentNumber,
         changeDocumentType,
-        input
+        getDocument
     } = useContext(UserFormContext)
+
+    const document = getDocument()
 
     const documentsList = useMemo(
         () => Object
@@ -36,14 +38,14 @@ const Document = () => {
         <div className="flex flex-col gap-y-4">
             <Row>
                 <Select 
-                    { ...input.document.type }
+                    { ...document.type }
                     className="mb-0 w-full sm:w-1/2"
                     list={documentsList}
                     label="Type"
                     onChange={documentTypeChangeHandler}
                 />
                 <Textfield 
-                    { ...input.document.number  }
+                    { ...document.number  }
                     className="mb-0 w-full sm:w-1/2"
                     label="Number"
                     onChange={changeDocumentNumber}
@@ -53,21 +55,21 @@ const Document = () => {
             </Row>
             <Row>
                 <DateInput 
-                    { ...input.document.issueDate }
+                    { ...document.issueDate }
                     className="mb-0 w-full sm:w-1/2"
                     date
                     label="Issue date"
-                    minDate={moment(input.document.issueDate.value).subtract(5, "years").toISOString()}
+                    minDate={moment(document.issueDate.value).subtract(5, "years").toISOString()}
                     maxDate={moment(new Date(Date.now())).toISOString()}
                     onChange={changeDocumentIssueDate}
                 />
                 <DateInput 
-                    { ...input.document.expireDate }
+                    { ...document.expireDate }
                     className="mb-0 w-full sm:w-1/2"
                     date
                     label="Expire date"
-                    minDate={input.document.issueDate.value}
-                    maxDate={moment(input.document.issueDate.value).add(5, "years").toString()}
+                    minDate={document.issueDate.value}
+                    maxDate={moment(document.issueDate.value).add(5, "years").toString()}
                     onChange={changeDocumentExpireDate}
                 />
             </Row>

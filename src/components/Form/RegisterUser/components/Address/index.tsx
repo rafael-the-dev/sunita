@@ -7,58 +7,66 @@ import Textfield from "@/components/Textfield"
 
 const Address = () => {
     const {
-        changeAddress,
-        changeHouseNumber,
+        countryChangeHandler,
+        cityChangeHandler,
+        getAddress,
+        numberChangeHandler,
+        streetChangeHandler,
+        statetChangeHandler,
         input
     } = useContext(UserFormContext)
+
+    const address = getAddress()
 
     return (
         <div className="flex flex-col gap-y-4">
             <Row>
                 <Textfield 
-                    { ...input.address.country }
+                    { ...address.country }
                     className="mb-0 w-full sm:w-1/2"
                     label="Counry"
-                    onChange={changeAddress("country")}
+                    onChange={countryChangeHandler}
                     placeholder="Insert first name"
                     required
                 />
                 <Textfield 
-                    { ...input.address.province }
+                    { ...address.province }
                     className="mb-0 w-full sm:w-1/2"
                     label="Province"
-                    onChange={changeAddress("province")}
+                    onChange={statetChangeHandler}
                     placeholder="Insert first name"
                     required
                 />
             </Row>
             <Row>
                 <Textfield 
-                    { ...input.address.city }
+                    { ...address.city }
                     className="mb-0 w-full sm:w-1/2"
                     label="City"
-                    onChange={changeAddress("city")}
+                    onChange={cityChangeHandler}
                     placeholder="Insert city name"
                     required
                 />
                 <Textfield 
-                    { ...input.address.block }
+                    { ...address.number }
                     className="mb-0 w-full sm:w-1/2"
-                    label="block"
-                    onChange={changeAddress("block")}
-                    placeholder="Insert block name"
+                    label="House number"
+                    onChange={numberChangeHandler}
+                    placeholder="Insert house number"
                     required
+                    type="number"
                 />
             </Row>
             <Row>
                 <Textfield 
-                    { ...input.address.house }
+                    { ...address.street }
                     className="mb-0 w-full sm:w-1/2"
-                    label="House number"
-                    onChange={changeHouseNumber}
-                    placeholder="Insert house number"
+                    label="block"
+                    multiline
+                    minRows={4}
+                    onChange={streetChangeHandler}
+                    placeholder="Insert block name"
                     required
-                    type="number"
                 />
             </Row>
         </div>

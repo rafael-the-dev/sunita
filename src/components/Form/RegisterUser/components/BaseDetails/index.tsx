@@ -4,6 +4,8 @@ import { USER_CATEGORY } from "@/types/user"
 
 import { UserFormContext } from "../../context"
 
+import Contact from "@/components/Container/Contact"
+import Legend from "@/components/shared/Legend"
 import Row from "../Row"
 import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
@@ -11,9 +13,15 @@ import Textfield from "@/components/Textfield"
 
 const BaseDetails = () => {
     const {
+        addPhoneNumber,
+        changePhone,
         changeName, changePostition, changeUsername,
+        getContact,
         input,
+        removePhoneNumber
     } = useContext(UserFormContext)
+
+    const contact = getContact()
 
     const usersPositions = useMemo(
         () => Object
@@ -64,6 +72,22 @@ const BaseDetails = () => {
                     onChange={usersPositionsChangeHandler}
                 />
             </Row>
+            <fieldset className="flex flex-col gap-y-4 mt-2">
+                <Legend
+                    className="mb-6">
+                    Contact
+                </Legend>
+                <Contact
+                    contact={contact}
+                    //@ts-ignore
+                    getAvailableTypes={contact.getAvailableTypes}
+                    hasErrors={null}
+                    onAddContact={addPhoneNumber}
+                    onChange={changePhone}
+                    onRemove={removePhoneNumber}
+                    resetContact={null}
+                />
+            </fieldset>
         </div>
     )
 }

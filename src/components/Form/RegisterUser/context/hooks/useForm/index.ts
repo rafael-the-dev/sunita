@@ -1,15 +1,14 @@
 import { ChangeEvent, useCallback, useMemo, useState } from "react"
 import moment from "moment"
 
-import { DOCUMENT_TYPE, USER_CATEGORY, User } from "@/types/user"
+import { USER_CATEGORY, User } from "@/types/user"
 
-import { dateFormat, dateTimeFormat } from "@/helpers/date"
+import useAddress from "@/hooks/useAddress"
+import useContact from "@/hooks/useContact"
+import useDocument from "@/hooks/useDocument"
 
 import { 
-    isValidDocumentIssueDate, isValidDocumentExpireDate, isValidDocumentNumber, 
-    isValidName, isValidUsername, 
-    isValidHouseNumber,
-    isValidAddress
+    isValidName, isValidUsername
 } from "@/validation/user"
 
 type ChangeNameKeyType = "firstName" | "lastName"
@@ -22,19 +21,6 @@ const initialInput = {
 }  
 
 const initial = {
-    address: {
-        block: initialInput,
-        country: initialInput,
-        province: initialInput,
-        city: initialInput, 
-        house: initialInput 
-    },
-    document: {
-        expireDate: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).toISOString() }),
-        issueDate: structuredClone({ ...initialInput, value: moment(new Date(Date.now())).toISOString() }),
-        type: structuredClone({ ...initialInput, value: DOCUMENT_TYPE.DRIVING_LICENCE }), 
-        number: structuredClone(initialInput) 
-    },
     firstName: structuredClone(initialInput),
     lastName: structuredClone(initialInput),
     position: structuredClone({ ...initialInput, value: USER_CATEGORY.EMPLOYEE }),
@@ -43,137 +29,30 @@ const initial = {
 
 const useForm = () => {
     const [ input, setInput ] = useState(initial);
+
+    const address = useAddress()
+    const contact = useContact()
+    const document = useDocument()
+
+    const hasAddressErrors = address.hasErrors
+    const hasContactErrors = contact.hasErrors
+    const hasDocumentErrors = document.hasErrors
     
-    const hasErrors = useCallback(() => {
-        return Boolean(
-            Object
-                .values(input)
-                .find(inputProps => {
-                    //@ts-ignore
-                    if(Object.keys(inputProps).includes("error")) return inputProps.error || !Boolean(inputProps.value.trim());
-
-                    return Boolean(
-                        Object
-                            .values(inputProps)
-                            .find(field => {
-                                let hasValue = true
-
-                                if(typeof field.value === "string") {
-                                    hasValue = Boolean(field.value.trim())
-                                }
-
-                                return field.error || !hasValue
-                            })
-                    )
-                })
-            )
-    }, [ input ])
-
-    const changeAddress = useCallback((key: ChangeAddressKeyType) => (e: ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-
-        const hasError = !isValidAddress(value);
-
-        setInput(input => ({
-            ...input,
-            address: {
-                ...input.address,
-                [key]: {
-                    error: hasError,
-                    helperText: hasError ? "It must contain four letters at least" : "",
-                    value
-                }
-            }
-        }));
-    }, [])
-
-    const changeHouseNumber = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            const { value } = e.target
-            const hasError = !isValidHouseNumber(value)
-
-            setInput(input => ({
-                ...input,
-                address: {
-                    ...input.address,
-                    house: {
-                        error: hasError,
-                        helperText: hasError ? "Invalid house number" : "",
-                        value
-                    }
-                }
-            }))
+    const hasErrors = useCallback(
+        () => {
+            return [
+                Boolean(
+                    Object
+                        .values(input)
+                        .find(inputProps => inputProps.error || !Boolean(inputProps.value.trim()))
+                    ),
+                    hasAddressErrors,
+                    hasContactErrors,
+                    hasDocumentErrors
+                ].find(error => error)
         }, 
-        []
+        [ hasAddressErrors, hasContactErrors, hasDocumentErrors, input ]
     )
-
-    const changeDocumentExpireDate = useCallback((newDate: string) => {
-        setInput(input => {
-            const hasError = !isValidDocumentExpireDate(newDate, input.document.issueDate.value)
-
-            return {
-                ...input,
-                document: {
-                    ...input.document,
-                    expireDate: {
-                        error: hasError,
-                        helperText: hasError ? "Invalid date" : "",
-                        value: newDate
-                    }
-                }
-            }
-        })
-    }, [])
-
-    const changeDocumentIssueDate = useCallback((newDate: string) => {
-        setInput(input => {
-            const hasError = !isValidDocumentIssueDate(newDate)
-
-            return {
-                ...input,
-                document: {
-                    ...input.document,
-                    issueDate: {
-                        error: hasError,
-                        helperText: hasError ? "Invalid date" : "",
-                        value: newDate
-                    }
-                }
-            }
-        })
-    }, [])
-
-    const changeDocumentType = useCallback((documentType: DOCUMENT_TYPE) => {
-        setInput(input => ({
-            ...input,
-            document: {
-               ...input.document,
-                type:  {
-                    error: false,
-                    helperText: "",
-                    value: documentType
-               }
-            }
-        }))
-    }, [])
-
-    const changeDocumentNumber = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-        const { value } = e.target;
-
-        const hasError = !isValidDocumentNumber(value);
-
-        setInput(input => ({
-            ...input,
-            document: {
-                ...input.document,
-                 number:  {
-                    error: hasError,
-                    helperText: "",
-                    value
-                }
-             }
-        }));
-    }, [])
 
     const changeName = useCallback((key: ChangeNameKeyType) => (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -218,20 +97,10 @@ const useForm = () => {
 
     const toString = () => {
         const user: User = {
-            address: {
-                block: input.address.block.value,
-                city: input.address.city.value,
-                country: input.address.country.value,
-                house: parseInt(input.address.house.value),
-                province: input.address.province.value,
-            },
+            address: address.toLiteralObject(),
             category: input.position.value,
-            document: {
-                expireDate: input.document.expireDate.value,
-                issueDate: input.document.issueDate.value,
-                number: input.document.number.value,
-                type: input.document.type.value,
-            },
+            contact: contact.toLiteralObject(),
+            document: document.toLiteralObject(),
             firstName: input.firstName.value,
             id: null,
             lastName: input.lastName.value,
@@ -244,11 +113,12 @@ const useForm = () => {
     }
 
     return {
+        ...address,
+        ...contact,
+        ...document,
         hasErrors,
         input,
 
-        changeAddress, changeHouseNumber,
-        changeDocumentExpireDate, changeDocumentIssueDate, changeDocumentNumber, changeDocumentType, 
         changeName, changePostition, changeUsername,
         resetForm,
         toString

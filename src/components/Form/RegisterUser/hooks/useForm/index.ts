@@ -119,14 +119,9 @@ const useForm = () => {
 
     const toString = () => {
         const user: User = {
-            address: {
-                block: "",
-                city: "",
-                country: "",
-                house: 0,
-                province: "",
-            },
+            address: null,
             category: input.position.value,
+            contact: null,
             document: {
                 expireDate: input.document.expireDate.value,
                 issueDate: input.document.issueDate.value,
