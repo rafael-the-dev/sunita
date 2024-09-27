@@ -1,14 +1,18 @@
-import { createContext, useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef } from "react";
 
 import { ContextType, PropsType } from "./types"
 import { FetchResponseType } from "@/types";
 import { PropertyType } from "@/types/property";
+
+import { PropertiesContext } from "@/context/PropertiesContext"
 
 import useFetch from "@/hooks/useFetch";
 
 export const StoresContext = createContext<ContextType>({} as ContextType)
 
 export const StoresContextProvider = ({ children }: PropsType) => {
+    const context = useContext(PropertiesContext)
+
     const { data, fetchData, loading } = useFetch<FetchResponseType<PropertyType[]>>(
         {
             autoFetch: false,
@@ -16,27 +20,24 @@ export const StoresContextProvider = ({ children }: PropsType) => {
         }
     )
 
+    const isInitial = useRef(true)
+
     const getProperties = useCallback(
-        () => data?.data ?? [],
-        [ data ]
+        () => {
+            const properties = ( isInitial.current ? context.data : data?.data ) ?? []
+
+            return properties
+        },
+        [ context, data ]
     )
 
     useEffect(
         () => {
-            const params = new URLSearchParams(window.location.search);
-            
-            const controller = new AbortController();
-
-            fetchData(
-                {
-                    path: `/api/stores/properties?${params.toString()}`,
-                    signal: controller.signal
-                }
-            )
-
-            return () => controller.abort()
+            if(data) {
+                isInitial.current = false
+            }
         },
-        [ fetchData ]
+        [ data ]
     )
 
     return (

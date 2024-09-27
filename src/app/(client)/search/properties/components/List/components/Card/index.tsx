@@ -1,3 +1,5 @@
+"use client"
+
 import { useMemo } from "react"
 import classNames from "classnames"
 import Chip from "@mui/material/Chip"
