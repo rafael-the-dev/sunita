@@ -4,7 +4,17 @@ import { getToken, isAuthenticated } from "./helpers/auth";
 import { isPublicPath } from "./middlewares/api";
 
 export const middleware = async (req: NextRequest) => {
+    const { pathname } = req.nextUrl
+   
     try {
+        if(pathname.startsWith("/") && !pathname.startsWith("/api")) {
+            const headers = new Headers(req.headers)
+
+            headers.set("current-pathname", pathname)
+
+            return NextResponse.next({ headers })
+        }
+
         if(isPublicPath(req)) return NextResponse.next();
         
         const token = getToken(req);
@@ -20,7 +30,7 @@ export const config = {
     matcher: [
         "/api/users/:username*",
         "/api/stores/:storeId*",
-        "/api/auth/refresh"
-
+        "/api/auth/refresh",
+        "/:path*"
     ]
 };
