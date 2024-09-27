@@ -1,10 +1,13 @@
+import { useContext } from "react";
 import Button from "@mui/material/Button"
 import classNames from "classnames"
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
-import useProperties from "@/hooks/useProperties"
+import { PropertiesContext } from "@/context/PropertiesContext";
+
+//import useProperties from "@/hooks/useProperties"
 
 import Card from "@/components/Card/Property"
 import Controllers from "@/common/components/CarouselControllers"
@@ -20,7 +23,8 @@ type PropsType = {
 }
 
 const RelatedProperties = ({ classes, queryParams }: PropsType) => {
-    const { data } = useProperties(queryParams)
+    const { data, error } = useContext(PropertiesContext)
+    const properties = data ?? []
  
     const breakpoints = {
         600: {
@@ -55,9 +59,9 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
             </div>
             <Swiper 
                 breakpoints={breakpoints}
-                className="flex flex-col-reverse" >
+                className="flex flex-col-reverse">
                 {
-                    data
+                    properties
                         .map(property => (
                             <SwiperSlide key={property.id}>
                                 <Card
@@ -66,7 +70,7 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
                             </SwiperSlide>
                         ))
                 }
-                { data.length > 1 && <Controllers className="mb-4" /> }
+                { properties.length > 1 && <Controllers className="mb-4" /> }
             </Swiper>
         </section>
     )
