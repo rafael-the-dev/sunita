@@ -1,8 +1,6 @@
 import Head from "next/head"
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 import "@/styles/reset.css";
 
@@ -26,13 +24,15 @@ import "@/styles/globals.css";
 import { theme } from "./mui/theme";
 import { AppContextProvider } from "@/context/AppContext";
 
+import LocalizationProvider from './components/LocalizationProvider';
+
 const RootLayout = ({ children }) => {
     return (
         <html lang="en">
             <body>
                 <AppRouterCacheProvider options={{  enableCssLayer: true  }}>
                     <ThemeProvider theme={theme}>
-                        <LocalizationProvider dateAdapter={AdapterMoment}>
+                        <LocalizationProvider>
                             <AppContextProvider>
                                 { children }
                             </AppContextProvider>
