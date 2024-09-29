@@ -26,9 +26,8 @@ const RootLayout = ({ children, queryParams }: { children: ReactNode, queryParam
             { children }
         </ProtectedLayout>
     )
-
     
-    if(["/", "/search/properties" ].includes(pathname)) {
+    if(["/" ].includes(pathname)) {
         return (
             <PropertiesSSR queryParams={queryParams}>
                 <Layout>
@@ -40,7 +39,7 @@ const RootLayout = ({ children, queryParams }: { children: ReactNode, queryParam
 
     const propertyRoutePattern = /^\/search\/properties\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
 
-    if(propertyRoutePattern.test(pathname)) {
+    if(propertyRoutePattern.test(pathname) || "/search/properties" === pathname) {
        return children
     }
 
