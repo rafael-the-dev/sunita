@@ -3,14 +3,14 @@
 import * as React from "react"
 import {PropertyType} from "@/types/property"
 
-type ResponseTyype = {
+type ResponseType = {
     data: PropertyType[],
     error: Error
 } 
 
-type PropertiesContextType = ResponseTyype
+type PropertiesContextType = ResponseType
 
-type PropsType = ResponseTyype & {
+type PropsType = ResponseType & {
     children: React.ReactNode
 }
 
