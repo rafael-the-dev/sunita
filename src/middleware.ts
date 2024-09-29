@@ -5,11 +5,12 @@ import { isPublicPath } from "./middlewares/api";
 
 export const middleware = async (req: NextRequest) => {
     const { pathname } = req.nextUrl
+    //console.log(pathname)
    
     try {
         if(pathname.startsWith("/") && !pathname.startsWith("/api")) {
             const headers = new Headers(req.headers)
-
+           
             headers.set("current-pathname", pathname)
 
             return NextResponse.next({ headers })
@@ -31,6 +32,7 @@ export const config = {
         "/api/users/:username*",
         "/api/stores/:storeId*",
         "/api/auth/refresh",
-        "/:path*"
+        "/search/properties/:path*",
+        "/"
     ]
 };
