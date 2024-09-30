@@ -5,8 +5,6 @@ import Dialog from "@/components/shared/layout/components/Dialog";
 import Layout from "@/components/shared/layout";
 import ProtectedLayout from "@/components/shared/layout/ProtectedLayout";
 
-import PropertiesSSR from "./ServerSideContainers/Properties"
-
 const RootLayout = ({ children }: { children: ReactNode }) => {
     const headersList = headers()
     const pathname = headersList.get("current-pathname")
@@ -27,7 +25,7 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
         </ProtectedLayout>
     )
     
-    if(["/" ].includes(pathname)) {
+    /*if(["/" ].includes(pathname)) {
         const searchParams = headersList.get("current-search-params")
 
         return (
@@ -37,11 +35,11 @@ const RootLayout = ({ children }: { children: ReactNode }) => {
                 </Layout>
             </PropertiesSSR>
         )
-    }
+    }*/
 
     const propertyRoutePattern = /^\/search\/properties\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/
 
-    if(propertyRoutePattern.test(pathname) || "/search/properties" === pathname) {
+    if(propertyRoutePattern.test(pathname) || [ "/", "/search/properties"].includes(pathname)) {
        return children
     }
 
