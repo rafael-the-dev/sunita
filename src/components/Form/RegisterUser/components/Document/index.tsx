@@ -4,7 +4,6 @@ import moment from "moment"
 import { DOCUMENT_TYPE } from "@/types/user"
 
 import { UserFormContext } from "../../context"
-import { dateFormat } from "@/helpers/date"
 
 import DateInput from "@/components/date"
 import Row from "../Row"
@@ -13,11 +12,13 @@ import Textfield from "@/components/Textfield"
 
 const Document = () => {
     const {
-        changeDocumentExpireDate,
-        changeDocumentIssueDate,
-        changeDocumentNumber,
-        changeDocumentType,
-        getDocument
+        document: {
+            changeDocumentExpireDate,
+            changeDocumentIssueDate,
+            changeDocumentNumber,
+            changeDocumentType,
+            getDocument
+        }
     } = useContext(UserFormContext)
 
     const document = getDocument()

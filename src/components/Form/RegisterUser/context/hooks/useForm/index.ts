@@ -34,9 +34,9 @@ const useForm = () => {
     const contact = useContact()
     const document = useDocument()
 
-    const hasAddressErrors = address.hasErrors
+    const hasAddressErrors = address.hasErrors()
     const hasContactErrors = contact.hasErrors
-    const hasDocumentErrors = document.hasErrors
+    const hasDocumentErrors = document.hasErrors()
     
     const hasErrors = useCallback(
         () => {
@@ -46,10 +46,11 @@ const useForm = () => {
                         .values(input)
                         .find(inputProps => inputProps.error || !Boolean(inputProps.value.trim()))
                     ),
-                    hasAddressErrors,
-                    hasContactErrors,
-                    hasDocumentErrors
-                ].find(error => error)
+                hasAddressErrors,
+                hasContactErrors,
+                hasDocumentErrors
+            ]
+            .find(error => error)
         }, 
         [ hasAddressErrors, hasContactErrors, hasDocumentErrors, input ]
     )
@@ -113,9 +114,11 @@ const useForm = () => {
     }
 
     return {
-        ...address,
-        ...contact,
-        ...document,
+        address,
+        contact,
+        document,
+        getAddress: address.getAddress,
+        getContact: contact.getContact,
         hasErrors,
         input,
 

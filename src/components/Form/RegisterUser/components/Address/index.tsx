@@ -7,12 +7,14 @@ import Textfield from "@/components/Textfield"
 
 const Address = () => {
     const {
-        countryChangeHandler,
-        cityChangeHandler,
+        address: {
+            countryChangeHandler,
+            cityChangeHandler,
+            numberChangeHandler,
+            streetChangeHandler,
+            statetChangeHandler,
+        },
         getAddress,
-        numberChangeHandler,
-        streetChangeHandler,
-        statetChangeHandler,
         input
     } = useContext(UserFormContext)
 

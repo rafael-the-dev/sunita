@@ -19,7 +19,10 @@ type InputType = {
 type ChangeNameKeyType = "firstName" | "lastName"
 type ChangeAddressKeyType = "country" | "province" | "city" | "block"
 
-export type ContextType = AddressEventHandlers & ContactMethodsType & DocumentInputFunctions &{
+export type ContextType = {
+    address: AddressEventHandlers;
+    contact: ContactMethodsType;
+    document: DocumentInputFunctions;
     hasErrors: () => boolean;
     input: {
         firstName: InputType,

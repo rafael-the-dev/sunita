@@ -13,12 +13,14 @@ import Textfield from "@/components/Textfield"
 
 const BaseDetails = () => {
     const {
-        addPhoneNumber,
-        changePhone,
+        contact: {
+            addPhoneNumber,
+            changePhone,
+            removePhoneNumber
+        },
         changeName, changePostition, changeUsername,
         getContact,
-        input,
-        removePhoneNumber
+        input
     } = useContext(UserFormContext)
 
     const contact = getContact()
