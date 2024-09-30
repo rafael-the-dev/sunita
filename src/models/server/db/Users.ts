@@ -2,68 +2,29 @@ import bcrypt from "bcrypt";
 
 import Error404 from "@/errors/server/404Error";
 
+import { ConfigType, FiltersType } from "@/types/app-config-server"
 import { SettingsType, UsernameFilterType } from "@/types/route";
 import { UserType, User, USER_CATEGORY, DOCUMENT_TYPE, StoreUserType } from "@/types/user";
 import { getId } from "@/helpers/id";
 import { getUserProxy } from "../proxy/user";
+import { getUsers } from "./User/helpers/db";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
 import { STATUS } from "@/types";
 import { isValidPassword } from "@/validation/user";
 
 class Users {
 
-    static async get({ username }: UsernameFilterType, { mongoDbConfig }: SettingsType): Promise<User> {
-        const user = await mongoDbConfig
-            .collections
-            .USERS
-            .findOne({ username }) as User;
+    static async get(filters: UsernameFilterType | FiltersType, { mongoDbConfig, user }: SettingsType): Promise<User> {
+        const users = await getUsers(filters, { mongoDbConfig, user }) as User[];
 
-        if(!user) throw new Error404("User not found");
+        if(users.length === 0) throw new Error404("User not found");
         
-        return user;
+        return users[0];
     }
 
-    static async getAll({ filters }: { filters?: Object }, { mongoDbConfig }: SettingsType): Promise<UserType[]> {
+    static async getAll({ filters }: { filters?: Object }, { mongoDbConfig, user }: SettingsType): Promise<UserType[]> {
         try {
-            const result = await mongoDbConfig
-                .collections
-                .WAREHOUSES
-                .aggregate([
-                    { 
-                        $match: {
-                            ...( filters ?? {} )
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: "users", // Replace with the name of your external product collection
-                            localField: "users.username",
-                            foreignField: "username",
-                            as: "user_info"
-                        }
-                    },
-                    { $unwind: "$user_info" },
-                    { $unwind: "$users" },
-                    {
-                        $group: {
-                            _id: "$user_info.username",
-                            category: { $first: "$user_info.category" },
-                            firstName: { $first: "$user_info.firstName" },
-                            id: { $first: "$user_info.username" },
-                            lastName: { $first: "$user_info.lastName" },
-                            stores: {
-                                $push: {
-                                    category: "$users.category",
-                                    storeId: "$id",
-                                    status: "$users.status",
-                                    username: "$users.username"
-                                }
-                            },
-                            username: { $first: "$user_info.username" }
-                        }
-                    }
-                ])
-                .toArray() as UserType[];
+            const result = await getUsers(filters, { mongoDbConfig, user }) as UserType[];
         
             const users = result.map(user => {
                 const userClone = structuredClone(user)
