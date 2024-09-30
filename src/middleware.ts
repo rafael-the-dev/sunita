@@ -5,6 +5,7 @@ import { isPublicPath } from "./middlewares/api";
 
 export const middleware = async (req: NextRequest) => {
     const { pathname } = req.nextUrl
+    const params = new URLSearchParams(req.nextUrl.search)
     //console.log(pathname)
    
     try {
@@ -12,6 +13,7 @@ export const middleware = async (req: NextRequest) => {
             const headers = new Headers(req.headers)
            
             headers.set("current-pathname", pathname)
+            headers.set("current-search-params", params.toString())
 
             return NextResponse.next({ headers })
         }
