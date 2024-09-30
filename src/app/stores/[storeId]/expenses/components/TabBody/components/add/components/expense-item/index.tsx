@@ -22,7 +22,7 @@ const ListItem = ({ description, id, price }: PropsType) => {
 
     const changeHandler = React.useCallback((prop: string) => ({ target: { value } }) => {
         updateItem(id, prop, value)
-    }, []);
+    }, [ id, updateItem ]);
 
     const removeHandler = React.useCallback(() => removeItem(id), [ id, removeItem ]);
 

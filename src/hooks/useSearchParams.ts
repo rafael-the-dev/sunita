@@ -86,7 +86,7 @@ const useSearchParamsHook = () => {
 
     const setSearchParam = React.useCallback(
         (key: string, value: string) => set(key, value), 
-        [ removeSearchParam, set ]
+        [ set ]
     );
 
     const toggleSearchParam = React.useCallback(
