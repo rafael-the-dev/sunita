@@ -34,7 +34,10 @@ export const config = {
         "/api/users/:username*",
         "/api/stores/:storeId*",
         "/api/auth/refresh",
+        "/stores/:path*",
+        "/system/:path*",
         "/search/properties/:path*",
+        "/login",
         "/"
     ]
 };
