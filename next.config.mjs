@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+    env: {
+      LIVE_URL: "https://sunita.netlify.app",
+      MODE: "DEV",
+      PORT: "3000"
+    },
     webpack(config) {
         config.module.rules.push({
           test: /\.svg$/,
