@@ -16,7 +16,7 @@ const PropertyPage = () => {
         <Property
             id={id}
             PropertiesSSC={PropertiesSSC}
-            queryParams={{}}>
+            queryParams={""}>
             <Layout>
                 <View />
             </Layout>
