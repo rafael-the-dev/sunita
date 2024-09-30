@@ -1,11 +1,11 @@
 
 
 
-import AddStock from "./components/add-stock";
+import AddStock from "../add-stock";
 import Button from "@/components/shared/button"
-import DialogBody from "./components/register-product/components/body";
+import DialogBody from "../register-product/components/body";
 import Main from "@/components/main";
-import RegisterProduct from "./components/register-product";
+import RegisterProduct from "../register-product";
 import SearchBox from "@/components/shared/product-search-box";
 import Table from "@/components/shared/table";
 import Link from "@/components/link";
@@ -17,8 +17,6 @@ const Footer = () => {
         <div className="flex flex-col items-stretch justify-end px-3 sm:flex-row">
             <Button 
                 className="mb-3 sm:mb-0 sm:mr-3" 
-                disabled={!data}
-                onClick={addStockClickHandler}
                 variant="outlined">
                 Add stock
             </Button>
