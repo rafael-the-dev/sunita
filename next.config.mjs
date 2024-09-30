@@ -3,7 +3,7 @@
 const nextConfig = {
     env: {
       LIVE_URL: "https://sunita.netlify.app",
-      MODE: "DEV",
+      MODE: "PRODUCTION",
       PORT: "3000"
     },
     webpack(config) {
