@@ -13,7 +13,9 @@ type PropsType = {
 }
 
 const PropertiesContainer = async ({ children, queryParams }: PropsType) => {
-    const res = await fetch(`http://localhost:3000/api/stores/properties?${queryParams}`)
+    const url = process.env.MODE === "PRODUCTION" ? process.env.LIVE_URL : `http://localhost:${process.env.PORT}`
+
+    const res = await fetch(`${url}/api/stores/properties?${queryParams}`)
 
     const data = await res.json() as FetchResponseType<PropertyType[]>
 

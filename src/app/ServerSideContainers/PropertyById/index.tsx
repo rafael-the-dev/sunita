@@ -24,11 +24,13 @@ const PropertyContainer = async ({ children, id, PropertiesSSC, queryParams }: P
     let bookings: BookingsResponseType = null;
     let error: Error = null;
 
+    const url = process.env.MODE === "PRODUCTION" ? process.env.LIVE_URL : `http://localhost:${process.env.PORT}`
+
     try {
-        const res = await fetch(`http://localhost:3000/api/stores/properties/${id}`);
+        const res = await fetch(`${url}/api/stores/properties/${id}`);
         property = await res.json() as PropertyType;
 
-        const bookingsResponse= await fetch(`http://localhost:3000/api/stores/${property?.owner}/properties/bookings?property=${id}`);
+        const bookingsResponse= await fetch(`${url}/api/stores/${property?.owner}/properties/bookings?property=${id}`);
         bookings = await bookingsResponse.json() as BookingsResponseType;
     } catch(e) {
         console.error(e.message);
