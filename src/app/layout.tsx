@@ -7,7 +7,7 @@ import ProtectedLayout from "@/components/shared/layout/ProtectedLayout";
 
 import PropertiesSSR from "./ServerSideContainers/Properties"
 
-const RootLayout = ({ children, queryParams }: { children: ReactNode, queryParams: { [key: string]: string | string[] } }) => {
+const RootLayout = ({ children }: { children: ReactNode }) => {
     const headersList = headers()
     const pathname = headersList.get("current-pathname")
 
@@ -28,8 +28,10 @@ const RootLayout = ({ children, queryParams }: { children: ReactNode, queryParam
     )
     
     if(["/" ].includes(pathname)) {
+        const searchParams = headersList.get("current-search-params")
+
         return (
-            <PropertiesSSR queryParams={queryParams}>
+            <PropertiesSSR queryParams={searchParams}>
                 <Layout>
                     { children }
                 </Layout>
