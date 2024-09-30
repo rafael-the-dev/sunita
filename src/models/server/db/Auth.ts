@@ -7,12 +7,11 @@ import AuthError from "@/errors/server/AuthenticationError";
 import Error404 from "@/errors/server/404Error";
 
 import { CredentialsType, LoginCredentialsType } from "@/types/login";
-import { DecodedUserType, USER_CATEGORY } from "@/types/user";
+import { DecodedUserType } from "@/types/user";
 import { SettingsType } from "@/types/route";
+import { User } from "@/types/user";
 
 import Users  from "./Users";
-import { STATUS } from "@/types";
-import { toISOString } from "@/helpers/date";
 import { WarehouseType } from "@/types/warehouse";
 
 class Auth {
@@ -25,8 +24,22 @@ class Auth {
 
     static async login({ password, username }: LoginCredentialsType, { mongoDbConfig }: SettingsType): Promise<CredentialsType> {
         try {
-            const user = await Users.get({ username }, { mongoDbConfig });
+            const users = await mongoDbConfig
+                .collections
+                .USERS
+                .aggregate(
+                    [
+                        {
+                            $match: { username }
+                        }
+                    ]
+                )
+                .toArray() as User[];
 
+            if(users.length === 0) throw new AuthError("Username or password invalid.");
+
+            const user = users[0]
+            
             const match = await bcrypt.compare(password, user.password);
 
             if(!match) throw new AuthError("Username or password invalid.");
@@ -44,6 +57,7 @@ class Auth {
                         {
                             $project: {
                                 _id: "$_id",
+                                id: "$id",
                                 users: "$users",
                             }
                         }
@@ -53,7 +67,7 @@ class Auth {
                 
             if(stores.length === 0) throw new AuthError("Username or password invalid");
 
-            //@ts-ignore
+           //@ts-ignore
             user.stores = stores.map((store: WarehouseType) => {
                 const { category, status } = store.users.find(user => user.username === username)
 
@@ -63,6 +77,8 @@ class Auth {
                     storeId: store.id
                 }
             })
+
+            delete user.password;
             
             //Get new token
             const token = decode(user);
@@ -70,9 +86,6 @@ class Auth {
             // vefify new token to get its expiration time
             const tokenResult = verifyToken<DecodedUserType>(token);
             const { _id, exp, iat, ...userDetails } = tokenResult;
-
-            //@ts-ignore
-            delete userDetails.password
 
             return { 
                 access: {
