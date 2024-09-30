@@ -8,9 +8,11 @@ import View from "./View"
 const PropertyPage = () => {
     const headersList = headers()
 
+    const searchParams = headersList.get("current-search-params")
+
     return (
         <PropertiesSSC
-            queryParams={{}}>
+            queryParams={searchParams}>
             <Layout>
                 <View />
             </Layout>
