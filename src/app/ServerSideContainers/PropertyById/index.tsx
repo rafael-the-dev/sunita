@@ -9,14 +9,14 @@ import { PropertyContextProvider } from "@/context/PropertyContext"
 
 type PropertiesSSCPropsType = {
     children: ReactNode,
-    queryParams: { [key: string]: string | string[] }
+    queryParams: string
 }
 
 type PropsType = {
     children: ReactNode,
     id: string,
     PropertiesSSC: FC<PropertiesSSCPropsType>,
-    queryParams: { [key: string]: string | string[] }
+    queryParams: string
 }
 
 const PropertyContainer = async ({ children, id, PropertiesSSC, queryParams }: PropsType) => {

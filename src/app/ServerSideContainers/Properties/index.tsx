@@ -9,18 +9,15 @@ import { PropertiesContextProvider } from "@/context/PropertiesContext"
 
 type PropsType = {
     children: ReactNode,
-    queryParams: { [key: string]: string | string[] } 
+    queryParams: string
 }
 
 const PropertiesContainer = async ({ children, queryParams }: PropsType) => {
-    const res = await fetch("http://localhost:3000/api/stores/properties")
+    const res = await fetch(`http://localhost:3000/api/stores/properties?${queryParams}`)
 
     const data = await res.json() as FetchResponseType<PropertyType[]>
 
     const properties = data.data
-
-    console.log(queryParams)
-    //console.log(new )
 
     return (
         <PropertiesContextProvider
