@@ -18,7 +18,8 @@ import { WarehouseType } from "@/types/warehouse";
 class Auth {
 
     static decode(token: string) {
-        const { _id, exp, iat, password, ...userDetails } = verifyToken<DecodedUserType>(token);
+        const { _id, exp, iat, ...userDetails } = verifyToken<DecodedUserType>(token);
+
         return userDetails
     }
 
@@ -52,13 +53,14 @@ class Auth {
                 
             if(stores.length === 0) throw new AuthError("Username or password invalid");
 
+            //@ts-ignore
             user.stores = stores.map((store: WarehouseType) => {
                 const { category, status } = store.users.find(user => user.username === username)
 
                 return {
                     category,
                     status,
-                    storeId: store.id ?? "12345"
+                    storeId: store.id
                 }
             })
             
@@ -68,6 +70,8 @@ class Auth {
             // vefify new token to get its expiration time
             const tokenResult = verifyToken<DecodedUserType>(token);
             const { _id, exp, iat, ...userDetails } = tokenResult;
+
+            //@ts-ignore
             delete userDetails.password
 
             return { 
@@ -91,7 +95,7 @@ class Auth {
      */
     static async refreshToken({ token }: { token: string }): Promise<CredentialsType> {
         try {
-            const { _id, exp, iat, password, ...userDetails } = verifyToken<DecodedUserType>(token);
+            const { _id, exp, iat, ...userDetails } = verifyToken<DecodedUserType>(token);
 
             //Get new token
             const newToken = decode(userDetails);
