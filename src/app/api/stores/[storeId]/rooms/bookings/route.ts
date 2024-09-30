@@ -31,13 +31,13 @@ export const GET = (req: NextRequest, { params: { storeId } }: URLParamsType) =>
     )
 }
 
-export const POST = (req: NextRequest, { params }: URLParamsType) => {
+export const POST = (req: NextRequest, { params: { storeId } }: URLParamsType) => {
     return apiHandler(
         req,
-        async ({ mongoDbConfig, user }) => {
+        async ({ mongoDbConfig, user }) => { 
             const booking = await req.json() as BookingType
 
-            await Booking.register(booking, { mongoDbConfig, user })
+            await Booking.register(booking, storeId, { mongoDbConfig, user })
 
             return NextResponse.json(
                 { message: "Booking was successfully created" }, 
