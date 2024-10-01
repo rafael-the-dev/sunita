@@ -8,7 +8,7 @@ import ProtectedLayout from "@/components/shared/layout/ProtectedLayout";
 const RootLayout = ({ children }: { children: ReactNode }) => {
     const headersList = headers()
     const pathname = headersList.get("current-pathname")
-
+    console.log(pathname)
     const isProtectedRoute = (
         () => {
             const protectedRoutes = [ "/stores", "/system", "/login" ]
