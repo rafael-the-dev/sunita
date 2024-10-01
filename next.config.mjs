@@ -2,7 +2,7 @@
 
 const nextConfig = {
     env: {
-      LIVE_URL: "https://sunita.netlify.app",
+      LIVE_URL: "https://sunita-booking.netlify.app",
       MODE: "PRODUCTION",
       PORT: "3000"
     },
