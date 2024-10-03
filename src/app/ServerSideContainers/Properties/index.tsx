@@ -20,8 +20,6 @@ const PropertiesContainer = async ({ children, queryParams }: PropsType) => {
     const data = await res.json() as FetchResponseType<PropertyType[]>
 
     const properties = data.data
-    console.log(process.env.MODE)
-    console.log(properties)
 
     return (
         <PropertiesContextProvider
