@@ -6,7 +6,7 @@ import { isPublicPath } from "./middlewares/api";
 export const middleware = async (req: NextRequest) => {
     const { pathname } = req.nextUrl
     const params = new URLSearchParams(req.nextUrl.search)
-   
+    
     try {
         if(pathname.startsWith("/") && !pathname.startsWith("/api")) {
             const headers = new Headers(req.headers)
@@ -30,11 +30,13 @@ export const middleware = async (req: NextRequest) => {
 
 export const config = {
     matcher: [
+        '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
         "/api/users/:username*",
         "/api/stores/:storeId*",
         "/api/auth/refresh",
         "/stores/:path*",
         "/system/:path*",
+        "/login",
         "/search/properties/:path*",
         "/:path*"
     ]
