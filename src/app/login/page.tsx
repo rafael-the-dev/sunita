@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useFormState } from "react-dom";
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+ 
 import Paper from '@mui/material/Paper';
 import Typography from "@mui/material/Typography"
 
@@ -17,6 +17,8 @@ import { LoginContext } from "@/context/LoginContext";
 
 import Alert from "@/components/alert";
 import Button from "./components/SubmitButton";
+import Footer from "@/common/components/Footer"
+import Header from "@/common/components/Header"
 import Input from "@/components/Input";
 import PasswordInput from '@/components/shared/password';
 
@@ -83,48 +85,52 @@ const Login = () => {
     }, [ beforeUnloadHandler ])
     
     return (
-        <main className="bg-primary-50 flex items-center justify-center min-h-screen">
-            <Paper
-                action={formAction}
-                component="form"
-                className={classNames(styles.form, `mx-auto px-4 py-8 rounded-xl sm:px-6`)}
-                elevation={1}>
-                <fieldset>
-                    <Typography 
-                        component="legend"
-                        className='font-bold text-center text-2xl sm:text-3xl'
-                        variant='h2'>
-                        Login
-                    </Typography>
-                        <Alert 
-                            className="mt-3"
-                            description={state.error}
-                            onClose={onCloseHandlerRef}
-                            onOpen={onOpenHandlerRef}
-                            severity="error"
-                            title="Error"
+        <div>
+            <Header />
+            <main className="bg-primary-50 flex items-center justify-center min-h-screen">
+                <Paper
+                    action={formAction}
+                    component="form"
+                    className={classNames(styles.form, `mx-auto px-4 py-8 rounded-xl sm:px-6`)}
+                    elevation={1}>
+                    <fieldset>
+                        <Typography 
+                            component="legend"
+                            className='font-bold text-center text-2xl sm:text-3xl'
+                            variant='h2'>
+                            Login
+                        </Typography>
+                            <Alert 
+                                className="mt-3"
+                                description={state.error}
+                                onClose={onCloseHandlerRef}
+                                onOpen={onOpenHandlerRef}
+                                severity="error"
+                                title="Error"
+                            />
+                        <div className={classNames(`border border-solid border-primary-800 flex items-center mt-4 px-3 rounded-lg sm:mt-8`)}>
+                            <AccountCircleIcon className="text-slate-700" />
+                            <Input 
+                                className="bg-primary-800 border-0 grow"
+                                name="username-input"
+                                placeholder='Username'
+                                required
+                            />
+                        </div>
+                        <PasswordInput 
+                            name="password-input"
+                            placeholder="Password"
                         />
-                    <div className={classNames(`border border-solid border-primary-800 flex items-center mt-4 px-3 rounded-lg sm:mt-8`)}>
-                        <AccountCircleIcon className="text-slate-700" />
-                        <Input 
-                            className="bg-primary-800 border-0 grow"
-                            name="username-input"
-                            placeholder='Username'
-                            required
-                        />
+                    </fieldset>
+                    <div className='flex flex-col items-center mt-4'>
+                        <Button>
+                            Submit
+                        </Button>
                     </div>
-                    <PasswordInput 
-                        name="password-input"
-                        placeholder="Password"
-                    />
-                </fieldset>
-                <div className='flex flex-col items-center mt-4'>
-                    <Button>
-                        Submit
-                    </Button>
-                </div>
-            </Paper>
-        </main>
+                </Paper>
+            </main>
+            <Footer />
+        </div>
     )
 };
 
