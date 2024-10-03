@@ -5,38 +5,36 @@ export const isPublicPath = (req: NextRequest) => {
     const pathname = req
         .nextUrl
         .pathname
-        .replace("http://localhost:3000/api", "")
-        .replace(`${process.env.LIVE_URL}/api`, "")
-        .replace( /\?[A-Za-z0-9&.+-=]*/g,"");
-
+        //.replace( /\?[A-Za-z0-9&.+-=]*/g,"");
+   
     const publicResources = [
         {
             methods: [ "POST" ],
-            path: "/auth/login",
+            path: "/api/auth/login",
             useRegExp: false,
 
         },
         {
             methods: [ "GET" ],
-            path: "/auth/refresh",
+            path: "/api/auth/refresh",
             useRegExp: false,
 
         },
         {
             methods: [ "GET" ],
-            path: "/stores/properties",
+            path: "/api/stores/properties",
             useRegExp: false,
 
         },
         {
             methods: [ "GET" ],
-            path: "^/stores/properties/[A-z0-9\-]+$",
+            path: "^/api/stores/properties/[A-z0-9\-]+$",
             useRegExp: true,
 
         },
         {
             methods: [ "GET", "POST" ],
-            path: "^/stores/[A-z0-9\-]+/properties/bookings$",
+            path: "^/api/stores/[A-z0-9\-]+/properties/bookings$",
             useRegExp: true,
         }
     ]
@@ -44,10 +42,10 @@ export const isPublicPath = (req: NextRequest) => {
     const resource = publicResources.find(
         ({ methods, path, useRegExp }) => {
             if(!methods.includes(req.method)) return false
-
+            
             return useRegExp ? pathname.match(path) : (path === pathname)
         }
     )
-    
+
     return Boolean(resource)
 }
