@@ -7,6 +7,7 @@ export const middleware = async (req: NextRequest) => {
     const { pathname } = req.nextUrl
     const params = new URLSearchParams(req.nextUrl.search)
     console.log("middleware", pathname)
+    console.log(process.env.MODE)
    
     try {
         if(pathname.startsWith("/") && !pathname.startsWith("/api")) {
