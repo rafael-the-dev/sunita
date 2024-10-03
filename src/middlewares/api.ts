@@ -6,7 +6,7 @@ export const isPublicPath = (req: NextRequest) => {
         .nextUrl
         .pathname
         .replace("http://localhost:3000/api", "")
-        .replace(process.env.LIVE_URL, "")
+        .replace(`${process.env.LIVE_URL}/api`, "")
         .replace( /\?[A-Za-z0-9&.+-=]*/g,"");
 
     const publicResources = [
@@ -40,8 +40,6 @@ export const isPublicPath = (req: NextRequest) => {
             useRegExp: true,
         }
     ]
-
-    console.log(pathname)
    
     const resource = publicResources.find(
         ({ methods, path, useRegExp }) => {
