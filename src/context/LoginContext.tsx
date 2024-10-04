@@ -99,6 +99,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
                 console.error(e);
                 router.push("/login");
             } finally {
+                isFirstRender.current = false;
                 setRevalidatingToken(false)
             }
         }, 
@@ -109,7 +110,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         () => {
             const controller = new AbortController();
 
-            if(isFirstRender.current) {
+            if(!isFirstRender.current && !revalidatingToken) {
                 isFirstRender.current = false;
                 return;
             }
@@ -118,7 +119,7 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
 
             return () => controller.abort();
         }, 
-        [ validateSavedToken ]
+        [ revalidatingToken, validateSavedToken ]
     );
     
     React.useEffect(
