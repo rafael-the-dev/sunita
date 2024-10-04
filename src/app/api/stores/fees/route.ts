@@ -20,8 +20,6 @@ export const GET = async (req: NextRequest) => {
                 config
             )
 
-            console.log(response)
-
             return NextResponse.json(response)
         }
     )
