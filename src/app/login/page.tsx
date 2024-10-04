@@ -85,9 +85,9 @@ const Login = () => {
     }, [ beforeUnloadHandler ])
     
     return (
-        <div>
+        <div className="flex flex-col items-stretch min-h-screen">
             <Header />
-            <main className="bg-primary-50 flex items-center justify-center min-h-screen">
+            <main className="bg-primary-50 flex grow items-center justify-center py-20">
                 <Paper
                     action={formAction}
                     component="form"
@@ -96,7 +96,7 @@ const Login = () => {
                     <fieldset>
                         <Typography 
                             component="legend"
-                            className='font-bold text-center text-2xl sm:text-3xl'
+                            className='font-bold text-center text-2xl sm:text-3xl w-full'
                             variant='h2'>
                             Login
                         </Typography>
