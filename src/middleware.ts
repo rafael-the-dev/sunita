@@ -4,8 +4,8 @@ import { getToken, isAuthenticated } from "./helpers/auth";
 import { isPublicPath } from "./middlewares/api";
 
 export const middleware = async (req: NextRequest) => {
-    const { pathname } = req.nextUrl
-    const params = new URLSearchParams(req.nextUrl.search)
+    const { pathname, search } = req.nextUrl
+    const params = new URLSearchParams(search)
     
     try {
         if(pathname.startsWith("/") && !pathname.startsWith("/api")) {
@@ -38,6 +38,6 @@ export const config = {
         "/system/:path*",
         "/login",
         "/search/properties/:path*",
-        "/:path*"
+        "/"
     ]
 };
