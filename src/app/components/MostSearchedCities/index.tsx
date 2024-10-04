@@ -55,7 +55,7 @@ const ListItem = ({ label, query }: { label: string, query: string }) => (
     <li>
         <Link
             className="text-black hover:text-gray-600"
-            href={`/search/stores?city=${query}`}>
+            href={`/search/stores/properties?city=${query}`}>
             { label }
         </Link>
     </li>
