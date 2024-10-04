@@ -21,11 +21,12 @@ type PropsType = {
 
 const useFetch = <T>({ autoFetch= true, url }: PropsType) => {
     const [ state, setState ] = useState<StateType<T>>({ data: null, error: null, loading: autoFetch });
-    const router = useRouter()
 
     const isfirstRender = useRef(true)
 
     const fetchData = useCallback(async ({ options, onError, onSuccess, path, signal }: FetchDataPropsType) => {
+        isfirstRender.current = false
+
         setState((state) => ({
             ...state,
             loading: true
@@ -72,11 +73,11 @@ const useFetch = <T>({ autoFetch= true, url }: PropsType) => {
     }, [ url ]);
 
     useEffect(() => {
-        if(isfirstRender.current) {
+        if(!isfirstRender.current) {
             isfirstRender.current = false;
             return;
         }
-
+        
         const controller = new AbortController();
 
         if(autoFetch) fetchData({ signal: controller.signal});
