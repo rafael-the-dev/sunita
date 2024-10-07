@@ -3,8 +3,11 @@ import classNames from "classnames";
 
 import styles from "./styles.module.css";
 
+import { Store as StoreDetailsType } from "@/types/warehouse"
+
 import { AppContext } from "@/context/AppContext";
 import { FormContext, FormContextProvider } from "./context";
+import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext";
 
 import useFetch from "@/hooks/useFetch";
 
@@ -20,14 +23,16 @@ import UsersStep from "./components/User";
 const Form = () => {
     const { fetchDataRef } = useContext(AppContext);
     const { hasErrors, reset, toLiteralObject, user } = useContext(FormContext);
+    const { getDialog } = useContext(StaticTabsContext);
 
-    const hasPayload = false;
-    const hasError = hasErrors() || isInvalidInput(user.getUserInput().username) || user.address.hasErrors();
+    const storeDetails = getDialog().current?.payload as StoreDetailsType
+    const hasPayload = Boolean(storeDetails);
+    const hasError = hasErrors() || ( hasPayload ? false : (isInvalidInput(user.getUserInput().username) || user.address.hasErrors()));
     
     const { fetchData, loading } = useFetch(
         {
             autoFetch: false,
-            url: `/api/stores/`
+            url: `/api/stores/${hasPayload ? storeDetails.id : "" }`
         }
     )
     
@@ -66,7 +71,7 @@ const Form = () => {
             {
                 options: {
                     body: JSON.stringify(toLiteralObject()),
-                    method: "POST"
+                    method: hasPayload ? "PUT" : "POST"
                 },
                 onError(error) {
                     alertProps.current = {
@@ -77,7 +82,7 @@ const Form = () => {
                 },
                 async onSuccess() {
                     alertProps.current = {
-                        description: `Store was successfully registered`,
+                        description: `Store was successfully ${ hasPayload ? "updated" : "registered" }`,
                         severity: "success",
                         title: "Success"
                     }
@@ -100,7 +105,13 @@ const Form = () => {
             <Stepper 
                 alert={alert}
                 className={classNames(styles.stepper, "box-border flex flex-col items-stretch justify-between overflow-y-auto px-2 py-4 sm:pt-6 sm:px-4")}
-                components={[ <BaseDetailsStep key={0} />, <UsersStep key={1} />, <PaymentStep key={2} /> ]}
+                components={
+                    [ 
+                        <BaseDetailsStep key={0} />, 
+                        ...(hasPayload ? [] : [ <UsersStep key={1} /> ]), 
+                        ...(hasPayload ? [] : [ <PaymentStep key={2} /> ] )
+                    ]
+                }
                 resetStepperRef={resetStepperRef}
                 FinishButton={
                     () => (
@@ -112,7 +123,11 @@ const Form = () => {
                         </Button>
                     )
                 }
-                steps={[ "Details", "Admin", "Payment" ]}
+                steps={[ 
+                    "Details", 
+                    ...(hasPayload ? [] : [ "Admin" ]), 
+                    ...( hasPayload ? [] : [ "Payment" ] )
+                ]}
             />
         </form>
     )
