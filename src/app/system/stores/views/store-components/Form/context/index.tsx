@@ -1,7 +1,10 @@
 import * as React from "react"
 
-import { EnrollStoreType,  } from "@/types/warehouse"
+import { EnrollStoreType, Store as StoreDetailsType } from "@/types/warehouse"
 import { FormContextType, PropsType } from "./types"
+import { STATUS } from "@/types";
+
+import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext";
 
 import useAddress from "@/hooks/useAddress"
 import useContact from "@/hooks/useContact"
@@ -10,28 +13,44 @@ import useUser from "./hooks/useUser"
 
 import { isValidName } from "@/validation/product"
 
-import { defaultInputField } from "@/config/input"
+import { defaultInputField, getInputFieldObject } from "@/config/input"
 
 export const FormContext = React.createContext<FormContextType>({} as FormContextType)
 
 const initialBaseDetails = {
     name: defaultInputField,
+    status: STATUS.ACTIVE
 }
 
 export const FormContextProvider = ({ children }: PropsType) => {
-    const [ baseDetails, setBaseDetails ] = React.useState(initialBaseDetails)
+    const { getDialog } = React.useContext(StaticTabsContext);
 
-    const address = useAddress({ hasCords: true })
-    const contact = useContact()
+    const storeDetails = getDialog().current?.payload as StoreDetailsType;
+    const hasPayload = Boolean(storeDetails);
+
+    const [ baseDetails, setBaseDetails ] = React.useState(
+        () => {
+            if(!hasPayload) return initialBaseDetails;
+
+            return {
+                name: getInputFieldObject(storeDetails.name),
+                status: storeDetails.status
+            }
+        }
+    )
+
+    const address = useAddress({ hasCords: true, initialAddress: storeDetails?.address })
+    const contact = useContact(storeDetails?.contact)
     const payment = usePayment(8500)
     const user = useUser()
 
     const hasErrors = () => {
         return [
+            address.hasErrors(),
             baseDetails.name.error || !baseDetails.name.value.trim(),
             contact.hasErrors,
-            payment.hasErrors,
-            user.hasErrors()
+            hasPayload ? false : payment.hasErrors,
+            hasPayload ? false : user.hasErrors()
         ].find(error => error)
     }
 
@@ -53,6 +72,11 @@ export const FormContextProvider = ({ children }: PropsType) => {
         []
     )
 
+    const statusChangeHandler = React.useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => setBaseDetails(details => ({ ...details, status: e.target.value as STATUS})),
+        []
+    )
+
     const reset = () => {
         setBaseDetails(structuredClone(initialBaseDetails))
         contact.resetContact()
@@ -64,10 +88,10 @@ export const FormContextProvider = ({ children }: PropsType) => {
         const storeEnrollment: EnrollStoreType = {
             address: address.toLiteralObject(),
             contact: contact.toLiteralObject(),
-            id: null,
+            id: storeDetails?.id,
             name: baseDetails.name.value,
             payment: payment.getPayment(),
-            status: null,
+            status: baseDetails.status,
             users: [ user.toLiteralObject() ]
         }
 
@@ -85,7 +109,7 @@ export const FormContextProvider = ({ children }: PropsType) => {
 
                 hasErrors,
                 nameChangeHandler,
-                reset,
+                reset, statusChangeHandler,
                 toLiteralObject
             }}>
             { children }
