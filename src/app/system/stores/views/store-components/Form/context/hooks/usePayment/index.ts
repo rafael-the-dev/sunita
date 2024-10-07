@@ -31,15 +31,7 @@ const useEnrollmentPayment = (totalPrice: number) => {
     const bookingInfo = getDialog().current?.payload as BookingInfoType
     const hasPayload = Boolean(bookingInfo)
 
-    const [ payment, setPayment ] = useState(
-        () => {
-            if(!hasPayload) return initialState;
-
-            return {
-                ...bookingInfo.payment
-            }
-        }
-    )
+    const [ payment, setPayment ] = useState(initialState);
 
     const {
         add,
