@@ -60,7 +60,7 @@ const getStoreProxy = (target: StoreType) => {
 
                     validate(status, "Invalid status", status => STORE_STATUS.includes(status as STATUS))
 
-                    return Reflect.set(target, prop, name)
+                    return Reflect.set(target, prop, status)
                 }
             
             }
