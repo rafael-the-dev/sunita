@@ -9,6 +9,6 @@ export const getInputFieldObject = (value: string) => {
     return {
         error: false,
         helperText: "",
-        value
+        value: Boolean(value) ? value : ""
     }
 }
