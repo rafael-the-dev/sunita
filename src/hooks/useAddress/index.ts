@@ -1,18 +1,39 @@
 import * as React from "react"
 import currency from "currency.js"
 
-import { AddressType } from "@/types/address";
+import { AddressType, COUNTRIES } from "@/types/address";
 import { PropsType} from "./types"
 
 import { initialAddress } from "./values";
 
+import { getInputFieldObject } from "@/config/input"
 import { isValidCountry, isValidCity, isValidNumber, isValidState, isValidStreet } from "@/validation/address";
 import { isInvalidInput } from "@/helpers";
 
 type KeysType = "country" | "city" | "number" | "state" | "street";
 
 const useAddress = (props?: PropsType) => {
-    const [ address, setAddress ] = React.useState(initialAddress)
+    const [ address, setAddress ] = React.useState(
+        () => {
+            const address = props?.initialAddress;
+
+            if(!address) return initialAddress;
+
+
+            return {
+                country: { error: false, helperText: "", value: address?.country ?? "" as COUNTRIES },
+                province: getInputFieldObject(address?.state),
+                city: getInputFieldObject(address?.city), 
+                cords: {
+                    lat: address?.cords?.lat,
+                    long: address?.cords?.long
+                },
+                state: getInputFieldObject(address?.state),
+                street: getInputFieldObject(address?.street),
+                number: getInputFieldObject(address?.number?.toString()),
+            }
+        }
+    )
 
     const hasCords = Boolean(props?.hasCords)
 
@@ -23,10 +44,11 @@ const useAddress = (props?: PropsType) => {
     }
 
     const hasErrors = () => {
+        console.log(address.cords)
         return [
             isInvalidInput(address.city),
             isInvalidInput(address.country),
-            isInvalidInput(address.province),
+            //isInvalidInput(address.province),
             isInvalidInput(address.state),
             isInvalidInput(address.street),
             isInvalidInput(address.number),

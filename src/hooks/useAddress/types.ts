@@ -1,5 +1,6 @@
 import { ChangeEvent } from "react"
 
+import { AddressType } from "@/types/address"
 import { initialAddress } from "./values"
 
 export type AddressInputType = typeof initialAddress
@@ -17,5 +18,6 @@ export type AddressEventHandlers = {
 }
 
 export type PropsType = {
-    hasCords: boolean
+    hasCords: boolean,
+    initialAddress?: AddressType
 }
