@@ -1,6 +1,6 @@
 
 import { ConfigType, FiltersType } from "@/types/app-config-server"
-import { EnrollStoreType, StoreType } from "@/types/warehouse"
+import { EnrollStoreType, StoreType, Store as StoreDetailsType } from "@/types/warehouse"
 import { BaseFeeType, FEES_TYPE } from "@/types/fees"
 import { STATUS } from "@/types"
 
@@ -102,6 +102,98 @@ class Store {
                 .collections
                 .WAREHOUSES
                 .deleteOne({ id })
+                
+            throw e
+        }
+    }
+
+    static async update(store: StoreDetailsType, config: ConfigType) {
+        if(!store || typeof store !== "object") throw new InvalidArgumentError("Invalid store details");
+
+        const  storeDetails = (await this.get(store.id, config)).data;
+
+        const enrollStore: EnrollStoreType = {
+            address: null,
+            contact: null,
+            id: null,
+            name: null,
+            payment: null,
+            users: [],
+            status: STATUS.INACTIVE
+        }
+
+        const storeProxy = getStoreProxy(enrollStore);
+
+        storeProxy.address = store.address;
+        storeProxy.contact = store.contact;
+        storeProxy.name = store.name;
+        storeProxy.status = store.status
+
+        try {
+            await Promise.all(
+                [
+                    config
+                        .mongoDbConfig
+                        .collections
+                        .WAREHOUSES
+                        .updateOne(
+                            { id: storeDetails.id },
+                            {
+                                $set: {
+                                    address: store.address,
+                                    contact: store.contact,
+                                    name: store.name,
+                                    status: store.status
+                                }
+                            }
+                        ),
+                    
+                    config
+                        .mongoDbConfig
+                        .collections
+                        .PROPERTIES
+                        .updateMany(
+                            { owner: store.id },
+                            {
+                                $set: {
+                                    address: store.address
+                                }
+                            }
+                        )
+                ]
+            )
+        } catch(e) {
+            await Promise.all(
+                [
+                    config
+                        .mongoDbConfig
+                        .collections
+                        .WAREHOUSES
+                        .updateOne(
+                            { id: storeDetails.id},
+                            {
+                                $set:  {
+                                    address: storeDetails.address,
+                                    contact: storeDetails.contact,
+                                    name: storeDetails.name,
+                                    status: storeDetails.status
+                                }
+                            }
+                        ),
+                        config
+                            .mongoDbConfig
+                            .collections
+                            .PROPERTIES
+                            .updateMany(
+                                { owner: store.id },
+                                {
+                                    $set: {
+                                        address: storeDetails.address
+                                    }
+                                }
+                            )
+                    ]
+                )
                 
             throw e
         }
