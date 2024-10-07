@@ -6,6 +6,7 @@ import { DocumentInputFunctions } from "@/hooks/useDocument/types"
 import { EnrollStoreType } from "@/types/warehouse"
 import { PaymentType } from "@/types/payment-method"
 import { PaymentFunctionsType } from "@/hooks/usePayment/types"
+import { STATUS } from "@/types"
 import { UserInputHandlers } from "@/hooks/useUser/types"
 
 import { defaultInputField } from "@/config/input"
@@ -27,6 +28,7 @@ export type FormContextType = {
     payment: PaymentFunctionsType & {
         getPayment: () => PaymentType
     },
+    status: STATUS,
     user: UserInputHandlers & {
         address: AddressType
         contact: ContactType,
@@ -39,6 +41,7 @@ export type FormContextType = {
     hasErrors: () => boolean,
     nameChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void,
     reset: () => void,
+    statusChangeHandler: (e: React.ChangeEvent<HTMLInputElement>) => void,
     toLiteralObject: () => EnrollStoreType,
 }
 
