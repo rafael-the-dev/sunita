@@ -1,6 +1,7 @@
-import { useContext, useEffect, useState } from "react"
+import { useCallback,useContext, useEffect, useState } from "react"
 import classNames from "classnames"
 import { Marker, Popup, TileLayer } from "react-leaflet"
+import { LatLng } from "leaflet"
 
 import styles from "./styles.module.css"
 
@@ -21,23 +22,40 @@ type MarkerType = {
 }
 
 const PropertyMap = () => {
-    const { property } = useContext(PropertyContext)
+    const { property } = useContext(PropertyContext);
 
     const [ markers, setMarkers ] = useState<MarkerType[]>(
         () => {
             if(property && property.address) return [
                 {
-                    description: "", 
-                    id: getId(),
+                    description: property.type, 
+                    id: property.id,
                     cords: {
                         lat: property.address?.cords?.lat,
                         long: property.address?.cords?.long
                     } 
                 }
-            ]
+            ];
 
             return []
         }
+    )
+
+    const getCenter = useCallback(
+        () => {
+            const isEmpty = !Boolean(property);
+
+            if(isEmpty) {
+                const userLocation = markers.find(marker => marker.description === "Your location");
+
+                if(userLocation) return new LatLng(userLocation.cords.lat, userLocation.cords.long);
+
+                return new LatLng(51.505, -0.09);// London coordinates
+            }
+
+            return new LatLng(property.address?.cords?.lat, property.address?.cords?.long);
+        },
+        [ markers, property ]
     )
 
     useEffect(
@@ -64,7 +82,7 @@ const PropertyMap = () => {
     return (
         <div className={classNames(styles.mapContainer, `mt-8 xl:mt-0`)}>
             <MapContainer 
-                center={[ property?.address?.cords?.lat, property?.address?.cords?.long ]} 
+                center={getCenter()} 
                 zoom={13} 
                 scrollWheelZoom={false}
                 style={{ height: "100%", width: "100%"}}>
