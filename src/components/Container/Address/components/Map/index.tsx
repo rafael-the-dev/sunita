@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import classNames from "classnames"
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+import { Marker, Popup, TileLayer } from "react-leaflet"
 
 import styles from "./styles.module.css"
 
@@ -8,6 +8,7 @@ import { getId } from "@/helpers/id"
 import { onGettingUserLocation } from "@/helpers/location"
 
 import Button from "@/components/shared/button"
+import MapContainer from "@/components/Map"
 import MapHandlers from "./MapHandlers"
 
 type MarkerType = {
