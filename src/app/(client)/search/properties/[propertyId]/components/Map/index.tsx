@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import classNames from "classnames"
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"
+import { Marker, Popup, TileLayer } from "react-leaflet"
 
 import styles from "./styles.module.css"
 
+import { PropertyContext } from "@/context/PropertyContext"
+
 import { getId } from "@/helpers/id"
 import { onGettingUserLocation } from "@/helpers/location"
+
+import MapContainer from "@/components/Map"
 
 type MarkerType = {
     description: string,
@@ -17,13 +21,29 @@ type MarkerType = {
 }
 
 const PropertyMap = () => {
-    const [ markers, setMarkers ] = useState<MarkerType[]>([])
+    const { property } = useContext(PropertyContext)
+
+    const [ markers, setMarkers ] = useState<MarkerType[]>(
+        () => {
+            if(property && property.address) return [
+                {
+                    description: "", 
+                    id: getId(),
+                    cords: {
+                        lat: property.address?.cords?.lat,
+                        long: property.address?.cords?.long
+                    } 
+                }
+            ]
+
+            return []
+        }
+    )
 
     useEffect(
         () => {
             onGettingUserLocation(
                 (lat, long) => setMarkers(markers => {
-                    console.log(lat, long)
                     return [
                         ...markers, 
                         { 
@@ -44,7 +64,7 @@ const PropertyMap = () => {
     return (
         <div className={classNames(styles.mapContainer, `mt-8 xl:mt-0`)}>
             <MapContainer 
-                center={[ -25.8998272, 32.5615616 ]} 
+                center={[ property?.address?.cords?.lat, property?.address?.cords?.long ]} 
                 zoom={13} 
                 scrollWheelZoom={false}
                 style={{ height: "100%", width: "100%"}}>
@@ -58,9 +78,11 @@ const PropertyMap = () => {
                             <Marker 
                                 key={marker.id}
                                 position={[ marker.cords.lat, marker.cords.long ]}>
-                                <Popup>
-                                    { marker.description }
-                                </Popup>
+                                    { marker.description && (
+                                        <Popup>
+                                            { marker.description }
+                                        </Popup>
+                                    )}
                             </Marker>
                         )
                     )
