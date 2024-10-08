@@ -1,0 +1,16 @@
+
+.main {
+    background-color: #ebeaea4f;
+}
+
+.imageContainer {
+    height: 220px;
+    width: 80%;
+}
+
+@media screen and (width >= 600px) {
+    .imageContainer {
+        height: 280px;
+        width: 400px;
+    }
+}
