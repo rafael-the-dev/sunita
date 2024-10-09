@@ -98,10 +98,10 @@ const BookingForm = () => {
 
     return (
         <form
-            className={classNames(styles.form, `px-3 py-4`)}
+            className={classNames(styles.form, "px-3 py-4")}
             onSubmit={submmitHandler}>
-            { alert }
             <Stepper
+                alert={alert}
                 className={classNames(styles.stepper, "flex flex-col items-stretch justify-between")}
                 components={[ <BaseDetails key={0} />, <Guest key={1} />, <Payment key={2} /> ]}
                 resetStepperRef={resetStepperRef}

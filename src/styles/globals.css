@@ -59,6 +59,14 @@ table td, table th {
     position: relative;
 }
 
+.MuiStepper-horizontal {
+    overflow-x: auto;
+}
+
+.MuiStep-root {
+    text-wrap: nowrap;
+}
+
 @media screen and (width >= 768px) {
     .searchPropertyBookings .dx-scheduler {
         width: 100%;
