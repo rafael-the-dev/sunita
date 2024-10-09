@@ -55,12 +55,15 @@ const PropertyMap = () => {
         () => {
             const properties = getProperties() ?? [];
 
-            const evaluatedLocations: number[] = [];
             const isEmpty = properties.length === 0;
-
+            
             if(isEmpty && Boolean(userLocation)) return new LatLng(userLocation.cords.lat, userLocation.cords.long);
 
             if(isEmpty) return new LatLng(51.505, -0.09);// London coordinates
+
+            
+            const evaluatedLocations: number[] = [];
+            let length = 0
 
             const { lat, lng } = properties.reduce(
                 (prevValue, property) => {
@@ -69,6 +72,7 @@ const PropertyMap = () => {
                     if(evaluatedLocations.includes(newLocation)) return prevValue;
 
                     evaluatedLocations.push(newLocation);
+                    length++;
 
                     return {
                         lat: currency(property.address.cords.lat).add(prevValue.lat).value,
@@ -78,8 +82,8 @@ const PropertyMap = () => {
                 { lat: 0, lng: 0 }
             );
 
-            const avgLat = currency(lat).divide(properties.length).value;
-            const avgLng = currency(lng).divide(properties.length).value;
+            const avgLat = currency(lat).divide(length).value;
+            const avgLng = currency(lng).divide(length).value;
 
             return new LatLng(avgLat, avgLng);
         },
