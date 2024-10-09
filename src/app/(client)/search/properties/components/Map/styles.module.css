@@ -1,6 +1,12 @@
 
 .mapContainer {
-    height: 80vh;
+    height: 55vh;
+}
+
+@media screen and (width >= 600px) {
+    .mapContainer {
+        height: 65vh;
+    }
 }
 
 @media screen and (width >= 900px) {
