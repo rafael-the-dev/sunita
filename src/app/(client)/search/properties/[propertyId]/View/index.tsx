@@ -16,6 +16,7 @@ import useSearchParams from "@/hooks/useSearchParams"
 import Button from "@/components/shared/button"
 import Bookings from "../components/Bookings"
 import BookingForm from "../components/BookingForm"
+import Dialog from "@/components/shared/layout/components/Dialog";
 import Footer from "@/common/components/Footer"
 import Header from "@/common/components/Header"
 import Images from "../components/Images"
@@ -176,6 +177,7 @@ const PropertyContainer = () => {
                 <Testimonials className="!px-0" />
                 <RelatedProperties classes={{ root: "block mt-12"}} />
                 <WhyUs className="!mt-12 !px-0" />
+                <Dialog />
             </main>
             <Footer />
         </div>
