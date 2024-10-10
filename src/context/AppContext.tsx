@@ -38,10 +38,14 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     const [ dialog, setDialog ] = React.useState<DialogType | null>(null);
     const [ language, setLanguage ] = React.useState(
         () => {
-            if(window) {
-                const language = getItem<LANGUAGE>("language")
+            try {
+                if(window) {
+                    const language = getItem<LANGUAGE>("language")
 
-                return isValidLanguage(language) ? language : LANGUAGE.PORTUGUESE
+                    return isValidLanguage(language) ? language : LANGUAGE.PORTUGUESE
+                }
+            } catch(e) {
+                return LANGUAGE.PORTUGUESE
             }
 
             return LANGUAGE.PORTUGUESE
