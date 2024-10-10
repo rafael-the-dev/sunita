@@ -13,7 +13,11 @@ import Typography from "@mui/material/Typography"
 import styles from "./styles.module.css";
 
 import { CredentialsType } from '@/types/login';
+import { LANGUAGE } from "@/types/language"
+
 import { LoginContext } from "@/context/LoginContext";
+
+import useLanguage from "@/hooks/useLanguage";
 
 import Alert from "@/components/alert";
 import Button from "./components/SubmitButton";
@@ -26,6 +30,7 @@ const Login = () => {
     const router = useRouter();
 
     const { setCredentials } = React.useContext(LoginContext);
+    const { translate } = useLanguage()
 
     const onCloseHandlerRef = React.useRef(null);
     const onOpenHandlerRef = React.useRef(null);
@@ -113,18 +118,39 @@ const Login = () => {
                             <Input 
                                 className="bg-primary-800 border-0 grow"
                                 name="username-input"
-                                placeholder='Username'
+                                placeholder={
+                                    translate(
+                                        {
+                                            [LANGUAGE.ENGLISH]: "Username",
+                                            [LANGUAGE.PORTUGUESE]: "Nome do usuario"
+                                        }
+                                    )
+                                }
                                 required
                             />
                         </div>
                         <PasswordInput 
                             name="password-input"
-                            placeholder="Password"
+                            placeholder={
+                                translate(
+                                    {
+                                        [LANGUAGE.ENGLISH]: "Password",
+                                        [LANGUAGE.PORTUGUESE]: "Palavra passe"
+                                    }
+                                )
+                            }
                         />
                     </fieldset>
                     <div className='flex flex-col items-center mt-4'>
                         <Button>
-                            Submit
+                            {
+                                translate(
+                                    {
+                                        [LANGUAGE.ENGLISH]: "Submit",
+                                        [LANGUAGE.PORTUGUESE]: "Submeter"
+                                    }
+                                )
+                            }
                         </Button>
                     </div>
                 </Paper>
