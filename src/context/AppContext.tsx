@@ -5,6 +5,8 @@ import * as React from "react";
 
 import { LANGUAGE } from "@/types/language"
 
+import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
+
 type DialogType = {
     header?: {
         onClose?: () => void;
@@ -24,6 +26,12 @@ type AppContextType = {
     setDialog: React.Dispatch<React.SetStateAction<DialogType>>
 };
 
+const isValidLanguage = (language: LANGUAGE) => {
+    return Object
+        .values(LANGUAGE)
+        .includes(language)
+}
+
 export const AppContext = React.createContext<AppContextType | null>(null);
 
 export const AppContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -35,13 +43,34 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
     const changeLanguage = React.useCallback(
         (language: LANGUAGE) => {
-            const isValid = Object
-                .values(LANGUAGE)
-                .includes(language)
+            const isValid = isValidLanguage(language)
 
             if(isValid) setLanguage(language)
         },
         []
+    )
+
+    React.useEffect(
+        () => {
+            try {
+                const language = getItem<LANGUAGE>("language")
+
+                if(isValidLanguage(language)) setLanguage(language)
+            } catch(e) {
+                configLocalStorage();
+            }
+        }, 
+        []
+    );
+
+    React.useEffect(
+        () => {
+            setItem({ 
+                key: "language", 
+                value: language 
+            });
+        },
+        [ language ]
     )
 
     return (
