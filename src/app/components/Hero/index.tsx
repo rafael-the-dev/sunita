@@ -4,6 +4,8 @@ import { Autoplay } from "swiper/modules"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Typography from "@mui/material/Typography"
 
+import SearchIcon from '@mui/icons-material/Search';
+
 import styles from "./styles.module.css"
 
 import { LANGUAGE } from "@/types/language"
@@ -82,7 +84,7 @@ const Hero = () => {
                 <Link 
                     className="mt-6 no-underline"
                     href="/search/properties">
-                    <Button>
+                    <Button startIcon={<SearchIcon />}>
                         { 
                             translate(
                                 { 
