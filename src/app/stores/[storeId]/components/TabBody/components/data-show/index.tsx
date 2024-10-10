@@ -6,7 +6,11 @@ import moment from "moment";
 
 import classes from "./styles.module.css"
 
+import { LANGUAGE } from "@/types/language"
+
 import { AnalyticsContext } from "@/context/AnalyticsContext";
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Chart from "./components/chart";
 import Resizeable from "@/components/resizeable";
@@ -14,15 +18,41 @@ import Table from "./components/table"
 
 import { formatDate, formatDates } from "@/helpers/date"
 
+const lang = {
+    chart: {
+        [LANGUAGE.ENGLISH]: "Chart",
+        [LANGUAGE.PORTUGUESE]: "Vendas"
+    },
+    list: {
+        [LANGUAGE.ENGLISH]: "List",
+        [LANGUAGE.PORTUGUESE]: "Lista"
+    },
+    sales: {
+        [LANGUAGE.ENGLISH]: "Sales",
+        [LANGUAGE.PORTUGUESE]: "Vendas"
+    },
+    table: {
+        [LANGUAGE.ENGLISH]: "Table",
+        [LANGUAGE.PORTUGUESE]: "Tabela"
+    },
+}
+
 const Container = () => {
     const { getAnalytics } = React.useContext(AnalyticsContext);
 
     const [ value, setValue ] = React.useState("TABLE")
 
-    const controls = React.useRef([
-        { label: 'Table', value: "TABLE" },
-        { label: 'Chart', value: "CHART" }
-    ]);
+    const { language, translate } = useLanguage()
+
+    const controls = React.useMemo(
+        () => [
+            { label: lang.table[language], value: "TABLE" },
+            { label: lang.chart[language], value: "CHART" }
+        ],
+        [ language ]
+    );
+
+
 
     const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value), []);
 
@@ -39,13 +69,22 @@ const Container = () => {
     const chartMemo = React.useMemo(() => <Chart />, [])
     const tableMemo = React.useMemo(() => <Table />, [])
 
-    const titleMemo = React.useMemo(() => (
-        <Typography
-            component="h2"
-            className="font-bold text-xl">
-            Sales { value === "TABLE" ? "list" : "chart" } { formatDates(getSalesDate()) }
-        </Typography>
-    ), [ getSalesDate, value ]);
+    const titleMemo = React.useMemo(
+        () => {
+            const chartLabel = lang.chart[language]
+            const listLabel = lang.list[language]
+            const salesLabel = lang.sales[language]
+
+            return (
+                <Typography
+                    component="h2"
+                    className="font-bold text-xl">
+                    { salesLabel } { value === "TABLE" ? listLabel : chartLabel } { formatDates(getSalesDate()) }
+                </Typography>
+            )
+        }, 
+        [ getSalesDate, language, value ]
+    );
     
     const hasRange = React.useCallback(() => {
         const list = getSalesDate();
@@ -83,7 +122,7 @@ const Container = () => {
                             row
                         >
                             {
-                                controls.current.map(item => (
+                                controls.map(item => (
                                     <FormControlLabel 
                                         { ...item }
                                         control={<Radio checked={value === item.value} onChange={changeHandler} />} 
