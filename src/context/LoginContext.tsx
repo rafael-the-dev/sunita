@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { CredentialsType } from "@/types/login" ;
 import { UserType } from "@/types/user";
 
-import { configLocalStorage, getItem, setItem } from "@/helpers/local-storage";
+import { getItem, setItem } from "@/helpers/local-storage";
 
 type LoginContextType = {
     credentials: CredentialsType,
@@ -37,17 +37,6 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         }, 
         [ router ]
     )
-
-    React.useEffect(
-        () => {
-            try {
-                getItem<CredentialsType>("credentials")
-            } catch(e) {
-                configLocalStorage();
-            }
-        }, 
-        []
-    );
 
     React.useEffect(
         () => {
