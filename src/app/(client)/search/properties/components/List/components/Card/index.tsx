@@ -7,7 +7,10 @@ import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css"
 
+import { LANGUAGE } from "@/types/language"
 import { PropertyType } from "@/types/property"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Button from "@/components/shared/button"
 import Image from "./components/Image"
@@ -15,6 +18,8 @@ import Link from "@/components/link"
 import Status from "@/components/shared/Status"
 
 const Card = ({ amenities, bedroom, description, id, images, name, price, status }: PropertyType) => {
+    const { translate } = useLanguage()
+
     const amenitiesList = useMemo(
         () => amenities
             .join(", "),
@@ -60,16 +65,23 @@ const Card = ({ amenities, bedroom, description, id, images, name, price, status
                             <div className={classNames(styles.footer, `flex flex-col gap-y-6 justify-between w-full sm:flex-row sm:gap-y-0 sm:items-end xl:flex-col
                                 xl:gap-y-6 xl:items-start xl:mt-0`)}>
                                 <div className='flex items-center gap-x-3'>
-                                    <Chip label={`${price.night}/n`} />
-                                    <Chip className="bg-primary-500 text-white" label={`${price.hourly}/h`} />
-                                    <Chip label={`${price.daily}/d`} />
+                                    <Chip label={`${price.night}Mt/n`} />
+                                    <Chip className="bg-primary-500 text-white" label={`${price.hourly}Mt/h`} />
+                                    <Chip label={`${price.daily}Mt/d`} />
                                 </div>
                                 <Link
                                     className="" 
                                     href={`./properties/${id}`}>
                                     <Button
                                         className="py-2 sm:py-1">
-                                        View details
+                                        {
+                                            translate(
+                                                {
+                                                    [LANGUAGE.ENGLISH]: "View details",
+                                                    [LANGUAGE.PORTUGUESE]: "Ver detalhes"
+                                                }
+                                            )
+                                        }
                                     </Button>
                                 </Link>
                             </div>

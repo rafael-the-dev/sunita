@@ -6,6 +6,10 @@ import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css"
 
+import { LANGUAGE } from "@/types/language"
+
+import useLanguage from "@/hooks/useLanguage"
+
 import Button from "@/components/shared/button"
 import Link from "@/components/link"
 
@@ -28,6 +32,8 @@ const list = [
 ]
 
 const Hero = () => {
+    const { translate } = useLanguage()
+
     const gradient = "linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .4))"
 
     return (
@@ -51,18 +57,40 @@ const Hero = () => {
                 <Typography
                     component="h1"
                     className="font-bold text-2xl md:text-3xl lg:text-4xl">
-                    Find the Perfect Place—Right Near You!
+                    { 
+                        translate(
+                            { 
+                                [LANGUAGE.PORTUGUESE]: "Encontre o lugar perfeito – bem perto de você!", 
+                                [LANGUAGE.ENGLISH]: "Find the Perfect Place—Right Near You!" 
+                            }
+                        ) 
+                    }
                 </Typography>
                 <Typography
                     component="p"
                     className="mt-3 opacity-90">
-                    Browse apartments, houses, and workspaces near your location and book instantly with just a few clicks.
+                    { 
+                        translate(
+                            { 
+                                [LANGUAGE.PORTUGUESE]: "Procure apartamentos, casas e espaços de trabalho próximos à sua localização e reserve  instantaneamente com apenas alguns cliques.", 
+                                [LANGUAGE.ENGLISH]: "Browse apartments, houses, and workspaces near your location and book instantly with just  a few clicks." 
+                            }
+                        ) 
+                    }
+                    
                 </Typography>
                 <Link 
                     className="mt-6 no-underline"
                     href="/search/properties">
                     <Button>
-                        Search Nearby Properties
+                        { 
+                            translate(
+                                { 
+                                    [LANGUAGE.PORTUGUESE]: "Pesquisar propriedades próximas", 
+                                    [LANGUAGE.ENGLISH]: "Search Nearby Properties" 
+                                }
+                            ) 
+                        }
                     </Button>
                 </Link>
             </div>

@@ -3,6 +3,10 @@ import classNames from "classnames"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Typography from "@mui/material/Typography"
 
+import { LANGUAGE } from "@/types/language"
+
+import useLanguage from "@/hooks/useLanguage"
+
 import Controllers from "@/common/components/CarouselControllers"
 import Title from "@/app/(client)/search/properties/[propertyId]/components/Title"
 import Testimonial from "@/common/components/Testimonial"
@@ -42,6 +46,8 @@ const testimonialsList = [
   
 
 const Testimonials = ({ className }: { className?: string }) => {
+    const { translate } = useLanguage()
+
     const breakpoints = {
         600: {
             spaceBetween: 20,
@@ -60,12 +66,26 @@ const Testimonials = ({ className }: { className?: string }) => {
     return (
         <section className={classNames(className, "px-[5%] pt-16")}>
             <Title>
-                What Our Happy Customers Say
+                {
+                    translate(
+                        {
+                            [LANGUAGE.ENGLISH]: "What Our Happy Customers Say",
+                            [LANGUAGE.PORTUGUESE]: "O que nossos clientes satisfeitos dizem"
+                        }
+                    )
+                }
             </Title>
             <Typography
                 component="p"
                 className="mt-3 mb-6 opacity-85 text-small">
-                Do not just take our word for it—see what real users have to say about their booking experience.
+                {
+                    translate(
+                        {
+                            [LANGUAGE.ENGLISH]: "Do not just take our word for it—see what real users have to say about their booking experience.",
+                            [LANGUAGE.PORTUGUESE]: "Não acredite apenas na nossa palavra: veja o que usuários reais têm a dizer sobre sua experiência de reserva."
+                        }
+                    )
+                }
             </Typography>
             <div>
                 <Swiper 

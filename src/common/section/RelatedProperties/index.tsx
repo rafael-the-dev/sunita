@@ -5,9 +5,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
+import {LANGUAGE} from "@/types/language"
+
 import { PropertiesContext } from "@/context/PropertiesContext";
 
-//import useProperties from "@/hooks/useProperties"
+import useLanguage from "@/hooks/useLanguage"
 
 import Card from "@/components/Card/Property"
 import Controllers from "@/common/components/CarouselControllers"
@@ -24,6 +26,9 @@ type PropsType = {
 
 const RelatedProperties = ({ classes, queryParams }: PropsType) => {
     const { data, error } = useContext(PropertiesContext)
+
+    const { translate } = useLanguage()
+
     const properties = data ?? []
  
     const breakpoints = {
@@ -45,7 +50,14 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
         <section className={classNames(classes?.root)}>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2">
                 <Title>
-                    Properties Available Near You
+                    { 
+                        translate(
+                            { 
+                                [LANGUAGE.PORTUGUESE]: "Propriedades disponíveis perto de você", 
+                                [LANGUAGE.ENGLISH]: "Properties Available Near You" 
+                            }
+                        ) 
+                    }
                 </Title>
                 <Link
                     className="no-underline"
@@ -53,7 +65,7 @@ const RelatedProperties = ({ classes, queryParams }: PropsType) => {
                     <Button
                         className="capitalize text-black hover:!bg-black hover:border-black hover:text-white"
                         endIcon={<ArrowRightIcon />}>
-                        View all
+                        { translate({ [LANGUAGE.PORTUGUESE]: "ver todas", [LANGUAGE.ENGLISH]: "View all" }) }
                     </Button>
                 </Link>
             </div>

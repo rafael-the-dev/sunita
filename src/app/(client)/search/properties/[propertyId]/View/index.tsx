@@ -6,12 +6,15 @@ import dynamicFunc from "next/dynamic"
 
 import Breadcrumbs from "@mui/material/Breadcrumbs"
 import Typography from "@mui/material/Typography"
+
+import { LANGUAGE } from "@/types/language"
 import { TABS } from "../components/Tab/types"
 
 import { AppContext } from "@/context/AppContext"
 import { PropertyContext } from "@/context/PropertyContext"
 
 import useSearchParams from "@/hooks/useSearchParams"
+import useLanguage from "@/hooks/useLanguage"
 
 import Button from "@/components/shared/button"
 import Bookings from "../components/Bookings"
@@ -37,10 +40,11 @@ enum DIALOG {
 }
 
 const PropertyContainer = () => {
-    const { fetchDataRef, setDialog } = useContext(AppContext)
+    const { fetchDataRef, language, setDialog } = useContext(AppContext)
     const { error, fetchBookings, getBookings, property } = useContext(PropertyContext)
 
     const searchParams = useSearchParams()
+    const { translate } = useLanguage()
 
     const tab = searchParams.get("tab", TABS.BOOKINGS)
     const dialogQueryParam = searchParams.get("dialog", "")
@@ -96,7 +100,7 @@ const PropertyContainer = () => {
                     <Link 
                         className="no-underline text-black"
                         href="/search/properties">
-                        Properties
+                        { translate({ [LANGUAGE.PORTUGUESE]: "Propriedades", [LANGUAGE.ENGLISH]: "Properties" }) }
                     </Link>
                 </Breadcrumbs>
                 <div className="flex items-center justify-between mt-4">
@@ -115,7 +119,7 @@ const PropertyContainer = () => {
                 </div>
                 <div className="flex items-center mt-8 mb-4">
                     <Title className="opacity-90">
-                        Amenities:
+                        { translate({ [LANGUAGE.PORTUGUESE]: "Comodidades", [LANGUAGE.ENGLISH]: "Amenities" }) }:
                     </Title>
                     <Typography
                         className="capitalize ml-3"
@@ -131,11 +135,11 @@ const PropertyContainer = () => {
                     <ul className="flex items-stretch mb-8">
                         <Tab
                             id={TABS.BOOKINGS}>
-                            Bookings
+                            { translate({ [LANGUAGE.PORTUGUESE]: "Reservas", [LANGUAGE.ENGLISH]: "Bookings" }) }
                         </Tab>
                         <Tab
                             id={TABS.DETAILS}>
-                            Details
+                            { translate({ [LANGUAGE.PORTUGUESE]: "Detalhes", [LANGUAGE.ENGLISH]: "Details" }) }
                         </Tab>
                     </ul>
                     {
@@ -145,7 +149,7 @@ const PropertyContainer = () => {
                                     <Button
                                         className="py-2 sm:w-fit sm:px-8"
                                         onClick={clickHandler}>
-                                        Book now
+                                        { translate({ [LANGUAGE.PORTUGUESE]: "Reservar agora", [LANGUAGE.ENGLISH]: "Book now" }) }
                                     </Button>
                                     <Bookings 
                                         data={bookings} 
@@ -159,13 +163,15 @@ const PropertyContainer = () => {
                                 <div className="flex flex-col gap-y-2 items-stretch my-6">
                                     <div className="flex flex-col">
                                         <Title className="opacity-90">
-                                            Description
+                                        { translate({ [LANGUAGE.PORTUGUESE]: "Descrição", [LANGUAGE.ENGLISH]: "Description" }) }
                                         </Title>
                                         <Typography
                                             className="text-small mt-3"
                                             component="p">
                                             { 
-                                                Boolean(property?.description?.trim()) ? property.description : "No description"
+                                                Boolean(property?.description?.trim()) 
+                                                    ? property.description 
+                                                    : translate({ [LANGUAGE.PORTUGUESE]: "Sem Descrição", [LANGUAGE.ENGLISH]: "No Description" })
                                             }
                                         </Typography>
                                     </div>

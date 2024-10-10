@@ -2,6 +2,10 @@
 
 import Typography from "@mui/material/Typography"
 
+import { LANGUAGE } from "@/types/language"
+
+import useLanguage from "@/hooks/useLanguage"
+
 import Link from "@/components/link"
 
 const citiesList1 = [
@@ -62,13 +66,21 @@ const ListItem = ({ label, query }: { label: string, query: string }) => (
 )
 
 const MostSearchedCities = () => {
+    const { translate } = useLanguage()
 
     return (
         <section className="flex flex-col overflow-none px-[5%] py-16">
             <Typography
                 component="h2"
                 className="font-normal text-2xl">
-                People are also searching for properties in
+                { 
+                    translate(
+                        { 
+                            [LANGUAGE.PORTUGUESE]: "As pessoas também procuram propriedades em", 
+                            [LANGUAGE.ENGLISH]: "People are also searching for properties in" 
+                        }
+                    ) 
+                }
             </Typography>
             <div className="flex gap-x-8 mt-6 sm:gap-x-4">
                 <ul className="flex flex-col gap-y-2 w-1/2 sm:flex-row sm:gap-y-0 sm:gap-x-4 sm:flex-wrap sm:w-auto">

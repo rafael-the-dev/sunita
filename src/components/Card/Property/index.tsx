@@ -1,27 +1,21 @@
 
-import classNames from "classnames"
-import Carousel from "react-slick"
 import { Swiper, SwiperSlide } from "swiper/react"
 import Typography from "@mui/material/Typography"
 
 import styles from "./styles.module.css"
 
+import {LANGUAGE} from "@/types/language"
 import { PropertyType } from "@/types/property"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Button from "@/components/shared/button"
 import Image from "@/components/Image"
 import Link from "@/components/link"
 
 const PropertyCard = ({ property }: { property: PropertyType }) => {
-    const settings = {
-        dots: false,
-        infinite: false,
-        speed: 500,
-        slidesToScroll: 1,
-        slidesToShow: 1,
-        initialSlide: 0,
-    }
-    
+    const { translate } = useLanguage()
+
     return (
         <div>
             <Swiper>
@@ -48,7 +42,9 @@ const PropertyCard = ({ property }: { property: PropertyType }) => {
                 <Typography
                     className="capitalize flex flex-col"
                     component="p">
-                        <span className="font-medium mr-2 opacity-90">Amenities:</span>
+                        <span className="font-medium mr-2 opacity-90">
+                            { translate({ [LANGUAGE.PORTUGUESE]: "Comodidades", [LANGUAGE.ENGLISH]: "Amenities" }) }:
+                        </span>
                     {
                         property
                             .amenities
@@ -61,7 +57,7 @@ const PropertyCard = ({ property }: { property: PropertyType }) => {
                         href={`/search/properties/${property.id}`}>
                         <Button
                             className="block py-2">
-                            View details
+                            { translate({ [LANGUAGE.PORTUGUESE]: "Ver detalhes", [LANGUAGE.ENGLISH]: "View details" }) }
                         </Button>
                     </Link>
                     <Typography
