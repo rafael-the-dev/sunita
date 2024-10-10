@@ -4,6 +4,7 @@ import Hidden from "@mui/material/Hidden"
 import Button from "@/components/shared/button"
 import Link from "@/components/link"
 import List from "./components/List"
+import Language from "./components/Language"
 import MobileMenu from "./components/Menu"
 
 const Header = () => {
@@ -25,7 +26,8 @@ const Header = () => {
                     <List />
                 </nav>
             </Hidden>
-            <div>
+            <div className="flex items-center gap-x-2">
+                <Language />
                 <Link href="/login">
                     <Button className="py-1">
                         Login
