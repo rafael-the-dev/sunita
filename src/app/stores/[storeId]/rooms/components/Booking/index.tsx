@@ -5,11 +5,13 @@ import { SchedulerTypes, Scheduler, View } from "devextreme-react/scheduler"
 import styles from "./styles.module.css"
 
 import { BookingInfoType } from "@/types/booking"
+import {LANGUAGE} from "@/types/language"
 
 import { AppContext } from "@/context/AppContext"
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
 import { RoomsContext } from "../../context"
 
+import useLanguage from "@/hooks/useLanguage"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import { formatDates } from "@/helpers/date";
@@ -23,6 +25,23 @@ enum DIALOG_TYPE {
     BOOKING = "booking"
 }
 
+const lang = {
+    title: {
+        [LANGUAGE.ENGLISH]: "Date",
+        [LANGUAGE.PORTUGUESE]: "Data"
+    },
+    buttons: {
+        fetchBookings: {
+            [LANGUAGE.ENGLISH]: "Fetch bookings",
+            [LANGUAGE.PORTUGUESE]: "Pesquisar reservas"
+        },
+        book: {
+            [LANGUAGE.ENGLISH]: "Book",
+            [LANGUAGE.PORTUGUESE]: "Reservar"
+        }
+    }
+}
+
 const Booking = () => {
     const searchParams = useSearchParams()
 
@@ -30,6 +49,8 @@ const Booking = () => {
 
     const { bookings } = useContext(RoomsContext)
     const { setDialog } = useContext(StaticTabsContext)
+
+    const { language } = useLanguage()
 
     const bookingsData = bookings?.data
     const bookingsList = bookingsData?.data?.list ?? [];
@@ -83,7 +104,10 @@ const Booking = () => {
                     <Card>
                         <div>
                             <Card.Title>
-                                <span className="text-base">Date</span><br/>
+                                <span className="text-base">
+                                    { lang.title[language] }
+                                </span>
+                                <br/>
                                 { bookingsRange  }
                             </Card.Title>
                         </div>
@@ -111,12 +135,12 @@ const Booking = () => {
                 <Button
                     className="py-2"
                     onClick={() => bookings?.fetchData({})}>
-                    Fetch bookings
+                    { lang.buttons.fetchBookings[language] }
                 </Button>
                 <Button 
                     className="py-2"
                     onClick={openDialog(DIALOG_TYPE.BOOKING)}>
-                    Book
+                    { lang.buttons.book[language] }
                 </Button>
             </div>
         </div>

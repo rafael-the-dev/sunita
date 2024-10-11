@@ -5,15 +5,19 @@ import styles from "./styles.module.css"
 
 import { CategoryType } from "@/types/category"
 import { FetchDataFuncType } from "@/hooks/useFetch/types"
+import {LANGUAGE} from "@/types/language"
 
 import ListItem from "./components/ListItem"
 import RegisterCategory from "./components/RegisterListItem"
 import TextField from "@/components/Textfield"
 
 import useFetch from "@/hooks/useFetch"
+import useLanguage from "@/hooks/useLanguage"
 
 const CategoriesContainer = ({ list, refetchData, url }: { refetchData?: FetchDataFuncType, list?: CategoryType[], url: string }) => {
     const [ value, setValue ] = useState("")
+
+    const { translate } = useLanguage()
 
     const isFirstRender = useRef(true)
     
@@ -51,7 +55,14 @@ const CategoriesContainer = ({ list, refetchData, url }: { refetchData?: FetchDa
             <div>
                 <TextField 
                     fullWidth
-                    label="Insert category name"
+                    label={
+                        translate(
+                            {
+                                [LANGUAGE.ENGLISH]: "Insert category name",
+                                [LANGUAGE.PORTUGUESE]: "Insere o nome da categoria"
+                            }
+                        )
+                    }
                     onChange={changeHandler}
                     value={value}
                 />

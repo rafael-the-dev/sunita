@@ -4,15 +4,19 @@ import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
+import {LANGUAGE} from "@/types/language"
 import { PROPERTY_TYPE, PropertyType } from "@/types/property"
-import { ROOM_TYPE, RoomType } from "@/types/room"
+import { ROOM_TYPE } from "@/types/room"
 
 import { LoginContext } from "@/context/LoginContext"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
 import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 
+import lang from "./lang.json"
+
 import useFetch from "@/hooks/useFetch"
 import useForm from "./hooks/useForm"
+import useLanguage from "@/hooks/useLanguage"
 
 import { getList } from "@/helpers"
 
@@ -32,6 +36,8 @@ const RoomsForm = () => {
     const { credentials } = useContext(LoginContext);
     const { getDialog } = useContext(FixedTabsContext);
     const { fetchRooms } = useContext(RoomsContext)
+
+    const { language } = useLanguage()
     
     const property = getDialog().current.payload as PropertyType;
     const hasPayload = Boolean(property)
@@ -83,19 +89,19 @@ const RoomsForm = () => {
     const bedRoomDetailsMemo = useMemo(
         () => (
             <Legend>
-                Bed room details
+                { lang["bedroom"]["label"][language] }
             </Legend>
         ),
-        []
+        [ language ]
     );
 
     const priceLengendMemo = useMemo(
         () => (
             <Legend>
-                Price
+                { lang["price"]["label"][language] }
             </Legend>
         ),
-        []
+        [ language ]
     )
 
     const submitHandler = async (e: FormEvent<HTMLFormElement>) => {
@@ -144,7 +150,7 @@ const RoomsForm = () => {
                 },
                 async onSuccess(res, data) {
                     alertProps.current = {
-                        description: "Room was successfully registered.",
+                        description: lang["alert"]["success"][hasPayload ? "update" : "register"][language],
                         severity: "success",
                         title: "Success"
                     };
@@ -184,15 +190,15 @@ const RoomsForm = () => {
                         <Textfield
                             { ...input.name }
                             className="mb-0 w-full sm:w-1/2"
-                            label="Name"
+                            label={lang["name"]["label"][language]}
                             onChange={changeName}
-                            placeholder="Insert property name" 
+                            placeholder={lang["name"]["placeholder"][language]}
                             required
                         />
                         <Select
                             { ...input.propertyType } 
                             className="mb-0 w-full sm:w-1/2"
-                            label="Property type"
+                            label={lang["type"][language]}
                             list={propertiesList}
                             onChange={changePropertyType}
                         />
@@ -205,16 +211,16 @@ const RoomsForm = () => {
                                     <Textfield
                                         { ...input.bedRoom.quantity }
                                         className="mb-0 w-full sm:w-1/2"
-                                        label="Quantity"
+                                        label={lang["bedroom"]["quantity"]["label"][language]}
                                         onChange={changeQuantity}
-                                        placeholder="Insert number of rooms" 
+                                        placeholder={lang["bedroom"]["quantity"]["placeholder"][language]} 
                                         required
                                         type="number"
                                     />
                                     <Select
                                         { ...input.bedRoom.type } 
                                         className="mb-0 w-full sm:w-1/2"
-                                        label="Type"
+                                        label={lang["bedroom"]["type"][language]}
                                         list={bedRoomTypesList}
                                         onChange={changeType}
                                     />
@@ -233,25 +239,25 @@ const RoomsForm = () => {
                             <Textfield
                                 { ...input.price.hour }
                                 className="mb-0 w-full sm:w-1/3"
-                                label="Price per hour"
+                                label={lang["price"]["hour"]["label"][language]}
                                 onChange={changePrice("hour")}
-                                placeholder="Insert price per hour" 
+                                placeholder={lang["price"]["hour"]["placeholder"][language]} 
                                 required
                             />
                             <Textfield
                                 { ...input.price.night }
                                 className="mb-0 w-full sm:w-1/3"
-                                label="Price per night"
+                                label={lang["price"]["night"]["label"][language]}
                                 onChange={changePrice("night")}
-                                placeholder="Insert price per night" 
+                                placeholder={lang["price"]["night"]["placeholder"][language]}
                                 required
                             />
                             <Textfield
                                 { ...input.price.day }
                                 className="mb-0 w-full sm:w-1/3"
-                                label="Price per day"
+                                label={lang["price"]["day"]["label"][language]}
                                 onChange={changePrice("day")}
-                                placeholder="Insert price per day" 
+                                placeholder={lang["price"]["day"]["placeholder"][language]}
                                 required
                             />
                         </Row>
@@ -259,7 +265,7 @@ const RoomsForm = () => {
                     <Textfield 
                         className="mt-2"
                         inputRef={descriptionInputRef}  
-                        label="Description"
+                        label={lang["description"][language]}
                         multiline
                         minRows={4}
                     />
@@ -270,7 +276,7 @@ const RoomsForm = () => {
                      <Button
                         className="py-2"
                         type="submit">
-                        { loading ? "Loading..." : ( hasPayload ? "Update" : "Submit" ) }
+                        { loading ? "Loading..." : ( hasPayload ? lang["buttons"]["update"][language] : lang["buttons"]["submit"][language] ) }
                     </Button>
                 }
             </div>

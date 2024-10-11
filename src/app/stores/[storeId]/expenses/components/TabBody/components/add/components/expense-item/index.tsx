@@ -5,7 +5,13 @@ import { IconButton, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import styles from "./styles.module.css"
+
+
+import { LANGUAGE } from "@/types/language"
+
 import { ExpensesContext } from "@/context/ExpensesContext";
+
+import useLanguage from "@/hooks/useLanguage"
 
 import TextField from "@/components/Textfield";
 
@@ -15,8 +21,21 @@ type PropsType = {
     price: number;
 }
 
+const lang = {
+    price: {
+        [LANGUAGE.ENGLISH]: "Price",
+        [LANGUAGE.PORTUGUESE]: "Preço"
+    },
+    description: {
+        [LANGUAGE.ENGLISH]: "Description",
+        [LANGUAGE.PORTUGUESE]: "Descrição"
+    }
+}
+
 const ListItem = ({ description, id, price }: PropsType) => {
     const { getItems, removeItem, updateItem } = React.useContext(ExpensesContext);//:;
+
+    const { language } = useLanguage()
 
     const hasOneItemLeft = getItems().length === 1;
 
@@ -32,14 +51,14 @@ const ListItem = ({ description, id, price }: PropsType) => {
             elevation={1}>
             <TextField 
                 className={classNames(`mb-4 w-full`, { "mb-0": hasOneItemLeft })}
-                label="Price"
+                label={ lang.price[language] }
                 onChange={changeHandler("price")}
                 required
                 value={price}
             />
             <TextField 
                 className={classNames(`mb-0 w-full`)}
-                label="Description"
+                label={ lang.description[language] }
                 multiline
                 minRows={4}
                 onChange={changeHandler("description")}

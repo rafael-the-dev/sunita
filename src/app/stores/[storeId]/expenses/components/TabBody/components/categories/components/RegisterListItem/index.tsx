@@ -6,8 +6,10 @@ import SendIcon from '@mui/icons-material/Send';
 
 import { ClientCategoryRequestType } from "@/types/category";
 import { FetchDataFuncType } from "@/hooks/useFetch/types"
+import {LANGUAGE} from "@/types/language"
 
 import useFetch from "@/hooks/useFetch"
+import useLanguage from "@/hooks/useLanguage"
 
 type PropsType = { 
     refreshData: FetchDataFuncType,
@@ -16,6 +18,8 @@ type PropsType = {
 
 const RegisterListItem = ({ refreshData, url }: PropsType) => {
     const [ value, setValue ] = useState("")
+
+    const { translate } = useLanguage()
 
     const { fetchData, loading } = useFetch({
         autoFetch: false,
@@ -48,7 +52,14 @@ const RegisterListItem = ({ refreshData, url }: PropsType) => {
             <input
                 className="border-0 grow outline-none"
                 onChange={changeHandler}
-                placeholder="Insert category name"
+                placeholder={
+                    translate(
+                        {
+                            [LANGUAGE.ENGLISH]: "Insert category name",
+                            [LANGUAGE.PORTUGUESE]: "Insere o nome da categoria"
+                        }
+                    )
+                }
                 value={value} 
             />
             {

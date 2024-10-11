@@ -1,8 +1,12 @@
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import RadioGroup from "@mui/material/RadioGroup"
 
+import {LANGUAGE} from "@/types/language"
+
 import { getId } from "@/helpers/id"
+
 import useSearchParams from "@/hooks/useSearchParams"
+import useLanguage from "@/hooks/useLanguage"
 
 import Categories from "@/components/shared/expenses-categories"
 import Filters from "@/components/shared/filters"
@@ -15,11 +19,17 @@ enum FILTERS {
 
 const filtersList = [
     {
-        label: "Date",
+        label: {
+            [LANGUAGE.ENGLISH]: "Date",
+            [LANGUAGE.PORTUGUESE]: "Data"
+        },
         value: FILTERS.DATE
     },
     {
-        label: "Category",
+        label: {
+            [LANGUAGE.ENGLISH]: "Category",
+            [LANGUAGE.PORTUGUESE]: "Categoria"
+        },
         value: FILTERS.CATEGORIES
     }
 ]
@@ -28,6 +38,8 @@ const FiltersContainer = () => {
     const [ filter, setFilter ] = useState(FILTERS.DATE)
 
     const searchParams = useSearchParams()
+    
+    const { language } = useLanguage()
 
     const category = searchParams.get("category", "-1")
     
@@ -54,6 +66,7 @@ const FiltersContainer = () => {
                             { ...item }
                             checked={item.value === filter}
                             key={item.value}
+                            label={ item.label[language] }
                             onChange={changeHandler(item.value)}
                         />
                     ))

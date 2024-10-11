@@ -1,0 +1,98 @@
+{
+    "alert": {
+        "success": {
+            "register": {
+                "en": "Property was successfully registered.",
+                "pt": "Propriedade foi registada com sucesso."
+            },
+            "update": {
+                "en": "Property was successfully registered.",
+                "pt": "Propriedade foi atualizada com sucesso."
+            }
+        }
+    },
+    "name": {
+        "label": {
+            "en": "Name",
+            "pt": "Nome"
+        },
+        "placeholder": {
+            "en": "Insert property name",
+            "pt": "Insere o nome da propriedade"
+        }
+    },
+    "type": {
+        "en": "Type",
+        "pt": "Tipo"
+    },
+    "bedroom": {
+        "label": {
+            "en": "Bedroom details",
+            "pt": "Detalhes do quarto"
+        },
+        "quantity": {
+            "label": {
+                "en": "Quantity",
+                "pt": "Quantidade"
+            },
+            "placeholder": {
+                "en": "Insert number of rooms",
+                "pt": "Insere o numero de quartos"
+            }
+        },
+        "type": {
+            "en": "Type",
+            "pt": "Tipo"
+        }
+    },
+    "price": {
+        "label": {
+            "en": "Price",
+            "pt": "Preço"
+        },
+        "hour": {
+            "label": {
+                "en": "Hourly price",
+                "pt": "Preço por hora"
+            },
+            "placeholder": {
+                "en": "Insert hourly price",
+                "pt": "Insere o preço por hora"
+            }
+        },
+        "night": {
+            "label": {
+                "en": "Price per night",
+                "pt": "Preço por noite"
+            },
+            "placeholder": {
+                "en": "Insert price per night",
+                "pt": "Insere o preço por noite"
+            }
+        },
+        "day": {
+            "label": {
+                "en": "Daily price",
+                "pt": "Preço diário"
+            },
+            "placeholder": {
+                "en": "Insert daily price",
+                "pt": "Insere o preço diário"
+            }
+        }
+    },
+    "description": {
+        "en": "Description",
+        "pt": "Descrição"
+    },
+    "buttons": {
+        "submit": {
+            "en": "Submit",
+            "pt": "Enviar"
+        },
+        "update": {
+            "en": "Update",
+            "pt": "Atualizar"
+        }
+    }
+}

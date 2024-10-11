@@ -1,17 +1,22 @@
 import { useContext } from "react"//:;
 
+import { FetchDataFuncType } from "@/hooks/useFetch/types";
+import {LANGUAGE} from "@/types/language"
+
 import { LoginContext } from "@/context/LoginContext";
 
 import useSearchParamsHook from "@/hooks/useSearchParams";
+import useLanguage from "@/hooks/useLanguage"
 
 import Button from "@/components/shared/button";
-import { FetchDataFuncType } from "@/hooks/useFetch/types";
 
 const mapValues = (key: string, list: string[]) => list.map(item => `${key}=${item}&`);
 
 const SubmitButton = ({ fetchData, loading }: { fetchData: FetchDataFuncType, loading: boolean }) => {
     const { credentials } = useContext(LoginContext)
     const searchParams = useSearchParamsHook();
+
+    const { translate } = useLanguage()
 
     const getSearchParams = () => {
         let queryParams = ""
@@ -43,6 +48,13 @@ const SubmitButton = ({ fetchData, loading }: { fetchData: FetchDataFuncType, lo
     // const controllerRef = useRef():;
     const canISubmit = hasSearchParams();
 
+    const buttonLabel = translate(
+        {
+            [LANGUAGE.ENGLISH]: "Submit",
+            [LANGUAGE.PORTUGUESE]: "Enviar"
+        }
+    )
+
     const submitHandler = async () => {
         await fetchData({
             ...( canISubmit ? { path: `/api/stores/${credentials?.user?.stores[0]?.storeId}/analytics/expenses?${getSearchParams()}` } : {})
@@ -54,7 +66,7 @@ const SubmitButton = ({ fetchData, loading }: { fetchData: FetchDataFuncType, lo
             className="mt-4 px-6 py-2"
             disabled={loading}
             onClick={submitHandler}>
-            { loading ? "Loading..." : ( canISubmit ? "Submit" : "Refresh" )}
+            { loading ? "Loading..." : ( canISubmit ? buttonLabel : "Refresh" )}
         </Button>
     );
 };

@@ -3,8 +3,10 @@ import { useCallback, useContext, useEffect } from "react"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
 import { RoomsContext } from "../../context"
 
+import {LANGUAGE} from "@/types/language"
 import { RoomType } from "@/types/room"
 
+import useLanguage from "@/hooks/useLanguage"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import Button from "@/components/shared/button"
@@ -17,11 +19,32 @@ enum DIALOG_TYPE {
     REGISTER_ROOM = "register-room"
 }
 
+const lang = {
+    buttons: {
+        addNewProperty: {
+            [LANGUAGE.ENGLISH]: "Add new property",
+            [LANGUAGE.PORTUGUESE]: "Adicionar nova propriedade"
+        }
+    },
+    title: {
+        add: {
+            [LANGUAGE.ENGLISH]: "Register new property",
+            [LANGUAGE.PORTUGUESE]: "Registar nova propriedade"
+        },
+        update: {
+            [LANGUAGE.ENGLISH]: "Update properrty",
+            [LANGUAGE.PORTUGUESE]: "Atualizar propriedade"
+        }
+    },
+}
+
 const Rooms = () => {
     const { setDialog } = useContext(FixedTabsContext)
     const { getProperties } = useContext(RoomsContext)
 
     const searchParams = useSearchParams()
+
+    const { language } = useLanguage()
 
     const openDialogHandler = useCallback(
         (value: DIALOG_TYPE) => () => searchParams.setSearchParam("dialog", value),
@@ -44,13 +67,13 @@ const Rooms = () => {
     )
 
     const openRegisterRoomDialog = useCallback(
-        () => roomDialogHelper("Add new room", null),
-        [ roomDialogHelper ]
+        () => roomDialogHelper(lang.title.add[language], null),
+        [ language, roomDialogHelper ]
     )
 
     const openUpdateRoomDialog = useCallback(
-        (room: RoomType) => () => roomDialogHelper("Update room", room),
-        [ roomDialogHelper ]
+        (property: RoomType) => () => roomDialogHelper(lang.title.update[language], property),
+        [ language, roomDialogHelper ]
     )
 
     const dialogQueryParam = searchParams.get("dialog", "") as DIALOG_TYPE;
@@ -78,7 +101,7 @@ const Rooms = () => {
                 <Button
                     className="py-2"
                     onClick={openDialogHandler(DIALOG_TYPE.REGISTER_ROOM)}>
-                    Add new room
+                    { lang.buttons.addNewProperty[language] }
                 </Button>
             </div>
         </div>
