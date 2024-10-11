@@ -7,8 +7,11 @@ import DeleteIcon from "@mui/icons-material/Close"
 
 import styles from "./styles.module.css"
 
-import InsertInput from "@/components/Input/InsertInput"
+import { LANGUAGE } from "@/types/language"
 
+import useLanguage from "@/hooks/useLanguage"
+
+import InsertInput from "@/components/Input/InsertInput"
 
 type PropsType = {
     addImage: (image: string) => void;
@@ -16,13 +19,24 @@ type PropsType = {
     removeImage: (image: string) => void;
 }
 
+const lang = {
+    placeholder: {
+        [LANGUAGE.ENGLISH]: "Insert image's link",
+        [LANGUAGE.PORTUGUESE]: "Insere o link da imagem"
+    }
+}
+
 const ImageContainer = ({ addImage, list, removeImage }: PropsType) => {
+    const { language } = useLanguage()
 
     const removeHandler = (id: string) => () => removeImage(id);
 
     return (
         <div>
-            <InsertInput onInsert={addImage} />
+            <InsertInput 
+                onInsert={addImage} 
+                placeholder={lang.placeholder[language]}
+            />
             <ul className="flex gap-x-3 flex-wrap mt-3">    
                 {
                     list.map((item) => (
