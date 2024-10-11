@@ -1,8 +1,6 @@
 import * as React from "react";
 import { FormControl, FormControlLabel, Paper, Radio, RadioGroup, Typography } from "@mui/material";
 import classNames from "classnames";
-import { v4 as uuidV4 } from "uuid";
-import moment from "moment";
 
 import classes from "./styles.module.css"
 
@@ -18,10 +16,15 @@ import Table from "./components/table"
 
 import { formatDate, formatDates } from "@/helpers/date"
 
+enum TABS {
+    CHART = "chart",
+    TABLE = "table"
+}
+
 const lang = {
     chart: {
         [LANGUAGE.ENGLISH]: "Chart",
-        [LANGUAGE.PORTUGUESE]: "Vendas"
+        [LANGUAGE.PORTUGUESE]: "Gráfico"
     },
     list: {
         [LANGUAGE.ENGLISH]: "List",
@@ -40,21 +43,21 @@ const lang = {
 const Container = () => {
     const { getAnalytics } = React.useContext(AnalyticsContext);
 
-    const [ value, setValue ] = React.useState("TABLE")
+    const [ value, setValue ] = React.useState(TABS.TABLE)
 
-    const { language, translate } = useLanguage()
+    const { language } = useLanguage()
 
     const controls = React.useMemo(
         () => [
-            { label: lang.table[language], value: "TABLE" },
-            { label: lang.chart[language], value: "CHART" }
+            { label: lang.table[language], value: TABS.TABLE },
+            { label: lang.chart[language], value: TABS.CHART }
         ],
         [ language ]
     );
 
 
 
-    const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value), []);
+    const changeHandler = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value as TABS), []);
 
     const getSalesDate = React.useCallback(() => {
         const analytics = getAnalytics();
@@ -79,7 +82,7 @@ const Container = () => {
                 <Typography
                     component="h2"
                     className="font-bold text-xl">
-                    { salesLabel } { value === "TABLE" ? listLabel : chartLabel } { formatDates(getSalesDate()) }
+                    { salesLabel } { value === TABS.TABLE ? listLabel : chartLabel } { formatDates(getSalesDate()) }
                 </Typography>
             )
         }, 
@@ -96,15 +99,20 @@ const Container = () => {
         return false;
     }, [ getSalesDate ])
 
+    const hasDataRange = React.useMemo(
+        () => hasRange(),
+        [ hasRange ]
+    )
+
     const resizeHandler = React.useCallback((el: React.MutableRefObject<HTMLDivElement>) => {
         if(Boolean(el.current)) el.current.style.width = "100%";
     }, []);
 
     React.useEffect(() => {
-        if(!hasRange()) {
-            setValue("TABLE")
+        if(!hasDataRange) {
+            setValue(TABS.TABLE)
         }
-    }, [ hasRange ])
+    }, [ hasDataRange ])
 
     if(!getAnalytics()) return <></>
 
@@ -126,7 +134,7 @@ const Container = () => {
                                     <FormControlLabel 
                                         { ...item }
                                         control={<Radio checked={value === item.value} onChange={changeHandler} />} 
-                                        disabled={ item.value === "CHART" && !hasRange() }
+                                        disabled={ item.value === TABS.CHART && !hasDataRange }
                                         key={item.value}
                                     />
                                 ))
@@ -135,7 +143,7 @@ const Container = () => {
                     </FormControl>
                 </div>
                 <div className={classNames(classes.tableContainer, "w-full")}>
-                    { value === "TABLE" ? tableMemo : chartMemo }
+                    { value === TABS.TABLE ? tableMemo : chartMemo }
                 </div>
             </Paper>
         </Resizeable>

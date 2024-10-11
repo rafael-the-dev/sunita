@@ -5,10 +5,13 @@ import styles from "./styles.module.css"
 
 import { ChartSerieType, ChartSeriesType, ChartXAxisType } from "@/types/chart";
 import { ChangeEventFunc, MouseEventFunc } from "@/types/events";
+import { LANGUAGE } from "@/types/language"
 
 import { AnalyticsContext  } from "@/context/AnalyticsContext";
 import { daysOfWeek } from "@/config/chart";
 import { getDayXAxis } from "./helper";
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Button from "./components/Button";
 import Collapse from "@/components/collapse";
@@ -18,28 +21,90 @@ import { getId } from "@/helpers/id";
 // const BarChart = dynamic(() => import( "./components/bar-chart"), { ssr: false });
 const Chart = dynamic(() => import( "@/components/chart/line"), { ssr: false });
 
+enum CHART_TYPE {
+    BAR = "bar",
+    LINE = "line",
+    PIE = "pie"
+}
+
+enum Y_AXIS {
+    SALES = "sales",
+    PROFIT = "profit",
+    EXPENSES = "expenses"
+}
+
+const lang = {
+    duration: {
+        day: {
+            [LANGUAGE.ENGLISH]: "Day",
+            [LANGUAGE.PORTUGUESE]: "Dia"
+        },
+        week: {
+            [LANGUAGE.ENGLISH]: "Week",
+            [LANGUAGE.PORTUGUESE]: "Semana"
+        },
+        month: {
+            [LANGUAGE.ENGLISH]: "Month",
+            [LANGUAGE.PORTUGUESE]: "Mês"
+        },
+    },
+    chartType: {
+        bar: {
+            [LANGUAGE.ENGLISH]: "Bar",
+            [LANGUAGE.PORTUGUESE]: "Barra"
+        },
+        line: {
+            [LANGUAGE.ENGLISH]: "Line",
+            [LANGUAGE.PORTUGUESE]: "Linha"
+        },
+    },
+    expenses: {
+        [LANGUAGE.ENGLISH]: "Expenses",
+        [LANGUAGE.PORTUGUESE]: "Despesas"
+    },
+    profit: {
+        [LANGUAGE.ENGLISH]: "Profit",
+        [LANGUAGE.PORTUGUESE]: "Lucros"
+    },
+    sales: {
+        [LANGUAGE.ENGLISH]: "Sales",
+        [LANGUAGE.PORTUGUESE]: "Vendas"
+    },
+}
+
 const filtersList = [
     {
         id: "CHART_TYPE",
-        label: "Chart type"
+        label: {
+            [LANGUAGE.ENGLISH]: "Chart type",
+            [LANGUAGE.PORTUGUESE]: "Tipo de gráfico"
+        }
     },
     {
         id: "X_AXE",
-        label: "X axis"
+        label: {
+            [LANGUAGE.ENGLISH]: "X axis",
+            [LANGUAGE.PORTUGUESE]: "Eixo x"
+        }
     },
     {
         id: "Y_AXE",
-        label: "Y axis"
+        label: {
+            [LANGUAGE.ENGLISH]: "Y axis",
+            [LANGUAGE.PORTUGUESE]: "Eixo y"
+        }
     }
 ];
 
 const ChartContainer = () => {
-    const [ chart, setChart ] = React.useState("LINE");
+    const [ chart, setChart ] = React.useState(CHART_TYPE.LINE);
     const [ open, setOpen ] = React.useState("");
     const [ xAxis, setXAxis ] = React.useState("DAY");
-    const [ yAxis, setYAxis ] = React.useState<string[]>([ "SALES" ]);
+    const [ yAxis, setYAxis ] = React.useState<Y_AXIS[]>([ Y_AXIS.SALES ]);
 
     const { dailySalesStats, weeklySalesStats } = React.useContext(AnalyticsContext);
+
+    const { language } = useLanguage()
 
     const dayXAxis = React.useRef<ChartXAxisType>(getDayXAxis());
     const weekXAxis = React.useRef({ categories: daysOfWeek });
@@ -47,101 +112,144 @@ const ChartContainer = () => {
     const onCloseRef = React.useRef<() => void | null>(null);
     const onOpenRef = React.useRef<() => void | null>(null);
 
-    const chartsType = React.useRef([
-        { label: "Bar", value: "BAR" },
-        { label: "Line", value: "LINE" },
-        { label: "Pie", value: "PIE" }
-    ]);
+    const chartsType = React.useMemo(
+        () => (
+            {
+                current: [
+                    { label: lang.chartType.bar[language], value: CHART_TYPE.BAR },
+                    { label: lang.chartType.line[language], value: CHART_TYPE.LINE },
+                    { label: "Pie", value: CHART_TYPE.PIE }
+                ]
+            }
+        ),
+        [ language ]
+    );
 
-    const xAxeList = React.useRef([
-        { label: "Day", value: "DAY" },
-        { label: "Week", value: "WEEK" },
-        { label: "Month", value: "MONTH" }
-    ]);
+    const xAxeList = React.useMemo(
+        () => (
+            { 
+                current: [
+                    { label: lang.duration.day[language], value: "DAY" },
+                    { label: lang.duration.week[language], value: "WEEK" },
+                    { label: lang.duration.month[language], value: "MONTH" }
+                ]
+            }
+        ),
+        [ language ]
+    );
 
-    const yAxeList = React.useRef([
-        { label: "Sales", value: "SALES" },
-        { label: "Profit", value: "PROFIT" },
-        { label: "Expenses", value: "EXPENSES" },
-    ]);
+    const yAxeList = React.useMemo(
+        () => (
+            {
+                current: [
+                    { label: lang["Sales"][language], value: Y_AXIS.SALES },
+                    { label: lang["Profit"][language], value: Y_AXIS.PROFIT },
+                    { label: lang["Expenses"][language], value: Y_AXIS.EXPENSES },
+                ]
+            }
+        ),
+        [ language ]
+    );
 
-    const clickHandler = React.useCallback((newValue: string): MouseEventFunc<HTMLButtonElement> => () => {
-        setOpen(currentValue => {
-            if(currentValue === newValue) return "";
+    const clickHandler = React.useCallback(
+        (newValue: string): MouseEventFunc<HTMLButtonElement> => () => {
+            setOpen(currentValue => {
+                if(currentValue === newValue) return "";
 
-            return newValue;
-        })
-    }, []);
+                return newValue;
+            })
+        }, 
+        []
+    );
 
     const changeHandler = React.useCallback((func: React.Dispatch<React.SetStateAction<string>>): ChangeEventFunc<HTMLInputElement> => (e) => {
         func(e.target.value);
     }, []);
 
-    const yAxisChangeHandler: ChangeEventFunc<HTMLInputElement> = React.useCallback((e) => {
-        const { value } = e.target;
+    const yAxisChangeHandler: ChangeEventFunc<HTMLInputElement> = React.useCallback(
+        (e) => {
+            const value = e.target.value as Y_AXIS;
 
-        setYAxis(list => {
-            const listClone = [ ...list ]
-            if(list.includes(value)) return listClone.filter(item => item !== value);
-            
-            listClone.push(value);
+            setYAxis(list => {
+                const listClone = [ ...list ]
+                if(list.includes(value)) return listClone.filter(item => item !== value);
+                
+                listClone.push(value);
 
-            return listClone;
-        });
-    }, []);
+                return listClone;
+            });
+        }, 
+        []
+    );
 
-    const isSelected = React.useCallback((currentValue: string | string[]) => (itemValue: string) => {
-        if(Array.isArray(currentValue)) return currentValue.includes(itemValue);
-        return currentValue === itemValue;
-    }, []);
+    const isSelected = React.useCallback(
+        (currentValue: string | string[]) => (itemValue: string) => {
+            if(Array.isArray(currentValue)) return currentValue.includes(itemValue);
 
-    const chartType = React.useMemo(() => (
-        <RadioGroup 
-            isSelected={isSelected(chart)}
-            list={chartsType}
-            onChange={changeHandler(setChart)}
-        />
-    ), [ chart, changeHandler, isSelected ]);
+            return currentValue === itemValue;
+        }, 
+        []
+    );
 
-    const xAxisType = React.useMemo(() => (
-        <RadioGroup 
-            isSelected={isSelected(xAxis)}
-            list={xAxeList}
-            onChange={changeHandler(setXAxis)}
-        />
-    ), [ changeHandler, isSelected, xAxis ]);
+    const chartType = React.useMemo(
+        () => (
+            <RadioGroup 
+                isSelected={isSelected(chart)}
+                list={chartsType}
+                onChange={changeHandler(setChart)}
+            />
+        ), 
+        [ chart, chartsType, changeHandler, isSelected ]
+    );
 
-    const yAxisType = React.useMemo(() => (
-        <RadioGroup 
-            isSelected={isSelected(yAxis)}
-            list={yAxeList}
-            onChange={yAxisChangeHandler}
-            radio={false}
-        />
-    ), [ isSelected, yAxis, yAxisChangeHandler ]);
+    const xAxisType = React.useMemo(
+        () => (
+            <RadioGroup 
+                isSelected={isSelected(xAxis)}
+                list={xAxeList}
+                onChange={changeHandler(setXAxis)}
+            />
+        ), 
+        [ changeHandler, isSelected, xAxis, xAxeList ]
+    );
 
-    const filters = React.useMemo(() => (
-        filtersList.map(item => (
-            <Button 
-                id={ item.id }
-                key={item.id}
-                onClick={clickHandler} 
-                selectedKey={open}>
-                { item.label }
-            </Button>
-        ))
-    ), [ clickHandler, open ])
+    const yAxisType = React.useMemo(
+        () => (
+            <RadioGroup 
+                isSelected={isSelected(yAxis)}
+                list={yAxeList}
+                onChange={yAxisChangeHandler}
+                radio={false}
+            />
+        ), 
+        [ isSelected, yAxis, yAxeList, yAxisChangeHandler ]
+    );
+
+    const filters = React.useMemo(
+        () => (
+            filtersList.map(item => (
+                <Button 
+                    id={ item.id }
+                    key={item.id}
+                    onClick={clickHandler} 
+                    selectedKey={open}>
+                    { item.label[language] }
+                </Button>
+            ))
+        ), 
+        [ clickHandler, language, open ]
+    )
 
     const getSeries = React.useCallback((chartSeries: ChartSeriesType) => {
         const list: ChartSerieType[] = []
 
-        const isIncluded = (id: string) => yAxis.includes(id);
+        const isIncluded = (id: Y_AXIS) => yAxis.includes(id);
 
-        if(isIncluded("SALES")) list.push(...chartSeries.total);
+        if(isIncluded(Y_AXIS.SALES)) list.push(...chartSeries.total);
 
-        if(isIncluded("PROFIT")) list.push(...chartSeries.profit);
+        if(isIncluded(Y_AXIS.PROFIT)) list.push(...chartSeries.profit);
 
-        if(isIncluded("EXPENSES")) list.push(...chartSeries.expenses);
+        if(isIncluded(Y_AXIS.EXPENSES)) list.push(...chartSeries.expenses);
        
         return list;
     }, [ yAxis ])
@@ -188,8 +296,8 @@ const ChartContainer = () => {
             <div className={Boolean(open) ? styles.chartContainerOpen : styles.chartContainer}>
                 {
                     {
-                        "BAR": <Chart key={getId()} { ...options} />,
-                        "LINE": <Chart key={getId()} { ...options } />
+                        [CHART_TYPE.BAR]: <Chart key={getId()} { ...options} />,
+                        [CHART_TYPE.LINE]: <Chart key={getId()} { ...options } />
                     }[chart]
                 }
             </div>
