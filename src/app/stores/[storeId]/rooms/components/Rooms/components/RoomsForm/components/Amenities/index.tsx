@@ -3,8 +3,11 @@ import classNames from "classnames";
 import Chip from "@mui/material/Chip"
 
 import { AMENITIES } from "@/types/property";
+import { LANGUAGE } from "@/types/language"
 
 import { getList } from "@/helpers";
+
+import useLanguage from "@/hooks/useLanguage"
 
 import InsertInput from "@/components/Input/InsertInput"
 import Legend from "@/components/shared/Legend"
@@ -18,7 +21,19 @@ type PropsType = {
 const amenitiesList = getList(AMENITIES)
 const amenitiesListClone = structuredClone(amenitiesList)
 
+const lang = {
+    amenities: {
+        [LANGUAGE.ENGLISH]: "Amenities",
+        [LANGUAGE.PORTUGUESE]: "Comodidades"
+    },
+    placeholder: {
+        [LANGUAGE.ENGLISH]: "Insert amenity",
+        [LANGUAGE.PORTUGUESE]: "Insere Comodidade"
+    }
+}
+
 const Amenities = ({ list, onInsert, onRemove }: PropsType) => {
+    const { language } = useLanguage()
 
     const deleteHandler = (amenity: string) => () => onRemove(amenity);
 
@@ -44,9 +59,12 @@ const Amenities = ({ list, onInsert, onRemove }: PropsType) => {
     return (
         <fieldset>
             <Legend>
-                Amenities
+                { lang.amenities[language] }
             </Legend>
-            <InsertInput onInsert={onInsert}/>
+            <InsertInput 
+                onInsert={onInsert}
+                placeholder={lang.placeholder[language]}
+            />
             <ul className="flex flex-wrap gap-x-3 mt-3">
                 {
                     getSuggestionList()
