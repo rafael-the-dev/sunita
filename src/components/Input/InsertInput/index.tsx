@@ -7,9 +7,10 @@ import AddIcon from "@mui/icons-material/Add"
 
 type PropsType = {
     onInsert: (image: string) => void;
+    placeholder?: string;
 }
 
-const InsertInput = ({ onInsert }: PropsType) => {
+const InsertInput = ({ onInsert, placeholder }: PropsType) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const clickHandler = () => {
@@ -26,7 +27,7 @@ const InsertInput = ({ onInsert }: PropsType) => {
         <div className="border border-solid border-gray-300 flex items-center py-1 pl-2 pr-1">
             <input 
                 className="border-0 font-normal grow outline-none text-small"
-                placeholder="Insert image link"
+                placeholder={placeholder ?? ""}
                 ref={inputRef}
             />
             <IconButton
