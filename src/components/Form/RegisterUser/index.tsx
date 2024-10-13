@@ -1,11 +1,16 @@
-import { FormEvent, MutableRefObject, useContext, useMemo, useRef } from "react"
+import { FormEvent, useContext, useMemo, useRef } from "react"
 import classNames from "classnames"
 
 import styles from "./styles.module.css"
 
-import { UsersContext } from "@/context/UsersContext"
+import { LANGUAGE } from "@/types/language"
+
 import { UserFormContext } from "./context"
+
+import lang from "@/lang/index.json"
+
 import useFetch from "@/hooks/useFetch"
+import useLanguage from "@/hooks/useLanguage"
 
 import Button from "@/components/shared/button"
 import Address from "./components/Address"
@@ -23,7 +28,9 @@ type PropsType = {
 
 const UserForm = ({ refetchUsers, url }: PropsType) => {
     const { hasErrors, resetForm, toString } = useContext(UserFormContext)
-    
+
+    const { language } = useLanguage()
+
     const { fetchData, loading  } = useFetch({
         autoFetch: false,
         url
@@ -51,7 +58,7 @@ const UserForm = ({ refetchUsers, url }: PropsType) => {
         [ loading ]
     )
 
-    console.log(refetchUsers)
+     const isEnglish = language === LANGUAGE.ENGLISH
 
     const submitHandler = async (e: FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
@@ -73,8 +80,9 @@ const UserForm = ({ refetchUsers, url }: PropsType) => {
                 }
             },
             async onSuccess() {
+                const description = isEnglish ? "User was successfully registered" : "User was successfully registered"
                 alertProps.current = {
-                    description: "User was successfully registered",
+                    description,
                     severity: "success",
                     title: "Success"
                 }
@@ -90,6 +98,8 @@ const UserForm = ({ refetchUsers, url }: PropsType) => {
         onOpenAlert.current?.()
     }
 
+    const steps = isEnglish ? [ "Base details", "Document", "Address" ] : [ "Detalhes básicos", "Documento", "Endereço"]
+
     return (
         <Form 
             className={classNames(styles.form, `box-border flex flex-col justify-between`)}>
@@ -97,7 +107,7 @@ const UserForm = ({ refetchUsers, url }: PropsType) => {
             <Stepper 
                 className={styles.stepper}
                 components={[ <BaseDetails key={0} />, <Document key={1} />, <Address key={2} /> ]}
-                steps={[ "Base details", "Document", "Address" ]}
+                steps={steps}
                 FinishButton={() => (
                     <Button 
                         className="py-2 px-4"
@@ -105,7 +115,7 @@ const UserForm = ({ refetchUsers, url }: PropsType) => {
                         onClick={submitHandler}
                         type="button"
                     >
-                        { loading ? "Loading..." : "Submit" }
+                        { loading ? "Loading..." : lang["buttons"]["submit"][language] }
                     </Button>
                 )}
                 resetStepperRef={resetStepperHandlerRef}

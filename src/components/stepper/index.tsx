@@ -8,6 +8,10 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import { LANGUAGE } from "@/types/language"
+
+import useLanguage from "@/hooks/useLanguage"
+
 type PropsType = {
     alert?: React.ReactNode;
     components: React.ReactNode[];
@@ -20,6 +24,10 @@ type PropsType = {
 const HorizontalLinearStepper = ({ alert, components, className, steps, FinishButton , resetStepperRef}: PropsType) => {
     const [activeStep, setActiveStep] = React.useState(0);
     const [skipped, setSkipped] = React.useState(new Set<number>());
+
+    const { language } = useLanguage()
+    
+    const isEnglish = language === LANGUAGE.ENGLISH
 
     const isLastStep = activeStep === steps.length - 1
 
@@ -132,7 +140,7 @@ const HorizontalLinearStepper = ({ alert, components, className, steps, FinishBu
                     onClick={handleBack}
                     sx={{ mr: 1 }}
                     >
-                    Back
+                    { isEnglish ? "Back" : "Voltar" }
                 </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
                 {
@@ -144,7 +152,7 @@ const HorizontalLinearStepper = ({ alert, components, className, steps, FinishBu
                 {
                     isLastStep && FinishButton ? <FinishButton /> : (
                         <Button onClick={handleNext}>
-                            {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                            { activeStep === steps.length - 1 ? (isEnglish ? 'Finish' : "Terminar") : ( isEnglish ? 'Next' : "Próximo" ) }
                         </Button>
                     )
                 }
