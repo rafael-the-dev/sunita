@@ -1,0 +1,30 @@
+{
+    "type": {
+        "label": {
+            "en": "Type",
+            "pt": "Tipo"
+        }
+    },
+    "issueDate": {
+        "label": {
+            "en": "Issue date",
+            "pt": "Data de emissão"
+        }
+    },
+    "expireDate": {
+        "label": {
+            "en": "Expire date",
+            "pt": "Data de validade"
+        }
+    },
+    "number": {
+        "label": {
+            "en": "Number",
+            "pt": "Número"
+        },
+        "placeholder": {
+            "en": "Insert document Number",
+            "pt": "Insira o número do documento"
+        }
+    }
+}

@@ -1,17 +1,17 @@
 import { ChangeEvent, useCallback, useContext, useMemo } from "react"
-import moment from "moment"
-import Typography from "@mui/material/Typography"
 
 import { DOCUMENT_TYPE } from "@/types/user"
 
 import { BookingContext } from "@/context/BookingContext"
 
+import useLanguage from "@/hooks/useLanguage"
+
+import lang from "@/lang/guest.json"
+
 import ContactList from "@/components/shared/ContactList"
 import Document from "@/components/shared/Document"
-import DateInput from "@/components/date"
 import Legend from "@/components/shared/Legend"
 import Row from "@/components/Form/RegisterUser/components/Row"
-import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
 
 const GuestContainer = () => {
@@ -29,6 +29,8 @@ const GuestContainer = () => {
 
     } = useContext(BookingContext)
 
+    const { language } = useLanguage()
+
     const contact = guest.contact
 
     const documentsList = useMemo(
@@ -41,10 +43,10 @@ const GuestContainer = () => {
     const contactLegend = useMemo(
         () => (
             <Legend>
-                Contact
+                { lang["contact"][language]}
             </Legend>
         ),
-        []
+        [ language ]
     )
 
     const contactList = useMemo(
@@ -65,10 +67,10 @@ const GuestContainer = () => {
     const documentLegend = useMemo(
         () => (
             <Legend>
-                Document
+                { lang["document"][language]}
             </Legend>
         ),
-        []
+        [ language ]
     )
 
     const documentTypeChangeHandler = useCallback(
@@ -82,13 +84,13 @@ const GuestContainer = () => {
                 <Textfield 
                     { ...guest.firstName}
                     className="mb-0 w-full sm:w-1/2"
-                    label="First name"
+                    label={ lang["firstName"][language]}
                     onChange={changeName("first")}
                 />
                 <Textfield 
                     { ...guest.lastName }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Last name"
+                    label={ lang["lastName"][language]}
                     onChange={changeName("last")}
                 />
             </Row>

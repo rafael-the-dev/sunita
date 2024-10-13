@@ -1,0 +1,50 @@
+{
+    "name": {
+        "label": {
+            "en": "Name",
+            "pt": "Nome"
+        }
+    },
+    "firstName": {
+        "label": {
+            "en": "First name",
+            "pt": "Primeiro nome"
+        },
+        "placeholder": {
+            "en": "Insert first name",
+            "pt": "Insira o primeiro nome"
+        }
+    },
+    "lastName": {
+        "label": {
+            "en": "Last name",
+            "pt": "Sobrenome"
+        },
+        "placeholder": {
+            "en": "Insert last name",
+            "pt": "Insira o sobrenome"
+        }
+    },
+    "username": {
+        "label": {
+            "en": "Username",
+            "pt": "Nome de usuário"
+        },
+        "placeholder": {
+            "en": "Insert username",
+            "pt": "Insira o nome usuário"
+        }
+    },
+    "position": {
+        "label": {
+            "en": "Position",
+            "pt": "Posição"
+        }
+    },
+    "status": {
+        "label": {
+            "en": "Status",
+            "pt": "Estado"
+        }
+    }
+}

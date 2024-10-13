@@ -3,7 +3,11 @@ import moment from "moment"
 
 import { DOCUMENT_TYPE } from "@/types/user"
 
+import lang from "@/lang/document.json"
+
 import { UserFormContext } from "../../context"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import DateInput from "@/components/date"
 import Row from "../Row"
@@ -20,6 +24,8 @@ const Document = () => {
             getDocument
         }
     } = useContext(UserFormContext)
+
+    const { language } = useLanguage()
 
     const document = getDocument()
 
@@ -42,15 +48,15 @@ const Document = () => {
                     { ...document.type }
                     className="mb-0 w-full sm:w-1/2"
                     list={documentsList}
-                    label="Type"
+                    label={ lang["type"]["label"][language] }
                     onChange={documentTypeChangeHandler}
                 />
                 <Textfield 
                     { ...document.number  }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Number"
+                    label={ lang["number"]["label"][language] }
                     onChange={changeDocumentNumber}
-                    placeholder="Insert document number"
+                    placeholder={ lang["number"]["placeholder"][language] }
                     required
                 />
             </Row>
@@ -59,16 +65,16 @@ const Document = () => {
                     { ...document.issueDate }
                     className="mb-0 w-full sm:w-1/2"
                     date
-                    label="Issue date"
+                    label={ lang["issueDate"]["label"][language] }
                     minDate={moment(document.issueDate.value).subtract(5, "years").toISOString()}
                     maxDate={moment(new Date(Date.now())).toISOString()}
-                    onChange={changeDocumentIssueDate}
+                    onChange={changeDocumentIssueDate} 
                 />
                 <DateInput 
                     { ...document.expireDate }
                     className="mb-0 w-full sm:w-1/2"
                     date
-                    label="Expire date"
+                    label={ lang["expireDate"]["label"][language] }
                     minDate={document.issueDate.value}
                     maxDate={moment(document.issueDate.value).add(5, "years").toString()}
                     onChange={changeDocumentExpireDate}

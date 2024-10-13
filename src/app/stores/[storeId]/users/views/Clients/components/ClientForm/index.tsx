@@ -11,8 +11,13 @@ import { BookingContext } from "@/context/BookingContext"
 import { AppContext } from "@/context/AppContext"
 import { LoginContext } from "@/context/LoginContext"
 
+import contactLang from "@/lang/contact.json"
+import lang from "@/lang/index.json"
+import userLang from "@/lang/user.json"
+
 import useInput from "./hooks/useInput"
 import useFetch from "@/hooks/useFetch"
+import useLanguage from "@/hooks/useLanguage"
 
 import Alert from "@/components/alert"
 import Button from "@/components/shared/button"
@@ -23,6 +28,7 @@ import Legend from "@/components/shared/Legend"
 import Row from "@/components/Form/RegisterUser/components/Row"
 import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
+
 
 const GuestContainer = () => {
 
@@ -55,8 +61,9 @@ const GuestContainer = () => {
         changeDocumentType,
     } = useInput()
 
-    const hasError = hasErrors()
+    const { language } = useLanguage()
 
+    const hasError = hasErrors()
 
     const { loading, fetchData } = useFetch(
         {
@@ -135,8 +142,11 @@ const GuestContainer = () => {
                     }
                 },
                 onSuccess() {
+                    const description = hasPayload ? `Client was successfully ${hasPayload ? "updated" : "registered"}` : 
+                    `Client foi ${ hasPayload ? "atualizado" : "registado" }  com success`
+
                     alertProps.current = {
-                        description: `Client was successfully ${hasPayload ? "updated" : "registered"}`,
+                        description,
                         severity: "success",
                         title: "Success"
                     }
@@ -161,27 +171,27 @@ const GuestContainer = () => {
                     <Textfield 
                         { ...firstName}
                         className="mb-0 w-full sm:w-1/2"
-                        label="First name"
+                        label={ userLang["firstName"]["label"][language] }
                         onChange={changeName("firstName")}
                     />
                     <Textfield 
                         { ...lastName }
                         className="mb-0 w-full sm:w-1/2"
-                        label="Last name"
+                        label={ userLang["lastName"]["label"][language] }
                         onChange={changeName("lastName")}
                     />
                 </Row>
                 <fieldset className="flex flex-col gap-y-4">
                     <Legend
                         className="mb-6">
-                        Contact
+                        { lang["contact"][language] }
                     </Legend>
                     { contactList }
                 </fieldset>
                 <fieldset className="flex flex-col gap-y-4 mt-4">
                     <Legend
                         className="mb-6">
-                        Document
+                        { lang["document"][language] }
                     </Legend>
                     <Document 
                         document={document}
@@ -196,13 +206,13 @@ const GuestContainer = () => {
                 <Button
                     disabled={hasError}
                     type="submit">
-                    { loading ? "Loading..." : (hasPayload ? "Update" : "Submit") }
+                    { loading ? "Loading..." : (hasPayload ? lang["buttons"]["update"][language] : lang["buttons"]["submit"][language]) }
                 </Button>
                 <Button
                     className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
                     type="button"
                     variant="outlined">
-                    Cancel
+                    { lang["buttons"]["cancel"][language] }
                 </Button>
             </div>
         </form>

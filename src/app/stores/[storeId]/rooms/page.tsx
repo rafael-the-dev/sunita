@@ -3,12 +3,14 @@
 import { useContext } from "react"
 import classNames from "classnames"
 
-import { TabType } from "@/context/FixedTabsContext/types"
+import { LANGUAGE } from "@/types/language"
 
 import { FiltersContextProvider } from "@/context/FiltersContext"
 import { FixedTabsContext } from "@/context/FixedTabsContext"
 import { LoginContext } from "@/context/LoginContext"
 import { RoomsContext, RoomsContextProvider } from "./context"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import { Container, Provider } from "@/components/shared/FixedTabsContainer"
 import Booking from "./components/Booking"
@@ -16,24 +18,31 @@ import Rooms from "./components/Rooms"
 
 enum TABS_TYPE {
     BOOKING = "booking",
-    ROOMS = "rooms",
-    MORE = "more"
+    ROOMS = "rooms"
 }
 
-const tabs = [
+const enTabs = [
     {
         id: TABS_TYPE.BOOKING,
         name: "Booking"
     },
     {
         id: TABS_TYPE.ROOMS,
-        name: "Rooms"
+        name: "Properties"
+    }
+]
+
+const ptTabs = [
+    {
+        id: TABS_TYPE.BOOKING,
+        name: "Reservas"
     },
     {
-        id: TABS_TYPE.MORE,
-        name: "More"
-    },
+        id: TABS_TYPE.ROOMS,
+        name: "Propriedades"
+    }
 ]
+
 
 const RoomsPage = () => {
     const { credentials } = useContext(LoginContext)
@@ -55,20 +64,25 @@ const RoomsPage = () => {
                             <Booking />
                         </FiltersContextProvider>
                     ),
-                    [TABS_TYPE.ROOMS]: <Rooms />,
-                    [TABS_TYPE.MORE]: <div></div>
+                    [TABS_TYPE.ROOMS]: <Rooms />
                 }[activeTab]
             }
         </div>
     )
 }
 
-const ProviderContainer = () => (
-    <RoomsContextProvider>
-        <Provider tabs={tabs}>
-            <RoomsPage />
-        </Provider>
-    </RoomsContextProvider>
-);
+const ProviderContainer = () => {
+    const { language } = useLanguage()
+
+    const tabs = language === LANGUAGE.ENGLISH ? enTabs : ptTabs
+
+    return (
+        <RoomsContextProvider>
+            <Provider tabs={tabs}>
+                <RoomsPage />
+            </Provider>
+        </RoomsContextProvider>
+    );
+}
 
 export default ProviderContainer;

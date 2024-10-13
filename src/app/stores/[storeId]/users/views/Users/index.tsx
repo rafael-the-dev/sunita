@@ -2,10 +2,13 @@
 
 import { useCallback, useContext, useEffect } from "react"
 
+import { LANGUAGE } from "@/types/language"
+
 import { AppContext } from "@/context/AppContext"
 import { UsersContext } from "@/context/UsersContext"
 import { LoginContext } from "@/context/LoginContext"
 
+import useLanguage from "@/hooks/useLanguage"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import Button from "@/components/shared/button"
@@ -17,10 +20,19 @@ enum DIALOG_PARAMS {
     REGISTER_USER = "register-user"
 }
 
+const lang = {
+    formTitle: {
+        [LANGUAGE.ENGLISH]: "Register user",
+        [LANGUAGE.PORTUGUESE]: "Registar usuário"
+    }
+}
+
 const UsersView = () => {
     const { setDialog } = useContext(AppContext)
     const { credentials } = useContext(LoginContext)
     const { loading } = useContext(UsersContext)
+
+    const { language } = useLanguage()
 
     const searchParams = useSearchParams()
 
@@ -34,11 +46,11 @@ const UsersView = () => {
 
         setDialog({
             header: {
-                title: "Register user"
+                title: lang.formTitle[language] 
             },
             body: <UserForm url={url} />
         })
-    }, [ credentials, setDialog ])
+    }, [ credentials, language, setDialog ])
 
     const dialog = searchParams.get("dialog", "")
 
@@ -68,7 +80,7 @@ const UsersView = () => {
                 <Button
                     className="py-2"
                     onClick={registerClickHandler}>
-                    Register
+                    { lang.formTitle[language] }
                 </Button>
             </div>
         </div>

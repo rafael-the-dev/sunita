@@ -1,11 +1,16 @@
 import { ChangeEvent, useCallback, useContext, useMemo } from "react"
 
 import { BOOKING_TYPE } from "@/types/room"
+import {LANGUAGE} from "@/types/language"
 
 import { BookingContext } from "@/context/BookingContext"
 import { RoomsContext } from "@/app/stores/[storeId]/rooms/context"
 
+import lang from "../../lang.json"
+
 import { getList } from "@/helpers"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import DateTime from "@/components/date"
 import Row from "@/components/Form/RegisterUser/components/Row"
@@ -15,6 +20,8 @@ const bookingTypesList = getList(BOOKING_TYPE)
 
 const BaseDetails = () => {
     const { getProperties } = useContext(RoomsContext)
+
+    const { language } = useLanguage()
 
     const { 
         booking,
@@ -51,13 +58,13 @@ const BaseDetails = () => {
                 <Select 
                     { ...booking.type }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Type"
+                    label={ lang["base"]["type"][language] }
                     list={bookingTypesList}
                     onChange={selectChangeHandler}
                 />
                 <Select 
                     className="mb-0 w-full sm:w-1/2"
-                    label="Select a property"
+                    label={ lang["base"]["property"][language] }
                     list={propertiesList}
                     onChange={roomChangeHandler}
                     value={ booking?.property?.id }

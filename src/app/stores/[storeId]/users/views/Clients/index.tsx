@@ -1,9 +1,12 @@
 import { useCallback, useContext, useEffect } from "react"
 
+import { LANGUAGE } from "@/types/language"
+
 import { AppContext } from "@/context/AppContext"
 import { FixedTabsContext as StaticContext } from "@/context/FixedTabsContext"
 import { UsersPageContext } from "../../context"
 
+import useLanguage from "@/hooks/useLanguage"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import Button from "@/components/shared/button"
@@ -15,10 +18,19 @@ enum DIALOG {
     REGISTER_CLIENT = "client-form"
 }
 
+const lang = {
+    formTitle: {
+        [LANGUAGE.ENGLISH]: "Register client",
+        [LANGUAGE.PORTUGUESE]: "Registar cliente"
+    }
+}
+
 const ClientsView = () => {
     const { fetchDataRef } = useContext(AppContext);
     const { setDialog } = useContext(StaticContext);
     const { customers } = useContext(UsersPageContext);
+
+    const { language } = useLanguage()
 
     const searchParams = useSearchParams();
     const dialog = searchParams.get("dialog", "");
@@ -32,13 +44,13 @@ const ClientsView = () => {
             setDialog(
                 {
                     header: {
-                        title: "Register client"
+                        title: lang.formTitle[language]
                     },
                     body: <ClientForm />
                 }
             )
         },
-        [ fetchCustomers, fetchDataRef, setDialog ]
+        [ fetchCustomers, fetchDataRef, language, setDialog ]
     )
 
     const registerClientClickHandler = useCallback(
@@ -63,7 +75,7 @@ const ClientsView = () => {
                 <Button
                     className="py-2"
                     onClick={registerClientClickHandler}>
-                    Register client
+                    { lang.formTitle[language] }
                 </Button>
             </div>
         </div>

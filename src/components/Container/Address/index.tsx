@@ -4,7 +4,11 @@ import dynamic from "next/dynamic"
 import { AddressInputType, AddressEventHandlers } from "@/hooks/useAddress/types"
 import {COUNTRIES} from "@/types/address"
 
+import lang from "@/lang/address.json"
+
 import { getList } from "@/helpers"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Row from "@/components/Form/RegisterUser/components/Row"
 import Select from "@/components/shared/combobox"
@@ -33,6 +37,8 @@ const Address = (props: PropsType) => {
         statetChangeHandler, streetChangeHandler 
     } = props
 
+    const { language } = useLanguage()
+
     const address = getAddress()
 
     return (
@@ -41,16 +47,16 @@ const Address = (props: PropsType) => {
                 <Select 
                     { ...address.country }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Country"
+                    label={ lang["country"]["label"][language] }
                     list={countriesList}
                     onChange={countryChangeHandler}
                 />
                 <Textfield 
                     { ...address.state }
                     className="mb-0 w-full sm:w-1/2"
-                    label="State/Province"
+                    label={ lang["state"]["label"][language]}
                     onChange={statetChangeHandler}
-                    placeholder="Insert state name"
+                    placeholder={ lang["state"]["placeholder"][language]}
                     required
                 />
             </Row>
@@ -58,17 +64,17 @@ const Address = (props: PropsType) => {
                 <Textfield 
                     { ...address.city }
                     className="mb-0 w-full sm:w-1/2"
-                    label="City"
+                    label={ lang["city"]["label"][language] }
                     onChange={cityChangeHandler}
-                    placeholder="Insert city name"
+                    placeholder={ lang["city"]["placeholder"][language] }
                     required
                 />
                 <Textfield 
                     { ...address.number }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Property number"
+                    label={ lang["number"]["label"][language] }
                     onChange={numberChangeHandler}
-                    placeholder="Insert property number"
+                    placeholder={ lang["number"]["placeholder"][language] }
                     required
                     type="number"
                 />
@@ -76,11 +82,12 @@ const Address = (props: PropsType) => {
             <Textfield 
                 { ...address.street }
                 className="mb-0 w-full"
-                label="Street"
+                fullWidth
+                label={ lang["street"]["label"][language] }
                 multiline
                 minRows={4}
                 onChange={streetChangeHandler}
-                placeholder="Insert street address"
+                placeholder={ lang["street"]["placeholder"][language] }
                 required
             />
             { hasCords && onLocationFound && <MapContainer onLocationFound={onLocationFound}/> }

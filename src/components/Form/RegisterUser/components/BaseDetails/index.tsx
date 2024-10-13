@@ -1,8 +1,13 @@
 import { ChangeEvent, useCallback, useContext, useMemo } from "react"
 
+import { LANGUAGE } from "@/types/language"
 import { USER_CATEGORY } from "@/types/user"
 
 import { UserFormContext } from "../../context"
+
+import lang from "@/lang/user.json"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Contact from "@/components/Container/Contact"
 import Legend from "@/components/shared/Legend"
@@ -22,6 +27,8 @@ const BaseDetails = () => {
         getContact,
         input
     } = useContext(UserFormContext)
+
+    const { language, translate } = useLanguage()
 
     const contact = getContact()
 
@@ -43,17 +50,17 @@ const BaseDetails = () => {
                 <Textfield 
                     { ...input.firstName }
                     className="mb-0 w-full sm:w-1/2"
-                    label="First name"
+                    label={ lang["firstName"]["label"][language] }
                     onChange={changeName("firstName")}
-                    placeholder="Insert first name"
+                    placeholder={ lang["firstName"]["placeholder"][language] }
                     required
                 />
                 <Textfield 
                     { ...input.lastName }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Last name"
+                    label={ lang["lastName"]["label"][language] }
                     onChange={changeName("lastName")}
-                    placeholder="Insert last name"
+                    placeholder={ lang["lastName"]["placeholder"][language] }
                     required
                 />
             </Row>
@@ -61,23 +68,30 @@ const BaseDetails = () => {
                 <Textfield 
                     { ...input.username }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Username"
+                    label={ lang["username"]["label"][language] }
                     onChange={changeUsername}
-                    placeholder="Example: rafael_tivane"
+                    placeholder={ lang["username"]["placeholder"][language] }
                     required
                 />
                 <Select 
                     { ...input.position }
                     className="mb-0 w-full sm:w-1/2"
                     list={usersPositions}
-                    label="Position"
+                    label={ lang["position"]["label"][language] }
                     onChange={usersPositionsChangeHandler}
                 />
             </Row>
             <fieldset className="flex flex-col gap-y-4 mt-2">
                 <Legend
                     className="mb-6">
-                    Contact
+                    {
+                        translate(
+                            {
+                                [LANGUAGE.ENGLISH]: "Contact",
+                                [LANGUAGE.PORTUGUESE]: "Contato"
+                            }
+                        )
+                    }
                 </Legend>
                 <Contact
                     contact={contact}

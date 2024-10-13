@@ -2,6 +2,10 @@ import { useContext } from "react"
 
 import { UserFormContext } from "../../context"
 
+import lang from "@/lang/address.json"
+
+import useLanguage from "@/hooks/useLanguage"
+
 import Row from "../Row"
 import Textfield from "@/components/Textfield"
 
@@ -18,6 +22,8 @@ const Address = () => {
         input
     } = useContext(UserFormContext)
 
+    const { language } = useLanguage()
+
     const address = getAddress()
 
     return (
@@ -26,17 +32,16 @@ const Address = () => {
                 <Textfield 
                     { ...address.country }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Counry"
+                    label={ lang["country"]["label"][language] }
                     onChange={countryChangeHandler}
-                    placeholder="Insert first name"
                     required
                 />
                 <Textfield 
                     { ...address.province }
                     className="mb-0 w-full sm:w-1/2"
-                    label="Province"
+                    label={ lang["state"]["label"][language]}
                     onChange={statetChangeHandler}
-                    placeholder="Insert first name"
+                    placeholder={ lang["state"]["placeholder"][language]}
                     required
                 />
             </Row>
@@ -44,17 +49,17 @@ const Address = () => {
                 <Textfield 
                     { ...address.city }
                     className="mb-0 w-full sm:w-1/2"
-                    label="City"
+                    label={ lang["city"]["label"][language] }
                     onChange={cityChangeHandler}
-                    placeholder="Insert city name"
+                    placeholder={ lang["city"]["placeholder"][language] }
                     required
                 />
                 <Textfield 
                     { ...address.number }
                     className="mb-0 w-full sm:w-1/2"
-                    label="House number"
+                    label={ lang["number"]["label"][language] }
                     onChange={numberChangeHandler}
-                    placeholder="Insert house number"
+                    placeholder={ lang["number"]["placeholder"][language] }
                     required
                     type="number"
                 />
@@ -62,12 +67,13 @@ const Address = () => {
             <Row>
                 <Textfield 
                     { ...address.street }
-                    className="mb-0 w-full sm:w-1/2"
-                    label="block"
+                    className="mb-0 w-full"
+                    fullWidth
+                    label={ lang["street"]["label"][language] }
                     multiline
                     minRows={4}
                     onChange={streetChangeHandler}
-                    placeholder="Insert block name"
+                    placeholder={ lang["street"]["placeholder"][language] }
                     required
                 />
             </Row>

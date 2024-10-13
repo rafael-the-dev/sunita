@@ -5,7 +5,11 @@ import { BOOKING_STATUS } from "@/types/booking"
 import { BookingContext } from "@/context/BookingContext"
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
 
+import lang from "@/lang/payment.json"
+
 import { getList } from "@/helpers"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import Payment from "@/components/Container/Payment"
 import Select from "@/components/shared/combobox"
@@ -27,6 +31,8 @@ const PaymentContainer = () => {
         removePaymentMethod
     } = useContext(BookingContext)
 
+    const { language } = useLanguage()
+
     const hasChanges = getPayment().changes > 0;
     const showRemainingAmount =  getPayment().remainingAmount > 0 &&  getPayment().remainingAmount < booking.totalPrice;
 
@@ -44,14 +50,14 @@ const PaymentContainer = () => {
             <div className="flex">
                  <Select 
                     className="mb-0 w-full sm:w-1/2"
-                    label="Status"
+                    label={ lang["status"][language] }
                     list={statusList}
                     onChange={changeStatusHandler}
                     value={bookingStatus}
                 />
             </div>
         ),
-        [ bookingStatus, changeStatusHandler ]
+        [ bookingStatus, changeStatusHandler, language ]
     )
 
     return (
@@ -81,7 +87,7 @@ const PaymentContainer = () => {
                     showRemainingAmount && (
                         <Typography 
                             classes={{ root: "text-red-600 text-md md:text-xl", value: "font-semibold ml-3" }}
-                            text="Mising"
+                            text={ lang["missing"][language] }
                             value={ getPayment().remainingAmount }
                         />         
                     )
@@ -90,7 +96,7 @@ const PaymentContainer = () => {
                     hasChanges && (
                         <Typography 
                             classes={{ root: "text-yellow-600 text-md md:text-xl", value: "font-semibold ml-3" }}
-                            text="Changes"
+                            text={ lang["changes"][language] }
                             value={ getPayment().changes }
                         />         
                     )

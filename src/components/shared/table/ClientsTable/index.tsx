@@ -3,6 +3,10 @@ import { MutableRefObject, useMemo, useRef } from "react";
 import { CustomerInfoType, CustomerType } from "@/types/guest";
 import { TableHeadersType } from "@/components/table/types";
 
+import contactLang from "@/lang/contact.json"
+import lang from "@/lang/user.json"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import useSearchParams from "@/hooks/useSearchParams";
 
@@ -20,11 +24,13 @@ const includesSearchKey = (value: string, searchKey: string) => value.toLowerCas
 const ClientsTable = ({ classes, data, headers, onClickRow }: PropsType) => {
     const searchParams = useSearchParams();
 
+    const { language } = useLanguage()
+
     const searchKey = searchParams.get("search", "").toLowerCase()
 
     const defaultHeaders = useRef<TableHeadersType[]>([
         {
-            label: "Name",
+            label: lang["name"]["label"][language],
             getComponent({ item }) {
                 const customer = item as CustomerType;
 
@@ -39,7 +45,7 @@ const ClientsTable = ({ classes, data, headers, onClickRow }: PropsType) => {
             }
         },
         {
-            label: "Contact",
+            label: contactLang["label"][language],
             getComponent({ item }) {
                 const customer = item as CustomerType
 
@@ -60,7 +66,7 @@ const ClientsTable = ({ classes, data, headers, onClickRow }: PropsType) => {
             }
         },
         {
-            label: "Doc type",
+            label: `Doc ${contactLang["type"][language]}`,
             key: {
                 value: "document",
                 subKey: {
@@ -69,7 +75,7 @@ const ClientsTable = ({ classes, data, headers, onClickRow }: PropsType) => {
             }
         },
         {
-            label: "Doc number",
+            label: `Doc ${contactLang["number"]["label"][language]}`,
             key: {
                 value: "document",
                 subKey: {

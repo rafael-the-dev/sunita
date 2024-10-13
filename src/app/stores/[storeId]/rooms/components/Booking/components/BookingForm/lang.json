@@ -1,0 +1,12 @@
+{
+    "base": {
+        "type": {
+            "en": "Type",
+            "pt": "Tipo"
+        },
+        "property": {
+            "en": "Select a property",
+            "pt": "Selecione uma propriedade"
+        }
+    }
+}

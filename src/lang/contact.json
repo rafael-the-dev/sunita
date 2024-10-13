@@ -1,0 +1,26 @@
+{
+    "label": {
+        "en": "Contact",
+        "pt": "Contato"
+    },
+    "type": {
+        "en": "Type",
+        "pt": "Tipo"
+    },
+    "number": {
+        "label": {
+                "en": "Number",
+                "pt": "Número"
+            },
+        "placeholder": {
+            "en": "Insert phone number",
+            "pt": "Insira o número de telefone"
+        }
+    },
+    "buttons": {
+        "add": {
+            "en": " Add new contact",
+            "pt": "Adicionar novo contato"
+        }
+    }
+}

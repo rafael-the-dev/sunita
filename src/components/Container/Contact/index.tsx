@@ -4,6 +4,10 @@ import classNames from "classnames"
 import { PHONE_TYPE } from "@/types/contact"
 import { ContactInputType } from "@/hooks/useContact/types"
 
+import useLanguage from "@/hooks/useLanguage"
+
+import lang from "@/lang/contact.json"
+
 import Button from "@/components/shared/button"
 import Contact from "@/components/shared/contact"
 
@@ -18,6 +22,8 @@ type PropsType = {
 }
 
 const ContactContainer = ({ contact, classes, onAddContact, onChange, onRemove }: PropsType) => {
+
+    const { language } = useLanguage()
 
     return (
         <>
@@ -39,7 +45,7 @@ const ContactContainer = ({ contact, classes, onAddContact, onChange, onRemove }
             <Button
                 className={classNames(classes?.button, "py-2 px-8 w-fit")}
                 onClick={onAddContact}>
-                Add new contact
+                { lang["buttons"]["add"][language] }
             </Button>
         </>
     )

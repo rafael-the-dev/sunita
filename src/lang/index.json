@@ -1,0 +1,24 @@
+{
+    "contact": {
+        "en": "Contact",
+        "pt": "Contato"
+    },
+    "document": {
+        "en": "Document",
+        "pt": "Documento"
+    },
+    "buttons": {
+        "cancel": {
+            "en": "Cancel",
+            "pt": "Cancelar"
+        },
+        "submit": {
+            "en": "Submit",
+            "pt": "Submeter"
+        },
+        "update": {
+            "en": "Update",
+            "pt": "Atualizar"
+        }
+    }
+}

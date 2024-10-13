@@ -8,6 +8,10 @@ import styles from "./styles.module.css";
 
 import { PaymentFunctionsType } from "@/hooks/usePayment/types";
 
+import lang from "@/lang/payment.json"
+
+import useLanguage from "@/hooks/useLanguage"
+
 import { PaymentMethodListItemType, PaymentType, PAYMENT_METHODS } from "@/types/payment-method";
 import { paymentMethodsList } from "@/config/payment-methods";
 
@@ -32,14 +36,20 @@ const PaymentMethodContainer = (props: PropsType) => {
         removePaymentMethod 
     } = props;
 
+    const { language } = useLanguage()
 
-    const filter = React.useCallback((item: PaymentMethodListItemType) => {
-        if(item.value === id) return true;
+    const filter = React.useCallback(
+        (item: PaymentMethodListItemType) => {
+            if(item.value === id) return true;
 
-        return !Boolean(getPayment().paymentMethods.find(method => {
-            return method.id === item.value
-        }));
-    }, [ getPayment, id ]);
+            return !Boolean(
+                getPayment()
+                    .paymentMethods
+                    .find(method => method.id === item.value)
+            );
+        }, 
+        [ getPayment, id ]
+    );
 
     const paymentMethods = React.useMemo(
         () => paymentMethodsList.filter(filter),
@@ -47,18 +57,21 @@ const PaymentMethodContainer = (props: PropsType) => {
     )
 
     const changeHandler = React.useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodValue("amount", id, e.target.value.trim())
-    , [ changePaymentMethodValue, id ]);
+        (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodValue("amount", id, e.target.value.trim()), 
+        [ changePaymentMethodValue, id ]
+    );
 
     const changeMethodHandler = React.useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodId(id, parseInt(e.target.value)), 
-    [ changePaymentMethodId, id ]);
+        [ changePaymentMethodId, id ]
+    );
 
     const removeHandler = React.useCallback(() => removePaymentMethod(id), [ id, removePaymentMethod ]);
     
     const transactionIdChangeHandler = React.useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodTransactionIdValue(id, e.target.value)
-    , [ changePaymentMethodTransactionIdValue, id ]);
+        (e: React.ChangeEvent<HTMLInputElement>) => changePaymentMethodTransactionIdValue(id, e.target.value),
+        [ changePaymentMethodTransactionIdValue, id ]
+    );
 
     return (
         <div className="border-b border-primary-300 border-solid flex flex-col pb-3 pt-8 first:pt-0 
@@ -66,14 +79,14 @@ const PaymentMethodContainer = (props: PropsType) => {
             <div className="flex flex-col items-stretch grow md:flex-row md:items-center">
                 <Select
                     className={classNames(styles.select, `w-full md:w-1/3`)}
-                    label="Payment method"
+                    label={ lang["payment-methods"]["pm"][language] }
                     list={paymentMethods}
                     onChange={changeMethodHandler}
                     value={id}
                 />
                 <Input 
                     className={classNames(styles.input, `w-full md:w-1/3`)}
-                    label="Insert amount"
+                    label={ lang["payment-methods"]["amount"][language] }
                     onChange={changeHandler}
                     value={amount}
                     variant="outlined"
@@ -82,7 +95,7 @@ const PaymentMethodContainer = (props: PropsType) => {
                     id != PAYMENT_METHODS.CASH && (
                         <Input 
                             className={classNames(styles.input, `w-full md:w-1/3`)}
-                            label="Insert transaction ID"
+                            label={ lang["payment-methods"]["transaction"][language] }
                             onChange={transactionIdChangeHandler}
                             value={transactionId}
                             variant="outlined"

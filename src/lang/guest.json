@@ -1,0 +1,18 @@
+{
+    "firstName": {
+        "en": "First name",
+        "pt": "Primeiro nome"
+    },
+    "lastName": {
+        "en": "Last name",
+        "pt": "Sobrenome"
+    },
+    "contact": {
+        "en": "Contact",
+        "pt": "Contato"
+    },
+    "document": {
+        "en": "Document",
+        "pt": "Documento"
+    }
+}

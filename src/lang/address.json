@@ -1,0 +1,54 @@
+{
+    "country": {
+        "label": {
+            "en": "Country",
+            "pt": "País"
+        }
+    },
+    "state": {
+        "label": {
+                "en": "State/Province",
+                "pt": "Estado/Província"
+            },
+        "placeholder": {
+            "en": "Insert province/state name",
+            "pt": "Inserir nome da/o provincia/estado"
+        }
+    },
+    "city": {
+        "label": {
+                "en": "City",
+                "pt": "Cidade"
+            },
+        "placeholder": {
+            "en": "Insert city name",
+            "pt": "Insira o nome da cidade"
+        }
+    },
+    "number": {
+        "label": {
+                "en": "Number",
+                "pt": "Número"
+            },
+        "placeholder": {
+            "en": "Insert property number",
+            "pt": "Inserir número da propriedade"
+        }
+    },
+    "street": {
+        "label": {
+                "en": "Street",
+                "pt": "Rua"
+            },
+        "placeholder": {
+            "en": "Insert street address",
+            "pt": "Inserir endereço"
+        }
+    },
+    "buttons": {
+        "add": {
+            "en": " Add new contact",
+            "pt": "Adicionar novo contato"
+        }
+    }
+}

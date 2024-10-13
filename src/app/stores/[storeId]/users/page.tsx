@@ -3,6 +3,7 @@
 import { useContext } from "react"
 import classNames from "classnames"
 
+import { LANGUAGE } from "@/types/language"
 import { TabType } from "@/context/FixedTabsContext/types"
 
 import { FixedTabsContext as StaticTabsContext  } from "@/context/FixedTabsContext"
@@ -10,6 +11,8 @@ import { UsersContextProvider } from "@/context/UsersContext"
 
 import { Provider as StaticTabsProvider } from "@/components/shared/FixedTabsContainer"
 import { UsersPageContextProvider } from "./context"
+
+import useLanguage from "@/hooks/useLanguage"
 
 import ClientsView from "./views/Clients"
 import UsersView from "./views/Users"
@@ -19,7 +22,7 @@ enum TABS {
     USERS = "users"
 }
 
-const tabs: TabType[] = [
+const enTabs: TabType[] = [
     {
         id: TABS.USERS,
         name: "Users"
@@ -29,6 +32,18 @@ const tabs: TabType[] = [
         name: "Clients"
     }
 ]
+
+const ptTabs: TabType[] = [
+    {
+        id: TABS.USERS,
+        name: "Usuários"
+    },
+    {
+        id: TABS.CLIENTS,
+        name: "Clientes"
+    }
+]
+
 
 const UsersPage = () => {
     const { getActiveTab } = useContext(StaticTabsContext)
@@ -50,14 +65,20 @@ const UsersPage = () => {
     )
 }
 
-const ContextProvider = () => (
-    <StaticTabsProvider tabs={tabs}>
-        <UsersContextProvider>
-            <UsersPageContextProvider>
-                <UsersPage />
-            </UsersPageContextProvider>
-        </UsersContextProvider>
-    </StaticTabsProvider>
-)
+const ContextProvider = () => {
+    const { language } = useLanguage()
+
+    const tabs = language === LANGUAGE.ENGLISH ? enTabs : ptTabs
+
+    return (
+        <StaticTabsProvider tabs={tabs}>
+            <UsersContextProvider>
+                <UsersPageContextProvider>
+                    <UsersPage />
+                </UsersPageContextProvider>
+            </UsersContextProvider>
+        </StaticTabsProvider>
+    )
+}
 
 export default ContextProvider

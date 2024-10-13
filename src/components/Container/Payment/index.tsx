@@ -1,6 +1,10 @@
 
 import { PaymentType } from "@/types/payment-method"
 
+import lang from "@/lang/payment.json"
+
+import useLanguage from "@/hooks/useLanguage"
+
 import Button from "@/components/shared/button"
 import PaymentMethod from "@/components/shared/payment-method"
 import { PaymentFunctionsType } from "@/hooks/usePayment/types"
@@ -10,6 +14,8 @@ type PropsType = PaymentFunctionsType & {
 }
 
 const PaymentContainer = (props: PropsType) => {
+
+    const { language } = useLanguage()
 
     return (
         <>
@@ -31,7 +37,7 @@ const PaymentContainer = (props: PropsType) => {
             <Button
                 className="block mt-4 mx-auto py-2"
                 onClick={props.addPaymentMethod}>
-                Add payment method
+                { lang["buttons"]["addPM"][language] }
             </Button>
         </>
     )

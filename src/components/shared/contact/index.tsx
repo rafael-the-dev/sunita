@@ -8,6 +8,10 @@ import styles from "./styles.module.css"
 
 import { PHONE_TYPE } from "@/types/contact"
 
+import useLanguage from "@/hooks/useLanguage"
+
+import lang from "@/lang/contact.json"
+
 import Select from "@/components/shared/combobox"
 import TextField from "@/components/Textfield"
 
@@ -30,13 +34,15 @@ type PropsType = {
 
 const Contact = ({ list, number, onChange, onRemove, type }: PropsType) => {
 
+    const { language } = useLanguage()
+
     return (
         <div className="border-b border-solid border-gray-200 flex flex-col justify-between pb-2 sm:flex-row sm:items-center">
             <div className={classNames(styles.inputContainer, "flex flex-col items-stretch sm:flex-row sm:gap-x-4")}>
                 <Select 
                     { ...type }
                     className="w-full sm:w-1/2"
-                    label="Type"
+                    label={ lang["type"][language] }
                     list={[ ...list, { label: type.value, value: type.value }]}
                     onChange={onChange(type.value, "type")}
                 />
@@ -44,8 +50,8 @@ const Contact = ({ list, number, onChange, onRemove, type }: PropsType) => {
                     { ...number }
                     className="w-full sm:w-1/2"
                     onChange={onChange(type.value, "number")}
-                    placeholder="Insert phone number"
-                    label="Number"
+                    placeholder={ lang["number"]["placeholder"][language]}
+                    label={ lang["number"]["label"][language]}
                 />
             </div>
             <IconButton

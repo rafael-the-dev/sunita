@@ -1,0 +1,34 @@
+{
+    "status": {
+        "en": "Status",
+        "pt": "Estado"
+    },
+    "missing": {
+        "en": "Missing",
+        "pt": "Faltando"
+    },
+    "changes": {
+        "en": "Changes",
+        "pt": "Trocos"
+    },
+    "buttons": {
+        "addPM": {
+            "en": "Add payment method",
+            "pt": "Adicionar novo metodo de pagamento"
+        }
+    },
+    "payment-methods": {
+        "pm": {
+            "en": "Payment method",
+            "pt": "Método de pagamento"
+        },
+        "amount": {
+            "en": "Insert amount",
+            "pt": "Insere a quantia"
+        },
+        "transaction": {
+            "en": "Insert transaction ID",
+            "pt": "Inserir ID da transação"
+        }
+    }
+}
