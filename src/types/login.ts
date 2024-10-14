@@ -5,7 +5,7 @@ export type CredentialsType = {
         expiresIn: number
         token: string
     },
-    user: UserType
+    user: UserType 
 }
 
 export type LoginCredentialsType = {

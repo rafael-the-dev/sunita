@@ -56,6 +56,8 @@ const Login = () => {
 
             const { access, user } = result as CredentialsType;
 
+            document.cookie = `token=${access.token}; SameSite=Strict`;
+
             setCredentials({ access, user });
 
             router.push(`/stores/${user?.stores[0]?.storeId}`);
@@ -78,7 +80,7 @@ const Login = () => {
     }, [ router ])
 
     React.useEffect(() => {
-        if(state.error) onOpenHandlerRef.current?.(); 
+        if(state?.error) onOpenHandlerRef.current?.(); 
     }, [ state ]);
 
     React.useEffect(() => {
@@ -107,7 +109,7 @@ const Login = () => {
                         </Typography>
                             <Alert 
                                 className="mt-3"
-                                description={state.error}
+                                description={state?.error}
                                 onClose={onCloseHandlerRef}
                                 onOpen={onOpenHandlerRef}
                                 severity="error"

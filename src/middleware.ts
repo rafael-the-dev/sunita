@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from 'next/headers'
 
 import { getToken, isAuthenticated } from "./helpers/auth";
 import { isPublicPath } from "./middlewares/api";
@@ -14,6 +15,18 @@ export const middleware = async (req: NextRequest) => {
             headers.set("current-pathname", pathname)
             headers.set("current-search-params", params.toString())
 
+            const isProtectedPage = pathname.startsWith("/stores") || pathname.startsWith("/system")
+            
+            if(isProtectedPage) {
+                const result = cookies().get("token");
+
+                if(!result?.value) return NextResponse.redirect("http://localhost:3000/login");
+
+                const credentials = await isAuthenticated(result.value);
+                
+                if(!credentials) return NextResponse.redirect("http://localhost:3000/login");
+            }
+            
             return NextResponse.next({ headers })
         }
 
@@ -24,6 +37,12 @@ export const middleware = async (req: NextRequest) => {
         
         return isLoggedIn ?  NextResponse.next() : NextResponse.json("User not authenticated", { status: 401 });
     } catch(e) {
+        console.error(e.message)
+
+        const isProtectedPage = pathname.startsWith("/stores") || pathname.startsWith("/system")
+
+        if(isProtectedPage) return NextResponse.redirect("http://localhost:3000/login");
+
         return NextResponse.json("User not authenticated", { status: 401 });
     }
 };

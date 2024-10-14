@@ -28,6 +28,9 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
     const [ credentials, setCredentials ] = React.useState<CredentialsType | null>(null);
     const [ revalidatingToken, setRevalidatingToken ] = React.useState(true)
 
+    
+    const isFirstRender = React.useRef(true)
+
     const user = React.useMemo<UserType | {}>(() => !credentials ? {} : credentials.user, [ credentials ]);
 
     const logout = React.useCallback(
@@ -38,6 +41,42 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         [ router ]
     )
 
+    /*React.useEffect(
+        () => {
+            if(!isFirstRender.current) return;
+
+            const getCookie = (name: string) => {
+                const nameEQ = name + "=";
+                const cookies = document.cookie.split(';');
+
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+
+                    if (cookie.indexOf(nameEQ) === 0) {
+                        return cookie.substring(nameEQ.length, cookie.length);
+                    }
+                }
+
+                return null;
+            }
+
+            const cookie = getCookie("credentials")
+
+            if(cookie) {
+                const credentialsCookie = JSON.parse(cookie);
+
+                isFirstRender.current = false;
+
+                setCredentials(credentialsCookie);
+
+                const params = new URLSearchParams(window.location.search);
+
+                router.push(`${pathname}?${params.toString()}`)
+            }
+        },
+        [ pathname, router ]
+    )*/
+
     React.useEffect(
         () => {
             try {
@@ -46,6 +85,8 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
                         key: "credentials", 
                         value: credentials 
                     });
+
+                    document.cookie = `token=${credentials.access.token}; SameSite=Strict`;
                 }
             } catch(e) {
             }
@@ -53,10 +94,10 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         [ credentials ]
     );
 
-    const isFirstRender = React.useRef(true)
-
     const validateSavedToken = React.useCallback(
-        async ({ signal }) => {
+        async ({ signal }: { signal: AbortSignal }) => {
+            isFirstRender.current = false;
+
             try {
                 const { access: { token } } = getItem<CredentialsType>("credentials");
 
@@ -88,7 +129,6 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
                 console.error(e);
                 router.push("/login");
             } finally {
-                isFirstRender.current = false;
                 setRevalidatingToken(false)
             }
         }, 
@@ -99,14 +139,14 @@ export const LoginContextProvider = ({ children }: { children: React.ReactNode }
         () => {
             const controller = new AbortController();
 
-            if(!isFirstRender.current && !revalidatingToken) {
+            if(isFirstRender.current && revalidatingToken) {
                 isFirstRender.current = false;
-                return;
+
+                validateSavedToken({ signal: controller.signal });
+
+                //return () => controller.abort();
             }
             
-            validateSavedToken({ signal: controller.signal });
-
-            return () => controller.abort();
         }, 
         [ revalidatingToken, validateSavedToken ]
     );

@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { cookies } from 'next/headers'
 
 import { decode, verifyToken } from "@/helpers/auth";
 
@@ -87,13 +88,17 @@ class Auth {
             const tokenResult = verifyToken<DecodedUserType>(token);
             const { _id, exp, iat, ...userDetails } = tokenResult;
 
-            return { 
+            const credentials = { 
                 access: {
                     expiresIn: exp,
                     token 
                 },
                 user: userDetails
             };
+
+            //cookies().set("credentials", JSON.stringify(credentials))
+
+            return credentials
 
         } catch(e) {
             if(e instanceof Error404) throw new AuthError("Username or password invalid.");   
@@ -115,14 +120,18 @@ class Auth {
     
             // vefify new token to get its expiration time
             const decodedToken = verifyToken<DecodedUserType>(newToken);
-    
-            return { 
+
+            const credentials = { 
                 access: {
                     expiresIn: decodedToken.exp,
                     token: newToken
                 },
                 user: userDetails
             };
+    
+            //cookies().set("credentials", JSON.stringify(credentials))
+
+            return credentials
         } catch(err) {
             if(err instanceof jwt.TokenExpiredError) throw new AuthError("Expired token");
             throw err;
