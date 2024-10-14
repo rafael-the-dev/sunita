@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import * as jose from "jose"
 
@@ -40,3 +40,6 @@ export const getToken = (req: NextRequest) => {
 
     return token
 }
+
+
+export const redirect = (url = "http://localhost:3000/login") => NextResponse.redirect(url);
