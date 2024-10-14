@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from 'next/headers'
 
+import { USER_CATEGORY } from "@/types/user"
+
 import { getToken, isAuthenticated } from "./helpers/auth";
+import { hasPageAccess } from "./middlewares/auth/pages";
 import { isPublicPath } from "./middlewares/api";
+import { redirect } from "./helpers/auth";
 
 export const middleware = async (req: NextRequest) => {
     const { pathname, search } = req.nextUrl
@@ -15,19 +19,7 @@ export const middleware = async (req: NextRequest) => {
             headers.set("current-pathname", pathname)
             headers.set("current-search-params", params.toString())
 
-            const isProtectedPage = pathname.startsWith("/stores") || pathname.startsWith("/system")
-            
-            if(isProtectedPage) {
-                const result = cookies().get("token");
-
-                if(!result?.value) return NextResponse.redirect("http://localhost:3000/login");
-
-                const credentials = await isAuthenticated(result.value);
-                
-                if(!credentials) return NextResponse.redirect("http://localhost:3000/login");
-            }
-            
-            return NextResponse.next({ headers })
+            return await hasPageAccess(pathname) ? NextResponse.next({ headers }) : redirect()
         }
 
         if(isPublicPath(req)) return NextResponse.next();
@@ -41,7 +33,7 @@ export const middleware = async (req: NextRequest) => {
 
         const isProtectedPage = pathname.startsWith("/stores") || pathname.startsWith("/system")
 
-        if(isProtectedPage) return NextResponse.redirect("http://localhost:3000/login");
+        if(isProtectedPage) return redirect();
 
         return NextResponse.json("User not authenticated", { status: 401 });
     }
