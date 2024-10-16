@@ -1,0 +1,18 @@
+{
+    "profit": {
+        "en": "Profit",
+        "pt": "Lucros"
+    },
+    "sales": {
+        "en": "Sales",
+        "pt": "Vendas"
+    },
+    "expenses": {
+        "en": "Expenses",
+        "pt": "Despesas"
+    },
+    "filters": {
+        "en": "Filters",
+        "pt": "Filtros"
+    }
+}

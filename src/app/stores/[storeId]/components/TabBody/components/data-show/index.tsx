@@ -82,11 +82,11 @@ const Container = () => {
                 <Typography
                     component="h2"
                     className="font-bold text-xl">
-                    { salesLabel } { value === TABS.TABLE ? listLabel : chartLabel } { formatDates(getSalesDate()) }
+                    { salesLabel } { formatDates(getSalesDate()) }
                 </Typography>
             )
         }, 
-        [ getSalesDate, language, value ]
+        [ getSalesDate, language ]
     );
     
     const hasRange = React.useCallback(() => {
