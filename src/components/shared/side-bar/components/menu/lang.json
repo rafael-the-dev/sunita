@@ -1,0 +1,42 @@
+{
+    "home": {
+        "en": "Home",
+        "pt": "Inicio"
+    },
+    "new-sale": {
+        "en": "New sale",
+        "pt": "Nova venda"
+    },
+    "sales": {
+        "en": "Sales",
+        "pt": "Vendas"
+    },
+    "products": {
+        "en": "Products",
+        "pt": "Produtos"
+    },
+    "properties": {
+        "en": "Properties",
+        "pt": "Propriedades"
+    },
+    "expenses": {
+        "en": "Expenses",
+        "pt": "Despesas"
+    },
+    "users": {
+        "en": "Users",
+        "pt": "Usuários"
+    },
+    "finances": {
+        "en": "Finances",
+        "pt": "Finanças"
+    },
+    "settings": {
+        "en": "Settings",
+        "pt": "Denifições"
+    },
+    "System": {
+        "en": "System",
+        "pt": "Sistema"
+    }
+}
