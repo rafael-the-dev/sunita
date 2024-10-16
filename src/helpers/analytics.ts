@@ -32,7 +32,7 @@ export const getSalesStats = (sales: SaleInfoType[]) => {
     };
 
     sales.forEach((currentSale) => {
-        salesStats.profit = currency(salesStats.profit).add(currentSale.profit).value;
+        salesStats.profit = currency(salesStats.profit).add(currentSale.profit ?? 0).value;
         salesStats.total = currency(salesStats.total).add(currentSale.total).value;
     });
 
