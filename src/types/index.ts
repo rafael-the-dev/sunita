@@ -16,3 +16,6 @@ export enum STATUS {
 export type FetchResponseType<T> = {
     data: T
 }
+
+export 
+type MethodType = "DELETE" | "GET" | "POST" | "PUT"
