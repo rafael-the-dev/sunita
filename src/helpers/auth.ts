@@ -26,7 +26,7 @@ export const isAuthenticated = async (token: string) => {
             user: rest
         }
     } catch(e) {
-        return false
+        return null
     }
     
 }
