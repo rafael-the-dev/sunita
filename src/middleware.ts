@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from 'next/headers'
 
-import { USER_CATEGORY } from "@/types/user"
+import { MethodType } from "./types";
 
 import { getToken, isAuthenticated } from "./helpers/auth";
 import { hasPageAccess } from "./middlewares/auth/pages";
 import { isPublicPath } from "./middlewares/api";
+import { hasRouteAccess } from "./middlewares/auth/api";
 import { redirect } from "./helpers/auth";
 
 export const middleware = async (req: NextRequest) => {
@@ -25,9 +25,13 @@ export const middleware = async (req: NextRequest) => {
         if(isPublicPath(req)) return NextResponse.next();
         
         const token = getToken(req);
-        const isLoggedIn = await isAuthenticated(token);
+        const credentials = await isAuthenticated(token);
         
-        return isLoggedIn ?  NextResponse.next() : NextResponse.json("User not authenticated", { status: 401 });
+        if(Boolean(credentials) && hasRouteAccess({ credentials, pathname, method: req.method as MethodType })) {
+            return NextResponse.next() 
+        }
+
+        return NextResponse.json("User not authenticated", { status: 401 });
     } catch(e) {
         console.error(e.message)
 
