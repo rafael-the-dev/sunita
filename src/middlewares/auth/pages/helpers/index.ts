@@ -17,6 +17,7 @@ export const hasStoreRoutesAccess = (credentials: CredentialsType, pathname: str
         const slug = pathname.split("/stores/")[1].split("/")[1]
         
         switch(slug) {
+            case "expenses": return hasFinancesRouteAccess(credentials, pathname)
             case "finances": return hasFinancesRouteAccess(credentials, pathname)
             case "users": return hasUsersRouteAccess(credentials, pathname)
         }
