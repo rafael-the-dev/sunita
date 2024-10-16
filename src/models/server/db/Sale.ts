@@ -2,6 +2,7 @@ import currency from "currency.js";
 
 import { ConfigType } from "@/types/app-config-server";
 import { CartResquestType, RequestCartItem } from "@/types/cart";
+import { USER_CATEGORY } from "@/types/user";
 import { StoreProductType } from "@/types/product";
 import { SaleType, SaleInfoType, SaleItemType } from "@/types/sale";
 
@@ -32,6 +33,8 @@ const toSaleType = (sale: SaleInfoType) => (
 
 class Sale {
     static async getAll({ filters,  storeId }: { filters?: Object, storeId: string }, { mongoDbConfig, user }: ConfigType) {
+        const isEmployee = user.category === USER_CATEGORY.EMPLOYEE
+
         const list = await mongoDbConfig
             .collections
             .WAREHOUSES
@@ -85,7 +88,7 @@ class Sale {
                                 }
                             }
                         },
-                        profit: { $first: "$sales.profit" },
+                        ...( isEmployee ? {} : { profit: { $first: "$sales.profit" }} ),
                         paymentMethods: { $first: "$sales.paymentMethods" },
                         total: { $first: "$sales.total" },
                         totalReceived: { $first: "$sales.totalReceived" },
