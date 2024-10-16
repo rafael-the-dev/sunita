@@ -10,6 +10,7 @@ import NewSaleIcon from '@mui/icons-material/AddShoppingCart';
 import SaleIcon from '@mui/icons-material/ShoppingCart';
 import UsersIcon from '@mui/icons-material/PeopleAlt';
 import FinancesIcon from '@mui/icons-material/AttachMoney';
+import SettingsIcon from '@mui/icons-material/Settings';
 import SystemIcon from '@mui/icons-material/AdminPanelSettings';
 
 import ProductsIcon from "../../../../../../public/images/icons/milk-svgrepo-com.svg"
@@ -76,6 +77,12 @@ const Menu = () => {
                 icon: <FinancesIcon />,
                 label: lang["finances"][language],
                 path: `/stores/${ credentials?.user?.stores[0]?.storeId }/finances`
+            },
+            {
+                hasAccess: hasStoreRoutesAccess,
+                icon: <SettingsIcon />,
+                label: lang["settings"][language],
+                path: `/stores/${ credentials?.user?.stores[0]?.storeId }/settings`
             },
             {
                 hasAccess: hasSystemPageAcess,
