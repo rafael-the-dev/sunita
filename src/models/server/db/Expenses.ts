@@ -1,6 +1,7 @@
 
 import { ConfigType } from "@/types/app-config-server";
 import { ExpenseClientType, ExpenseInfoType, ExpenseType, ExpenseStatus } from "@/types/expense";
+import { USER_CATEGORY } from "@/types/user";
 import { WarehouseType } from "@/types/warehouse";
 
 import { getId } from "@/helpers/id";
@@ -39,6 +40,8 @@ type UpdateStorePropsType = {
 
 class Expense {
     static async getAll({ filters, storeId }: GetAllPropsType, { mongoDbConfig, user }: ConfigType) {
+        if(USER_CATEGORY.EMPLOYEE === user.category) return []
+
         const expenses = await mongoDbConfig.collections
             .WAREHOUSES
             .aggregate([
