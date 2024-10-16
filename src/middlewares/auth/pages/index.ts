@@ -15,18 +15,11 @@ const hasStorePageAcess = (pathname: string, credentials: CredentialsType) => {
         const slug = pathname.split("/api/stores/")[1].split("/")[1]
 
         switch(slug) {
+            case "expenses": return hasFinancesRouteAccess(credentials, pathname)
             case "finances": return hasFinancesRouteAccess(credentials, pathname)
             case "users": return hasUsersRouteAccess(credentials, pathname)
         }
     }
-
-    /*const isFinancesPage = pathname.match("^/api/stores/[A-z0-9\-]+/finances$");
-
-    if(isFinancesPage) return hasFinancesRouteAccess(credentials, pathname)
-    
-    const isUsersPage = pathname.match("^/api/stores/[A-z0-9\-]+/users$");
-
-    if(isUsersPage) return hasUsersRouteAccess(credentials, pathname);*/
 
     return true
 }
