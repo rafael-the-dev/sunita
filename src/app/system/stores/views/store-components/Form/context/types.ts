@@ -1,6 +1,8 @@
 import { ReactNode } from "react"
 
 import { AddressEventHandlers, AddressInputType } from "@/hooks/useAddress/types"
+import { AddressType as AddressDetailsType } from "@/types/address"
+import { ContactType as ContactDetailsType } from "@/types/contact"
 import { ContactInputType, ContactMethodsType } from "@/hooks/useContact/types"
 import { DocumentInputFunctions } from "@/hooks/useDocument/types"
 import { EnrollStoreType } from "@/types/warehouse"
@@ -46,5 +48,11 @@ export type FormContextType = {
 }
 
 export type PropsType = {
-    children: ReactNode
+    children: ReactNode,
+    baseTest?: boolean,
+    initialAddress?: AddressDetailsType,
+    initialContact?: ContactDetailsType,
+    initialId?: string,
+    initialName?: string,
+    initialStatus?: STATUS
 }

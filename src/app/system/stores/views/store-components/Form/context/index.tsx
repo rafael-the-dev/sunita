@@ -22,16 +22,19 @@ const initialBaseDetails = {
     status: STATUS.ACTIVE
 }
 
-export const FormContextProvider = ({ children }: PropsType) => {
+export const FormContextProvider = ({ baseTest, children, initialAddress, initialContact, initialId, initialName, initialStatus }: PropsType) => {
     const { getDialog } = React.useContext(StaticTabsContext);
 
     const storeDetails = getDialog().current?.payload as StoreDetailsType;
     const hasPayload = Boolean(storeDetails);
-
+   
     const [ baseDetails, setBaseDetails ] = React.useState(
         () => {
-            if(!hasPayload) return initialBaseDetails;
-
+            if(!hasPayload) return { 
+                name: getInputFieldObject(initialName ?? ""),
+                status: initialStatus ?? STATUS.ACTIVE
+            };
+           
             return {
                 name: getInputFieldObject(storeDetails.name),
                 status: storeDetails.status
@@ -39,8 +42,8 @@ export const FormContextProvider = ({ children }: PropsType) => {
         }
     )
 
-    const address = useAddress({ hasCords: true, initialAddress: storeDetails?.address })
-    const contact = useContact(storeDetails?.contact)
+    const address = useAddress({ hasCords: true, initialAddress: initialAddress ?? storeDetails?.address })
+    const contact = useContact(initialContact ?? storeDetails?.contact)
     const payment = usePayment(8500)
     const user = useUser()
 
@@ -49,8 +52,8 @@ export const FormContextProvider = ({ children }: PropsType) => {
             address.hasErrors(),
             baseDetails.name.error || !baseDetails.name.value.trim(),
             contact.hasErrors,
-            hasPayload ? false : payment.hasErrors,
-            hasPayload ? false : user.hasErrors()
+            hasPayload || baseTest ? false : payment.hasErrors,
+            hasPayload || baseTest ? false : user.hasErrors()
         ].find(error => error)
     }
 
@@ -88,11 +91,11 @@ export const FormContextProvider = ({ children }: PropsType) => {
         const storeEnrollment: EnrollStoreType = {
             address: address.toLiteralObject(),
             contact: contact.toLiteralObject(),
-            id: storeDetails?.id,
+            id: initialId ?? storeDetails?.id,
             name: baseDetails.name.value,
-            payment: payment.getPayment(),
+            payment: hasPayload || baseTest ? null : payment.getPayment(),
             status: baseDetails.status,
-            users: [ user.toLiteralObject() ]
+            users: hasPayload || baseTest ? null : [ user.toLiteralObject() ]
         }
 
         return storeEnrollment
