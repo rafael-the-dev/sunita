@@ -3,7 +3,7 @@ import * as React from "react"
 import { FetchResponseType } from "@/types"
 import { PropsType, SettingsContextType } from "./types"
 import { Store as StoreType } from "@/types/warehouse"
-import { USER_CATEGORY } from "@/types/user"
+import { USER_CATEGORY, User as UserType } from "@/types/user"
 
 import { LoginContext } from "@/context/LoginContext"
 
@@ -23,9 +23,17 @@ export const SettingsContextProvider = ({ children }: PropsType) => {
         }
     )
 
+    const profile = useFetch<UserType>(
+        {
+            autoFetch: true,
+            url: `/api/users/${credentials?.user?.username}`
+        }
+    )
+
     return (
         <SettingsContext.Provider
             value={{
+                profile,
                 store
             }}>
             { children }
