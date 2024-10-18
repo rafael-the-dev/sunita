@@ -1,14 +1,10 @@
 import { NextResponse, NextRequest } from "next/server";
 
-import Users from "@/models/server/db/Users";
+import { URLParamsType } from "@/types/app-config-server"
 
 import { apiHandler } from "@/middlewares/route-handler";
 
-type URLParamsType = {
-    params: {
-        username: string
-    }
-}
+import Users from "@/models/server/db/Users";
 
 export const DELETE = async (req: NextRequest, { params: { username } }: URLParamsType) => {
     return await apiHandler(req, async ({ mongoDbConfig }) => {
