@@ -7,5 +7,6 @@ export type FetchDataFuncType = ({ options, onError, onSuccess, path, signal }: 
 export type FetchResponseType<T> = {
     data: T,
     error: Error,
-    fetchData: FetchDataFuncType
+    fetchData: FetchDataFuncType,
+    loading: boolean
 }
