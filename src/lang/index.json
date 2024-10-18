@@ -1,4 +1,8 @@
 {
+    "address": {
+        "en": "Address",
+        "pt": "Endereço"
+    },
     "contact": {
         "en": "Contact",
         "pt": "Contato"
