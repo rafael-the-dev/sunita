@@ -5,6 +5,7 @@ import { UserType, User } from "@/types/user";
 
 import { getUsers } from "./connections/db";
 import { getUserProxy } from "../../proxy/user";
+import { getCategories } from "@/helpers/user";
 
 import Error404 from "@/errors/server/404Error";
 import InvalidArgumentError from "@/errors/server/InvalidArgumentError";
@@ -26,6 +27,8 @@ class Users {
     }
 
     static async update({ address, document, category, contact, firstName, lastName, username }: User, { mongoDbConfig, user }: SettingsType) {
+        if(!getCategories(user.category).includes(category)) throw new InvalidArgumentError("You don't have access to set this category")
+        
         let userDetails: UserType = await this.get({ username }, { mongoDbConfig })
 
         try {
