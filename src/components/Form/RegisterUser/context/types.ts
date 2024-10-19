@@ -1,6 +1,6 @@
 import { ChangeEvent ,ReactNode } from "react"
 
-import { USER_CATEGORY } from "@/types/user";
+import { USER_CATEGORY, User } from "@/types/user";
 
 import { AddressEventHandlers, AddressInputType } from "@/hooks/useAddress/types"
 import { ContactMethodsType, ContactInputType } from "@/hooks/useContact/types"
@@ -8,6 +8,7 @@ import { DocumentInputFunctions } from "@/hooks/useDocument/types"
 
 export type PropsType = {
     children: ReactNode;
+    initialUser?: User
 }
 
 type InputType = {

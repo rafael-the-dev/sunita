@@ -7,6 +7,8 @@ import useAddress from "@/hooks/useAddress"
 import useContact from "@/hooks/useContact"
 import useDocument from "@/hooks/useDocument"
 
+import { defaultInputField, getInputFieldObject } from "@/config/input"
+
 import { 
     isValidName, isValidUsername
 } from "@/validation/user"
@@ -14,25 +16,30 @@ import {
 type ChangeNameKeyType = "firstName" | "lastName"
 type ChangeAddressKeyType = "country" | "province" | "city" | "block"
 
-const initialInput = {
-    error: false,
-    helperText: "",
-    value: ""
-}  
-
 const initial = {
-    firstName: structuredClone(initialInput),
-    lastName: structuredClone(initialInput),
-    position: structuredClone({ ...initialInput, value: USER_CATEGORY.EMPLOYEE }),
-    username: structuredClone(initialInput),
+    firstName: structuredClone(defaultInputField),
+    lastName: structuredClone(defaultInputField),
+    position: structuredClone({ ...defaultInputField, value: USER_CATEGORY.EMPLOYEE }),
+    username: structuredClone(defaultInputField),
 }
 
-const useForm = () => {
-    const [ input, setInput ] = useState(initial);
+const useForm = (initialUser?: User) => {
+    const [ input, setInput ] = useState(
+        () => {
+            if(!initialUser) return initial
 
-    const address = useAddress()
-    const contact = useContact()
-    const document = useDocument()
+            return {
+                firstName: getInputFieldObject(initialUser.firstName),
+                lastName: getInputFieldObject(initialUser.lastName),
+                position: { ...defaultInputField, value: initialUser.category },
+                username: getInputFieldObject(initialUser.username),
+            }
+        }
+    );
+
+    const address = useAddress({ hasCords: false, initialAddress: initialUser?.address })
+    const contact = useContact(initialUser?.contact)
+    const document = useDocument(initialUser?.document)
 
     const hasAddressErrors = address.hasErrors()
     const hasContactErrors = contact.hasErrors

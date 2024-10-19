@@ -5,8 +5,8 @@ import useForm from "./hooks/useForm";
 
 export const UserFormContext = createContext<ContextType>({} as ContextType)
 
-export const UserFormContextProvider = ({ children }: PropsType) => {
-    const form = useForm()
+export const UserFormContextProvider = ({ children, initialUser }: PropsType) => {
+    const form = useForm(initialUser)
 
 
     return (
