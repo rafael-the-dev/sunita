@@ -21,9 +21,11 @@ export const PUT = async (req: NextRequest, { params: { username } }: URLParamsT
     return await apiHandler(
         req, 
         async (config) => {
-            const requestedUser = await Users.get({ username }, config);
+            const user = await req.json()
+
+            await Users.update(user, config);
             
-            return NextResponse.json(requestedUser);
+            return NextResponse.json({ message: "User was successfully updated" });
         }
     );
 };
