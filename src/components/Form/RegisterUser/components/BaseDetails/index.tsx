@@ -37,7 +37,7 @@ const BaseDetails = () => {
     const contact = getContact()
 
     const usersPositions = useMemo(
-        () => getCategories(credentials)
+        () => getCategories(credentials?.user?.category)
             .map(item => ({ label: item, value: item }))
         ,
         [ credentials ]
