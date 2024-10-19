@@ -6,8 +6,7 @@ export const isClientUser = (user: BaseUserType) => {
     return !user || user.category === USER_CATEGORY.CLIENT
 }
 
-export const getCategories = (credentials: CredentialsType) => {
-    const category = credentials?.user?.category
+export const getCategories = (category: USER_CATEGORY) => {
 
     switch(category) {
         case USER_CATEGORY.CLIENT: return Object.values(USER_CATEGORY.CLIENT)
