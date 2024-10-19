@@ -3,6 +3,7 @@ import { ChangeEvent, useCallback, useContext, useMemo } from "react"
 import { LANGUAGE } from "@/types/language"
 import { USER_CATEGORY } from "@/types/user"
 
+import { LoginContext } from "@/context/LoginContext"
 import { UserFormContext } from "../../context"
 
 import lang from "@/lang/user.json"
@@ -14,9 +15,12 @@ import Legend from "@/components/shared/Legend"
 import Row from "../Row"
 import Select from "@/components/shared/combobox"
 import Textfield from "@/components/Textfield"
+import { getCategories } from "@/helpers/user"
 
 
 const BaseDetails = () => {
+    const { credentials } = useContext(LoginContext)
+
     const {
         contact: {
             addPhoneNumber,
@@ -33,10 +37,10 @@ const BaseDetails = () => {
     const contact = getContact()
 
     const usersPositions = useMemo(
-        () => Object
-            .values(USER_CATEGORY)
-            .map(value => ({ label: value, value })),
-        []
+        () => getCategories(credentials)
+            .map(item => ({ label: item, value: item }))
+        ,
+        [ credentials ]
     );
 
     const usersPositionsChangeHandler = useCallback(
