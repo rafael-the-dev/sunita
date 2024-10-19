@@ -8,5 +8,5 @@ export type FetchResponseType<T> = {
     data: T,
     error: Error,
     fetchData: FetchDataFuncType,
-    loading: boolean
+    loading?: boolean
 }
