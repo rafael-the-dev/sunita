@@ -37,7 +37,7 @@ const Address = () => {
                     required
                 />
                 <Textfield 
-                    { ...address.province }
+                    { ...address.state }
                     className="mb-0 w-full sm:w-1/2"
                     label={ lang["state"]["label"][language]}
                     onChange={statetChangeHandler}
