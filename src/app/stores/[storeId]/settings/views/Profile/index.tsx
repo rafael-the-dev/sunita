@@ -78,12 +78,12 @@ const ProfileView = () => {
                 }
 
                 await fetchData({})
-
-                resetForm()
             },
         });
 
         onOpenAlert.current?.()
+
+        setTimeout(() => onCloseAlert.current?.(), 5000)
     }
 
 
