@@ -122,10 +122,10 @@ const ProfileView = () => {
 const Provider = () => {
     const { profile } = React.useContext(SettingsContext)
     
-    //if(!store.data?.data) return <></>
+    if(!profile.data) return <></>
 
     return (
-        <UserFormContextProvider>
+        <UserFormContextProvider initialUser={profile.data}>
             <ProfileView />
         </UserFormContextProvider>
     )
