@@ -42,6 +42,9 @@ export type BaseUserType = {
 
 export type UserType = BaseUserType & {
     _id?: string,
+    address: AddressType,
+    contact: ContactType;
+    document: Document;
     stores: Store[]
 }
 
