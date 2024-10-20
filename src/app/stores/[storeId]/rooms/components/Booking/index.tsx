@@ -6,6 +6,7 @@ import styles from "./styles.module.css"
 
 import { BookingInfoType } from "@/types/booking"
 import {LANGUAGE} from "@/types/language"
+import {TABS} from "./components/Chart/components/Filters/types"
 
 import { AppContext } from "@/context/AppContext"
 import { FixedTabsContext as StaticTabsContext } from "@/context/FixedTabsContext"
@@ -19,7 +20,9 @@ import { formatDates } from "@/helpers/date";
 import Button from "@/components/shared/button"
 import BookingForm from "./components/BookingForm"
 import Card from "@/components/shared/report-card"
+import Chart from "./components/Chart"
 import Filters from "./components/Filters"
+import Tab from "./components/Tab"
 
 enum DIALOG_TYPE {
     BOOKING = "booking"
@@ -57,6 +60,7 @@ const Booking = () => {
     const fetchBookingsFuncRef = bookings?.fetchData
 
     const dialog = searchParams.get("dialog", "") as DIALOG_TYPE;
+    const tab = searchParams.get("tab", TABS.SCHEDULER) as TABS;
 
     const bookingsRange = bookingsList.length > 0 ? formatDates(bookingsList, "checkIn") : "";
 
@@ -119,17 +123,26 @@ const Booking = () => {
                     </Card>
                     <Filters />
                 </div>
-                <Scheduler
-                    allDayExpr="dayLong"
-                    dataSource={bookingsList}
-                    currentView="week"
-                    descriptionExpr="price.hour"
-                    endDateExpr="checkOut"
-                    onAppointmentClick={appointmentClickHandler}
-                    recurrenceRuleExpr="recurrence"
-                    startDateExpr="checkIn"
-                    textExpr="name">
-                </Scheduler>
+                <div className="flex mb-10 px-4">
+                    <Tab id={TABS.SCHEDULER}>Scheduler</Tab>
+                    <Tab id={TABS.CHART}>Chart</Tab>
+                </div>
+                { 
+                    tab === TABS.SCHEDULER ?
+                        <Scheduler
+                            allDayExpr="dayLong"
+                            dataSource={bookingsList}
+                            currentView="week"
+                            descriptionExpr="price.hour"
+                            endDateExpr="checkOut"
+                            onAppointmentClick={appointmentClickHandler}
+                            recurrenceRuleExpr="recurrence"
+                            startDateExpr="checkIn"
+                            textExpr="name">
+                        </Scheduler>
+                    :
+                        <Chart />
+                }
             </div>
             <div className="flex flex-col items-stretch mt-8 px-2 md:px-4 sm:flex-row sm:justify-end">
                 <Button
