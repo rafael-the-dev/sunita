@@ -91,7 +91,12 @@ const useSearchParamsHook = () => {
 
     const toggleSearchParam = React.useCallback(
         (key: string, value: string) =>  {
-            if(searchParams.get(key)) removeSearchParam(key)
+            const paramValue = searchParams.get(key)
+
+            if(Boolean(paramValue)) {
+                if(value !== paramValue) setSearchParam(key, value)
+                else removeSearchParam(key)
+            }
             else setSearchParam(key, value)
         }, 
         [ removeSearchParam, setSearchParam, searchParams ]
