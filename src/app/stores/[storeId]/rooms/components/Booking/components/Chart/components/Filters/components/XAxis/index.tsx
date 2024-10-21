@@ -1,15 +1,10 @@
 import * as React from "react"
 
+import { X_AXIS } from "@/app/stores/[storeId]/rooms/components/Booking/components/Chart/components/Filters/types"
+
 import useSearchParams from "@/hooks/useSearchParams"
 
 import RadioGroup from "@/common/components/RadioGroup"
-
-enum X_AXIS {
-    DAY = "day",
-    WEEK = "week",
-    MONTH = "month",
-    YEAR = "year"
-}
 
 const XAxis = () => {
     const searchParams = useSearchParams()
