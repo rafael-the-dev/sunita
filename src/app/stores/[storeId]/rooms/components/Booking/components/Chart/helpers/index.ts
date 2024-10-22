@@ -2,6 +2,7 @@ import currency from "currency.js"
 import moment from "moment"
 
 import {BookingInfoType} from "@/types/booking"
+import { MONTHS } from "@/types/date"
 import { PERIOD, SerieType} from "@/types"
 import { ChartSerieType } from "@/types/chart"
 
@@ -9,6 +10,16 @@ type GroupedBookings = {
     month: string,
     list: BookingInfoType[],
 }
+
+const monthlyBookingsMapper = new Map<string, BookingInfoType[]>()
+
+export const MONTHS_LIST = Object.values(MONTHS)
+
+export const getWeeklyXAxis = () => (
+    {
+        categories: [ "Sun", "Mon", "Tus", "Wed", "Thu", "Fri", "Sat" ]
+    }
+)
 
 export const getDailyXAxis = () => {
     let categories = []
@@ -40,6 +51,8 @@ export const groupBookingsByMonth = (list: BookingInfoType[], period: PERIOD) =>
         .entries()
         .map(
             ([ month, list ]) => {
+                monthlyBookingsMapper.set(month, list)
+
                 return {
                     list,
                     month
@@ -50,36 +63,41 @@ export const groupBookingsByMonth = (list: BookingInfoType[], period: PERIOD) =>
     return group
 }
 
-export const getDailySeries = (list: BookingInfoType[], period?: PERIOD): ChartSerieType[] => {
+export const getBookingsSeries = (list: BookingInfoType[], period: PERIOD.DAY | PERIOD.WEEK = PERIOD.DAY): ChartSerieType[] => {
     const groups = groupBookingsByMonth(list, period)
 
-    const mapper = new Map<string, Map<string, number>>()
+    const isDay = period === PERIOD.DAY;
+
+    const mapper = new Map<string, Map<string, number>>();
+    const xAxisList: string[] | number[] = isDay ? getDailyXAxis().categories : getWeeklyXAxis().categories;
+    const PERIOD_FORMAT = isDay ? "D" : "ddd";
 
     groups.forEach(
         ({ list, month }) => {
-            const monthMapper  = new Map<string, number>()
+            const monthMapper  = new Map<string, number>();
 
-            mapper.set(month, monthMapper)
+            mapper.set(month, monthMapper);
 
-            for(let i = 1; i <= 31; i++) {
-                const day = i.toString()
+            xAxisList.forEach(
+                (category) => {
+                    const currentPeriod = category.toString();
+                    
+                    const totalAmount = list.reduce(
+                        (prevValue, booking) => {
+                            const bookingPeriod = moment(booking.date).format(PERIOD_FORMAT);
+                            
+                            if(currentPeriod !== bookingPeriod) return prevValue;
 
-                list.forEach(
-                    booking => {
-                        const bookingDay = moment(booking.date).format(PERIOD.DAY)
+                            const totalAmount = currency(prevValue).add(booking.totalPrice).value;
 
-                        if(day === bookingDay) {
-                            const amount = monthMapper.get(day) ?? 0
+                            return totalAmount;
+                        },
+                        0
+                    )
 
-                            const totalAmount = currency(amount).add(booking.totalPrice).value
-
-                            monthMapper.set(day, totalAmount)
-                        }
-                    }
-                )
-
-                if(!monthMapper.has(day)) monthMapper.set(day, 0)
-            }
+                    monthMapper.set(currentPeriod, totalAmount)
+                }
+            )
         }
     )
 
@@ -103,21 +121,29 @@ export const getDailySeries = (list: BookingInfoType[], period?: PERIOD): ChartS
     return series
 }
 
-export const getMonthlySeries = (list: BookingInfoType[], period: PERIOD): SerieType[] => {
-    const groups = groupBookingsByMonth(list, period)
+export const getMonthlySeries = (list: BookingInfoType[], period: PERIOD): ChartSerieType[] => {
+    groupBookingsByMonth(list, period)
 
-    return groups
+    const data =  MONTHS_LIST
         .map(
-            ({ list, month }) => {
-                const totalAmount = list.reduce(
-                    (prevValue, currentBooking) => currency(prevValue).add(currentBooking.totalPrice).value,
+            month => {
+                const list = monthlyBookingsMapper.get(month)
+
+                if(!list) return 0
+
+                return list.reduce(
+                    (preValue, currentBooking) => currency(preValue).add(currentBooking.totalPrice).value,
                     0
                 )
-
-                return {
-                    period: month,
-                    totalAmount
-                }
             }
         )
+
+
+    return [
+        {
+            data,
+            name: "2024"
+        }
+    ]
+    
 }
