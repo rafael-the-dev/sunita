@@ -2,3 +2,15 @@
 .container {
     height: 300px;
 }
+
+@media screen and (width >= 600px) {
+    .container {
+        height: 350px;
+    }
+}
+
+@media screen and (width >= 1024px) {
+    .container {
+        height: 400px;
+    }
+}
