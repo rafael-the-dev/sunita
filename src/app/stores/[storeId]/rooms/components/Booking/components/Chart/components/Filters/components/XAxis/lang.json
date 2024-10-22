@@ -1,0 +1,18 @@
+{
+    "day": {
+        "en": "Day",
+        "pt": "Dia"
+    },
+    "month": {
+        "en": "Month",
+        "pt": "Mês"
+    },
+    "year": {
+        "en": "Year",
+        "pt": "Ano"
+    },
+    "week": {
+        "en": "Week",
+        "pt": "Semana"
+    }
+}
