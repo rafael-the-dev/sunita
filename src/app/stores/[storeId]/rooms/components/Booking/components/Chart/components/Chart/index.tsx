@@ -4,13 +4,16 @@ import dynamic from "next/dynamic"
 
 import styles from "./styles.module.css"
 
-import { X_AXIS } from "@/app/stores/[storeId]/rooms/components/Booking/components/Chart/components/Filters/types"
+import { ChartSerieType, ChartSeriesType, ChartXAxisType } from "@/types/chart";
+import { PERIOD } from "@/types"
+import { CHART_TYPE, X_AXIS } from "@/app/stores/[storeId]/rooms/components/Booking/components/Chart/components/Filters/types"
 
 import { RoomsContext as BookingsContext } from "@/app/stores/[storeId]/rooms/context"
 
 import useSearchParams from "@/hooks/useSearchParams"
 
-import { getDailySeries, getDailyXAxis, getMonthlySeries } from "../../helpers"
+import { getId } from "@/helpers/id"
+import { getBookingsSeries, getDailyXAxis, getWeeklyXAxis, getMonthlySeries, MONTHS_LIST } from "../../helpers"
 
 const Chart = dynamic(() => import( "@/components/chart/line"), { ssr: false });
 
@@ -19,28 +22,44 @@ const BookingsChart = () => {
 
     const searchParams = useSearchParams()
 
-    const dailyXAxis = React.useMemo(
-        () => getDailyXAxis(),
-        []
+    const dailyXAxis = React.useRef<ChartXAxisType>(getDailyXAxis())
+    const monthlyXAxis = React.useRef<ChartXAxisType>({ categories: MONTHS_LIST })
+    const weeklyXAxis = React.useRef<ChartXAxisType>(getWeeklyXAxis())
+
+    const list = React.useMemo(
+        () => data?.data?.list ?? [],
+        [ data ]
     )
 
-    const list = data?.data?.list ?? []
-
-    const chart = "LINE"
+    const chart = searchParams.get("chart-type", CHART_TYPE.LINE)
     const xAxis = searchParams.get("x-axis", X_AXIS.DAY) 
+
+    const dailySeries = React.useMemo(
+        () => getBookingsSeries(list),
+        [ list ]
+    )
+
+    const weeklySeries = React.useMemo(
+        () => getBookingsSeries(list, PERIOD.WEEK),
+        [ list ]
+    )
+
+    const monthlySeries = React.useMemo(
+        () => getMonthlySeries(list, PERIOD.MONTH),
+        [ list ]
+    )
 
     const options = {
         series: {
-            [X_AXIS.DAY]: getDailySeries(list),
-            //"WEEK": getSeries(weeklySalesStats)
+            [X_AXIS.DAY]: dailySeries,
+            [X_AXIS.MONTH]: monthlySeries,
+            [X_AXIS.WEEK]: weeklySeries
         }[xAxis],
-        type: {
-            "BAR": "bar",
-            "LINE": "line"
-        }[chart],
+        type: chart,
         xAxis: {
             [X_AXIS.DAY]: dailyXAxis,
-            //"WEEK": weekXAxis
+            [X_AXIS.MONTH]: monthlyXAxis,
+            [X_AXIS.WEEK]: weeklyXAxis
         }[xAxis]
     }
 
@@ -48,6 +67,7 @@ const BookingsChart = () => {
         <div className={classNames(styles.container, `mt-4`)}>
             <Chart 
                 { ...options }
+                key={getId()}
             />
         </div>
     )
