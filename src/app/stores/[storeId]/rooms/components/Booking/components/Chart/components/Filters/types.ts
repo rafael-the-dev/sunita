@@ -1,7 +1,13 @@
 
 export enum COLLAPSE {
+    CHART_TYPE = "chart",
     X_AXIS = "x-axis",
     Y_AXIS = "y-axis"
+}
+
+export enum CHART_TYPE {
+    BAR = "bar",
+    LINE = "line"
 }
 
 export enum TABS {
