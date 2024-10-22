@@ -6,6 +6,7 @@ import useSearchParams from "@/hooks/useSearchParams";
 
 import Buttons from "./components/Buttons"
 import Collapse from "@/components/collapse"
+import ChartType from "./components/ChartType"
 import XAxis from "./components/XAxis";
 import YAxis from "./components/YAxis";
 
@@ -38,6 +39,7 @@ const Filters = () => {
                 <div className="pt-2">
                     {
                         {
+                            [COLLAPSE.CHART_TYPE]: <ChartType />,
                             [COLLAPSE.X_AXIS]: <XAxis />,
                             [COLLAPSE.Y_AXIS]: <YAxis />,
                         }[selectedValue]
