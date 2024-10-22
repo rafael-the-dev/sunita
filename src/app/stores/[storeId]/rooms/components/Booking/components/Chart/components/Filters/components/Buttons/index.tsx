@@ -12,6 +12,10 @@ const Buttons = () => {
 
     const list = [
         {
+            label: translate({ [LANGUAGE.ENGLISH]: "Type", [LANGUAGE.PORTUGUESE]: "Tipo"}),
+            value: COLLAPSE.CHART_TYPE
+        },
+        {
             label: translate({ [LANGUAGE.ENGLISH]: "X Axis", [LANGUAGE.PORTUGUESE]: "Eixo X"}),
             value: COLLAPSE.X_AXIS
         },
