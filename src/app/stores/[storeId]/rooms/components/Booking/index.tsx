@@ -123,10 +123,10 @@ const Booking = () => {
                     </Card>
                     <Filters />
                 </div>
-                <div className="flex mb-10 px-4">
+                <ul className="flex list-none mb-10 px-4">
                     <Tab id={TABS.SCHEDULER}>Scheduler</Tab>
                     <Tab id={TABS.CHART}>Chart</Tab>
-                </div>
+                </ul>
                 { 
                     tab === TABS.SCHEDULER ?
                         <Scheduler
