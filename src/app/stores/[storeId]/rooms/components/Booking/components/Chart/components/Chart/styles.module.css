@@ -1,16 +1,18 @@
 
-.container {
+.chartContainer {
     height: 300px;
+    width: 600px;
 }
 
 @media screen and (width >= 600px) {
-    .container {
+    .chartContainer {
         height: 350px;
+        width: auto;
     }
 }
 
 @media screen and (width >= 1024px) {
-    .container {
+    .chartContainer {
         height: 400px;
     }
 }

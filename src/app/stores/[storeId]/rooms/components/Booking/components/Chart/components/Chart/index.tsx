@@ -69,11 +69,13 @@ const BookingsChart = () => {
     }
 
     return (
-        <div className={classNames(styles.container, `mt-4`)}>
-            <Chart 
-                { ...options }
-                key={getId()}
-            />
+        <div className={classNames(`mt-4 overflow-x-auto`)}>
+            <div className={classNames(styles.chartContainer)}>
+                <Chart 
+                    { ...options }
+                    key={getId()}
+                />
+            </div>
         </div>
     )
 }
