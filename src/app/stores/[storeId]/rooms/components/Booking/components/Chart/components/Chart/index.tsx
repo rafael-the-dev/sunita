@@ -4,27 +4,32 @@ import dynamic from "next/dynamic"
 
 import styles from "./styles.module.css"
 
-import { ChartSerieType, ChartSeriesType, ChartXAxisType } from "@/types/chart";
+import { ChartXAxisType } from "@/types/chart";
 import { PERIOD } from "@/types"
 import { CHART_TYPE, X_AXIS } from "@/app/stores/[storeId]/rooms/components/Booking/components/Chart/components/Filters/types"
+import { LANGUAGE } from "@/types/language"
 
 import { RoomsContext as BookingsContext } from "@/app/stores/[storeId]/rooms/context"
 
+import useLanguage from "@/hooks/useLanguage"
 import useSearchParams from "@/hooks/useSearchParams"
 
 import { getId } from "@/helpers/id"
-import { getBookingsSeries, getDailyXAxis, getWeeklyXAxis, getMonthlySeries, MONTHS_LIST } from "../../helpers"
+import { getBookingsSeries, getDailyXAxis, getPtWeeklyXAxis, getWeeklyXAxis, getMonthlySeries, MONTHS_LIST } from "../../helpers"
 
 const Chart = dynamic(() => import( "@/components/chart/line"), { ssr: false });
 
 const BookingsChart = () => {
     const { bookings: { data }} = React.useContext(BookingsContext)
 
+    const { language } = useLanguage()
     const searchParams = useSearchParams()
+
+    const isEnglish = language === LANGUAGE.ENGLISH
 
     const dailyXAxis = React.useRef<ChartXAxisType>(getDailyXAxis())
     const monthlyXAxis = React.useRef<ChartXAxisType>({ categories: MONTHS_LIST })
-    const weeklyXAxis = React.useRef<ChartXAxisType>(getWeeklyXAxis())
+    const weeklyXAxis = React.useRef<ChartXAxisType>(isEnglish ? getWeeklyXAxis() : getPtWeeklyXAxis())
 
     const list = React.useMemo(
         () => data?.data?.list ?? [],

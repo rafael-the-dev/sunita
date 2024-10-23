@@ -21,6 +21,13 @@ export const getWeeklyXAxis = () => (
     }
 )
 
+
+export const getPtWeeklyXAxis = () => (
+    {
+        categories: [ "Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab" ]
+    }
+)
+
 export const getDailyXAxis = () => {
     let categories = []
     
