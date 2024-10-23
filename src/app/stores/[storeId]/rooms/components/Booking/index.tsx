@@ -144,16 +144,16 @@ const Booking = () => {
                         <Chart />
                 }
             </div>
-            <div className="flex flex-col items-stretch mt-8 px-2 md:px-4 sm:flex-row sm:justify-end">
-                <Button
-                    className="py-2"
-                    onClick={() => bookings?.fetchData({})}>
-                    { lang.buttons.fetchBookings[language] }
-                </Button>
+            <div className="flex flex-col gap-y-4 items-stretch mt-8 px-2 sm:flex-row-reverse sm:gap-y-0 sm:gap-x-4 md:px-4 ">
                 <Button 
                     className="py-2"
                     onClick={openDialog(DIALOG_TYPE.BOOKING)}>
                     { lang.buttons.book[language] }
+                </Button>
+                <Button
+                    className="py-2"
+                    onClick={() => bookings?.fetchData({})}>
+                    { lang.buttons.fetchBookings[language] }
                 </Button>
             </div>
         </div>
