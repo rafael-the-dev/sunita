@@ -55,17 +55,16 @@ export const groupBookingsByMonth = (list: BookingInfoType[], period: PERIOD) =>
     })
 
     const group: GroupedBookings[] = mapper
-        .entries()
-        .map(
-            ([ month, list ]) => {
-                monthlyBookingsMapper.set(month, list)
+        .entries()//@ts-ignore
+        .map(([ month, list ]) => {
+            monthlyBookingsMapper.set(month, list)
 
-                return {
-                    list,
-                    month
-                }
+            return {
+                list,
+                month
             }
-        ).toArray()
+        })
+        .toArray()
     
     return group
 }
@@ -109,7 +108,7 @@ export const getBookingsSeries = (list: BookingInfoType[], period: PERIOD.DAY | 
     )
 
     const series: ChartSerieType[] = mapper
-        .entries()
+        .entries()//@ts-ignore
         .map(
             ([ month, monthMapper ]) => {
                 return {
